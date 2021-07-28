@@ -63,6 +63,21 @@ namespace SplineMesh{
 
         }
 
+        public void cizginin_basina_bagla()
+        {
+            //transform.position =Sonuna_eklenecek_cizgi.transform.position+Sonuna_eklenecek_cizgi.GetComponent<Spline>().nodes[0].Position;
+
+            cizgi = Sonuna_eklenecek_cizgi.GetComponent<Spline>();
+            CurveSample sample = cizgi.GetSample(0);
+
+            transform.position = Sonuna_eklenecek_cizgi.transform.position;
+            transform.position += Sonuna_eklenecek_cizgi.transform.forward * sample.location.z;
+            transform.position += Sonuna_eklenecek_cizgi.transform.right * sample.location.x;
+            transform.position += Sonuna_eklenecek_cizgi.transform.up * sample.location.y;
+            transform.rotation = sample.Rotation;
+            transform.eulerAngles = new Vector3(transform.rotation.eulerAngles.x, Sonuna_eklenecek_cizgi.transform.rotation.eulerAngles.y + transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
+
+        }
 
 
 

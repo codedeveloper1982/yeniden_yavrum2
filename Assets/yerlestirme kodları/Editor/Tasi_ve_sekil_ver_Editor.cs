@@ -39,7 +39,10 @@ namespace SplineMesh
             {
                 tasi_ve_sekil.gerile();
             }
-
+            if (GUILayout.Button("cizginin baþýna git"))
+            {
+                tasi_ve_sekil.cizginin_basina_bagla();
+            }
         }
 
 
