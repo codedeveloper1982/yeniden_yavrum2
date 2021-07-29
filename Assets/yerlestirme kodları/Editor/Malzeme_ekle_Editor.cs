@@ -43,6 +43,13 @@ namespace SplineMesh
                 ekle.Sona_kirik_ekle();
 
             }
+            if (GUILayout.Button("baþa kýrýk köprü ekle"))
+            {
+
+                ekle.basa_kirik_ekle();
+
+            }
+
             if (GUILayout.Button("yol ekle"))
             {
 
@@ -68,8 +75,18 @@ namespace SplineMesh
                 ekle.basa_yamac_ekle();
 
             }
+            if (GUILayout.Button("baþa dere kýyýsý"))
+            {
 
+                ekle.basa_dere();
 
+            }
+            if (GUILayout.Button("sona dere kýyýsý"))
+            {
+
+                ekle.sona_dere();
+
+            }
 
 
         }
