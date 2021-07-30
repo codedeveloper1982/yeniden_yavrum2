@@ -89,10 +89,15 @@ namespace UnityStandardAssets.Vehicles.Car
         //anti stuck ayarlarý
         [Header("takýlma ayarlarý")]
         [SerializeField] private float lastik_ray;
-        private bool ileri_atla;
 
+       
+        
+        /*
+        [Header("ön sensör ayarlarý")]
+        [SerializeField] private float on_sensor_uzunlugu;
+        public bool ileri_git;
 
-
+        */
 
 
 
@@ -145,7 +150,7 @@ namespace UnityStandardAssets.Vehicles.Car
             sira = 0;
             ilk = sira-(mermisayisi-1);
 
-            //ATÝSTUCK
+
 
 
     }
@@ -295,13 +300,27 @@ namespace UnityStandardAssets.Vehicles.Car
                 transform.Rotate(0.1f, 0, 0);
 
             }
-           
-
-///////////////////////////////ANTÝ STUCK SÝSTEMÝ//////////////////////////////////////
 
 
+            ///////////////////////////////ANTÝ STUCK SÝSTEMÝ//////////////////////////////////////
 
+            ////////////////////////////düþman kotrol için hit/////////////////////////////////
+           /* RaycastHit on_isin;
+            Vector3 araba = transform.position;
+            if(Physics.Raycast(araba,transform.forward,out on_isin, on_sensor_uzunlugu))
+            {
+                if(on_isin.collider.tag=="düþman kontrol")ileri_git = true;
 
+            }
+            else
+            {
+                ileri_git = false;
+            }
+
+            Debug.DrawRay(araba, transform.forward * on_sensor_uzunlugu, Color.green);
+*/
+
+////////////////////////////düþman kotrol için hit/////////////////////////////////
             /*Vector3 araba = transform.position;
             araba.z += sensorbaslangýcý;
 
