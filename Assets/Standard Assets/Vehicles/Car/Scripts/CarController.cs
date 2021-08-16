@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.Vehicles.Car;
+
 
 #pragma warning disable 649
-namespace UnityStandardAssets.Vehicles.Car
-{
+//namespace UnityStandardAssets.Vehicles.Car{
     internal enum CarDriveType
     {
         FrontWheelDrive,
@@ -90,22 +92,26 @@ namespace UnityStandardAssets.Vehicles.Car
         [Header("takýlma ayarlarý")]
         [SerializeField] private float lastik_ray;
 
-       
-        
-        /*
-        [Header("ön sensör ayarlarý")]
-        [SerializeField] private float on_sensor_uzunlugu;
-        public bool ileri_git;
-
-        */
+    public RaycastHit hit;
+    public bool vuruldu;
+    public string vurulan;
 
 
 
+    /*
+    [Header("ön sensör ayarlarý")]
+    [SerializeField] private float on_sensor_uzunlugu;
+    public bool ileri_git;
+
+    */
 
 
 
-        // Use this for initialization
-        private void Start()
+
+
+
+    // Use this for initialization
+    private void Start()
         {           
  
             m_WheelMeshLocalRotations = new Quaternion[4];
@@ -391,16 +397,18 @@ namespace UnityStandardAssets.Vehicles.Car
                 Vector3 fuze_ucu = mermiler[i].transform.position;
                 fuze_ucu.z += sensorbaslangýcý;
 
-                RaycastHit hit;
+
 
                 if(Physics.Raycast(fuze_ucu,mermiler[i].transform.forward,out hit, fuze_sensoru_uzunlugu))
                 {
-
+                    
                     Debug.Log("çarpma" + i);
                     patlama[i].SetActive(true);
                     patlama[i].transform.position = hit.point;
                     patlama[i].transform.rotation = Quaternion.LookRotation(hit.normal);
                     mermiler[i].SetActive(false);
+                    vuruldu = true;
+                    vurulan = hit.collider.tag;
 
 
                 }
@@ -723,4 +731,4 @@ namespace UnityStandardAssets.Vehicles.Car
 
 
     }
-}
+//}

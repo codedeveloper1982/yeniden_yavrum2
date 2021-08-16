@@ -122,7 +122,6 @@ namespace SplineMesh {
             res.GetComponent<MeshRenderer>().material = material;
             res.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             res.GetComponent<MeshRenderer>().receiveShadows = false;
-            res.tag = "zemin";
             res.GetComponent<MeshCollider>().material = physicMaterial;
             MeshBender mb = res.GetComponent<MeshBender>();
             mb.Source = SourceMesh.Build(mesh)
