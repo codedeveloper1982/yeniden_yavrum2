@@ -142,8 +142,10 @@ public class Kontrol_denemesi : MonoBehaviour
 
         for (int i = 0; i < dusmanlar.Length; i++)
         {
-            Hareket_et(drone_konum[i], drone_cizgi[i], drone_egri[i], drone_sirasi[i]);//hareket kodlarý burada olsun (sensör harici olanlar)
-            Drone_hareketi(dusmanlar[i], drone_konum[i], 4, 2, sag_sol[i], yatay_degisim[i]);
+            if (dusmanlar[i].activeSelf == true)
+            { 
+                Hareket_et(drone_konum[i], drone_cizgi[i], drone_egri[i], drone_sirasi[i]);//hareket kodlarý burada olsun (sensör harici olanlar)
+            Drone_hareketi(dusmanlar[i], drone_konum[i], 5, 2, sag_sol[i], yatay_degisim[i]);
             if (Mathf.Abs(sag_sol[i] - yatay_degisim[i]) < 0.3f)
             {
                 yatay_degisim[i] = Random.Range(-5, 6);//bunlarý sonra for döngüsünde çalýþtýr.
@@ -152,6 +154,7 @@ public class Kontrol_denemesi : MonoBehaviour
 
             if (sag_sol[i] > yatay_degisim[i]) sag_sol[i] -= sagsol_hiz;//bunlarý sonra for döngüsünde çalýþtýr.
             if (sag_sol[i] < yatay_degisim[i]) sag_sol[i] += sagsol_hiz;//bunlarý sonra for döngüsünde çalýþtýr.
+             }
 
         }
 
@@ -174,7 +177,10 @@ public class Kontrol_denemesi : MonoBehaviour
 
             for (int i = 0; i < dusmanlar.Length; i++)
             {
-                drone_sirasi[i] += otelenme;
+                if (dusmanlar[i].activeSelf == true)
+                {
+                    drone_sirasi[i] += otelenme;
+                }
             }
             ileri = false;
         }
@@ -199,7 +205,10 @@ public class Kontrol_denemesi : MonoBehaviour
 
             for (int i = 0; i < dusmanlar.Length; i++)
             {
-                drone_sirasi[i] -= otelenme;
+                if (dusmanlar[i].activeSelf == true)
+                {
+                    drone_sirasi[i] -= otelenme;
+                }
             }
             geri = false;
         }
@@ -208,6 +217,7 @@ public class Kontrol_denemesi : MonoBehaviour
 
         for (int i = 0; i < dusmanlar.Length; i++)
         {
+            if (dusmanlar[i].activeSelf == true) { 
         if (Mathf.Abs(gecici_konum[i]-drone_sirasi[i])<0.2f) { 
         hedef_sirasi [i] = Random.Range(2, 11);
                 
@@ -280,7 +290,7 @@ public class Kontrol_denemesi : MonoBehaviour
             {
                 if (a != i)
                 {
-                    if (Mathf.Abs(sag_sol[a] - sag_sol[i]) < 1 && Mathf.Abs(drone_sirasi[a] - drone_sirasi[i]) < 2)
+                    if (Mathf.Abs(sag_sol[a] - sag_sol[i]) < 1.5f && Mathf.Abs(drone_sirasi[a] - drone_sirasi[i]) < 2)
                     {
                         if (drone_sirasi[a] > drone_sirasi[i])
                         {
@@ -324,12 +334,12 @@ public class Kontrol_denemesi : MonoBehaviour
 
         }
 
-
-
-
+        Debug.Log(i);
+            } 
         }
 
 
+       
 
     }
 
@@ -368,5 +378,5 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
 
-
+    
 }
