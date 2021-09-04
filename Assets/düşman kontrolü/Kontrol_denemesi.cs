@@ -50,10 +50,31 @@ public class Kontrol_denemesi : MonoBehaviour
     public float sagsol_hiz=0.05f;
     public int maksimum_drone_sayisi = 2;
 
-    
+
+    ///////can çubuklarý///////////////////////
+    /*public GameObject can_bar;
+    private Transform cam;*/
+    // CAN BARI YAPIMINA SONRA KARAR VER.
+    private float [] dusman_cani;
+    public GameObject patlama;
+    public GameObject parcali_drone1;
+
+
 
 
     private GameObject player;
+    [Header("BURASI  PATLAMA ÝLE ÝLGÝLÝ")]
+    public float minforce;
+    public float maxforce;
+    public float radius;
+    private GameObject[] infilak;
+    private int  infilak_sirasi,onceki_infilak;
+    public int infilak_sayisi=4;
+
+    [Header("ENNKAZ ÝLE ÝLGÝLÝ")]
+    private float toplama_suresi=3,toplamaya_basla;
+    private bool enkaz_topla=false;
+
 
     void Start()
     {
@@ -115,15 +136,27 @@ public class Kontrol_denemesi : MonoBehaviour
 
             yatay_degisim = new  float[dusmanlar.Length];
             sag_sol =new  float[dusmanlar.Length];
+        dusman_cani=new  float[dusmanlar.Length];
         for (int i = 0; i < dusmanlar.Length; i++)
         {
             yatay_degisim[i] = sag_sol[i] = 0;
+            dusman_cani[i] = 100;
         
         }
 
-            //////////sað sol deðiþim ////////////// 
+        infilak = new GameObject[infilak_sayisi];
 
+        for (int i = 0; i < infilak_sayisi; i++)
+        {
+
+            infilak[i] = Instantiate(patlama, patlama.transform.position, Quaternion.identity);
+            infilak[i].SetActive(false);
         }
+        infilak_sirasi = 0;
+        //////////sað sol deðiþim ////////////// 
+        //cam = Camera.main.transform;CAN BARI YAPIMINA SONRA KARAR VER.
+        patlama.SetActive(false);
+    }
 
     // Update is called once per frame
     void Update()
@@ -334,12 +367,95 @@ public class Kontrol_denemesi : MonoBehaviour
 
         }
 
-        Debug.Log(i);
-            } 
+
+            }
+            //////////// düþman vurulmasý///////////////////
+            if (player.GetComponent<CarController>().vuruldu == true)
+            {
+                string isim = player.GetComponent<CarController>().vurulan;
+                // RaycastHit carp = player.GetComponent<CarController>().hit;
+
+               for(int a = 0; a < dusmanlar.Length; a++) { 
+                if (dusmanlar[a].activeSelf == true)
+                    { 
+
+                    if (dusmanlar[a] != null && dusmanlar[a].tag == isim)
+                    {
+
+                    dusman_cani[a] -= 50;
+
+                        if (dusman_cani[a] == 0 || dusman_cani[a] < 0)
+                        {
+                            infilak[infilak_sirasi].SetActive(true);
+                            infilak[infilak_sirasi].transform.position=dusmanlar[a].transform.position;
+                                Patla(dusmanlar[a],parcali_drone1);
+                                /*parcali_drone1.transform.position=dusmanlar[a].transform.position;
+                                parcali_drone1.SetActive(true);
+                                dusmanlar[a].SetActive(false);
+*/
+
+
+
+                                onceki_infilak = infilak_sirasi + 2;
+                                if(onceki_infilak==infilak_sayisi || onceki_infilak > infilak_sayisi)
+                                {
+                                    onceki_infilak = onceki_infilak - infilak_sayisi;
+
+                                }
+                            infilak[onceki_infilak].SetActive(false);
+                                infilak_sirasi++;
+                                toplamaya_basla = Time.time + toplama_suresi;
+                                enkaz_topla = true;
+
+
+                        /*patlama.SetActive(true);
+                        patlama.transform.position = dusmanlar[a].transform.position;
+                            parcali_drone1.transform.position=dusmanlar[a].transform.position;
+                            parcali_drone1.SetActive(true);
+
+                            dusmanlar[a].SetActive(false);*/
+                        }
+
+                    }
+                 }
+                }
+
+
+
+
+                player.GetComponent<CarController>().vuruldu = false;
+
+            }
+            //////////// düþman vurulmasý///////////////////
+
+
         }
 
+        // Debug.Log(dusman_cani[1]+"   "+dusmanlar[1].tag);
+        /*CAN BARI YAPIMINA SONRA KARAR VER.
+        can_bar.transform.position = dusmanlar[0].transform.position + new Vector3(0, 0.5f, 0);
+        can_bar.transform.position += dusmanlar[0].transform.forward * 1.2f; 
+        can_bar.transform.LookAt(can_bar.transform.position + cam.forward);
+       */
+        if (enkaz_topla)
+        {
 
-       
+            if(toplamaya_basla< Time.time)
+            {
+                foreach (Transform t in parcali_drone1.transform)
+                {
+
+                    t.localPosition = Vector3.zero;
+                    parcali_drone1.SetActive(false);
+                }
+
+
+                enkaz_topla = false;
+            }
+
+
+        }
+        Debug.Log(enkaz_topla);
 
     }
 
@@ -376,7 +492,29 @@ public class Kontrol_denemesi : MonoBehaviour
      }
 
 
+    private void Patla(GameObject pasif_olcak,GameObject aktif_olacak)
+    {
+        aktif_olacak.transform.position = pasif_olcak.transform.position;
+        aktif_olacak.transform.rotation = pasif_olcak.transform.rotation;
+        aktif_olacak.SetActive(true);
+        pasif_olcak.SetActive(false);
 
+        foreach (Transform t in aktif_olacak.transform)
+        {
+            var rb = t.GetComponent<Rigidbody>();
+
+            if (rb != null)
+            {
+                Vector3 patlama_noktasi = aktif_olacak.transform.position;//- new Vector3(0, 0, 0)
+                rb.AddExplosionForce(Random.Range(minforce, maxforce), patlama_noktasi, radius);
+            }
+
+
+        }
+
+
+
+    }
 
     
 }

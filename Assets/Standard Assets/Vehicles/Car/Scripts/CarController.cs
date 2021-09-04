@@ -62,6 +62,7 @@ using UnityStandardAssets.Vehicles.Car;
         GameObject[] mermiler;// mermiler dizisi oluþturur
         GameObject[] roket_trails;
         GameObject[] patlama;
+    GameObject[] kucuk_pat;
         public GameObject bullet;// çoðaltýlacak füze
         public GameObject roketatesi;
         public GameObject pat;
@@ -95,6 +96,7 @@ using UnityStandardAssets.Vehicles.Car;
     public RaycastHit hit;
     public bool vuruldu;
     public string vurulan;
+    public GameObject kucuk_patlama;
 
 
 
@@ -136,6 +138,7 @@ using UnityStandardAssets.Vehicles.Car;
             mermiler = new GameObject[mermisayisi];
             roket_trails=new GameObject[mermisayisi];
             patlama =new GameObject[mermisayisi];
+            kucuk_pat=new GameObject[mermisayisi];
 
             shootpoint = GameObject.FindGameObjectWithTag("atisnoktasi");
             for (int i = 0; i < mermisayisi; i++)
@@ -143,10 +146,12 @@ using UnityStandardAssets.Vehicles.Car;
                 mermiler[i] = Instantiate(bullet, shootpoint.transform.position, Quaternion.identity);
                 roket_trails[i]= Instantiate(roketatesi, shootpoint.transform.position, Quaternion.identity);
                 patlama[i]= Instantiate(pat, shootpoint.transform.position, Quaternion.identity);
-                mermiler[i].tag = "roket" + i;
+                kucuk_pat[i]= Instantiate(kucuk_patlama, shootpoint.transform.position, Quaternion.identity);
+                //mermiler[i].tag = "roket" + i;
                 mermiler[i].SetActive(false);
                 roket_trails[i].SetActive(false);
                 patlama[i].SetActive(false);
+                kucuk_pat[i].SetActive(false);
 
 
 
@@ -155,9 +160,6 @@ using UnityStandardAssets.Vehicles.Car;
             }
             sira = 0;
             ilk = sira-(mermisayisi-1);
-
-
-
 
     }
         private void Update()
@@ -377,6 +379,8 @@ using UnityStandardAssets.Vehicles.Car;
                     mermiler[ilk].SetActive(false);
                     roket_trails[ilk].SetActive(false);
                     patlama[ilk].SetActive(false);
+                    kucuk_pat[ilk].SetActive(false);
+                    
                     
 
 
@@ -401,14 +405,24 @@ using UnityStandardAssets.Vehicles.Car;
 
                 if(Physics.Raycast(fuze_ucu,mermiler[i].transform.forward,out hit, fuze_sensoru_uzunlugu))
                 {
-                    
-                    Debug.Log("çarpma" + i);
+                     vuruldu = true;
+                    vurulan = hit.collider.tag;
+                   
+
+                    if(vurulan=="füzeci" || vurulan=="drone_5" || vurulan == "drone_1b")
+                    {
+                        kucuk_pat[i].SetActive(true);
+                        kucuk_pat[i].transform.position = hit.point;
+                        kucuk_pat[i].transform.rotation = Quaternion.LookRotation(hit.normal);
+                    }
+                    else { 
+                    //Debug.Log("çarpma" + i);
                     patlama[i].SetActive(true);
                     patlama[i].transform.position = hit.point;
                     patlama[i].transform.rotation = Quaternion.LookRotation(hit.normal);
+                       }
+
                     mermiler[i].SetActive(false);
-                    vuruldu = true;
-                    vurulan = hit.collider.tag;
 
 
                 }
