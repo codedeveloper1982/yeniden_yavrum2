@@ -74,6 +74,21 @@ public class Kontrol_denemesi : MonoBehaviour
     [Header("ENNKAZ ÝLE ÝLGÝLÝ")]
     private float toplama_suresi=3,toplamaya_basla;
     private bool enkaz_topla=false;
+    /*
+        [Header("dusman ateþleri")]
+        public GameObject ates;
+        private GameObject[] muzzle;
+        private int muzzle_sayisi,muzzle_sirasi;
+    */
+
+    private bool[] ates;
+    private float[] ates_vakti;
+    private float[] ates_araligi;
+    private float [] oburune_gec;
+    private float[] gecis_vakti;
+    private bool[] gecis_bool;
+    private Vector3[] ates_konum;
+
 
 
     void Start()
@@ -137,10 +152,18 @@ public class Kontrol_denemesi : MonoBehaviour
             yatay_degisim = new  float[dusmanlar.Length];
             sag_sol =new  float[dusmanlar.Length];
         dusman_cani=new  float[dusmanlar.Length];
+      //  muzzle_sayisi = 0;        
         for (int i = 0; i < dusmanlar.Length; i++)
         {
             yatay_degisim[i] = sag_sol[i] = 0;
             dusman_cani[i] = 100;
+           
+           /* if (dusmanlar[i].tag == "drone_5")
+            {
+                muzzle_sayisi++;
+            }*/
+
+
         
         }
 
@@ -156,6 +179,38 @@ public class Kontrol_denemesi : MonoBehaviour
         //////////sað sol deðiþim ////////////// 
         //cam = Camera.main.transform;CAN BARI YAPIMINA SONRA KARAR VER.
         patlama.SetActive(false);
+
+
+
+        //////////ates etme ayarlarý ////////////// 
+        ates = new bool[dusmanlar.Length];
+        ates_vakti= new float[dusmanlar.Length];
+        ates_araligi= new float[dusmanlar.Length];
+        oburune_gec=new float[dusmanlar.Length];
+        gecis_vakti=new float[dusmanlar.Length];
+        gecis_bool= new bool[dusmanlar.Length];
+        ates_konum=new Vector3[dusmanlar.Length];
+        for (int i = 0; i < dusmanlar.Length; i++)
+        {
+            ates[i]=false;
+            ates_araligi[i] = Random.Range(5, 10);
+            ates_vakti[i] = Time.time + ates_araligi[i];
+            oburune_gec[i]=1;//bunu dier dronelar ile ayrý ayrý yap
+            gecis_vakti[i] = Time.time + oburune_gec[i];
+            gecis_bool[i]=false;
+        }
+
+
+       /* muzzle = new GameObject[muzzle_sayisi];
+        for (int i = 0; i < muzzle_sayisi; i++)
+        {
+
+           muzzle[i]=Instantiate(ates, patlama.transform.position, Quaternion.identity);
+           muzzle[i].SetActive(false);
+
+        }
+        Debug.Log(muzzle_sayisi);
+*/
     }
 
     // Update is called once per frame
@@ -379,7 +434,7 @@ public class Kontrol_denemesi : MonoBehaviour
                 if (dusmanlar[a].activeSelf == true)
                     { 
 
-                    if (dusmanlar[a] != null && dusmanlar[a].tag == isim)
+                    if (dusmanlar[a] != null && dusmanlar[a].name == isim)
                     {
 
                     dusman_cani[a] -= 50;
@@ -404,6 +459,7 @@ public class Kontrol_denemesi : MonoBehaviour
                                 }
                             infilak[onceki_infilak].SetActive(false);
                                 infilak_sirasi++;
+                                if (infilak_sirasi == 3) infilak_sirasi = 0;
                                 toplamaya_basla = Time.time + toplama_suresi;
                                 enkaz_topla = true;
 
@@ -426,7 +482,63 @@ public class Kontrol_denemesi : MonoBehaviour
                 player.GetComponent<CarController>().vuruldu = false;
 
             }
-            //////////// düþman vurulmasý///////////////////
+            //////////// ates etme kodlarý///////////////////
+            if (Time.time > ates_vakti[i])
+            {
+                ates[i] = true;
+
+                if(Time.time > ates_vakti[i] + ates_araligi[i])
+                {
+                    ates_araligi[i] = Random.Range(5, 10);
+                    ates_vakti[i] = Time.time + ates_araligi[i];
+
+                }
+
+
+            } else ates[i] = false;
+
+
+
+
+            if (ates[i])
+            {
+                if (dusmanlar[i].tag == "drone_5")
+                {
+                    if(Time.time > gecis_vakti[i])
+                    {
+                        gecis_vakti[i] = Time.time + oburune_gec[i];
+                        if (gecis_bool[i] == false)
+                        {
+                            gecis_bool[i] = true;
+                            ates_konum[i] = new Vector3(3.89f, 0.27f, 6.32f);
+                        }
+                        else {
+                             ates_konum[i]= new Vector3(-3.89f, 0.27f, 6.32f);
+                             gecis_bool[i] = false;        
+
+                        }
+
+
+
+
+                    }
+
+
+                    GameObject muzzle =dusmanlar[i].transform.GetChild(0).gameObject;
+                    muzzle.SetActive(true);
+                    muzzle.transform.localPosition = ates_konum[i];
+                }
+                
+               
+            }else {
+                if (dusmanlar[i].tag == "drone_5") {
+                    GameObject muzzle =dusmanlar[i].transform.GetChild(0).gameObject;
+                    muzzle.SetActive(false);
+ }
+
+                }
+
+
 
 
         }
@@ -455,7 +567,7 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
         }
-        Debug.Log(enkaz_topla);
+
 
     }
 

@@ -406,7 +406,7 @@ using UnityStandardAssets.Vehicles.Car;
                 if(Physics.Raycast(fuze_ucu,mermiler[i].transform.forward,out hit, fuze_sensoru_uzunlugu))
                 {
                      vuruldu = true;
-                    vurulan = hit.collider.tag;
+                    vurulan = hit.collider.name;
                    
 
                     if(vurulan=="füzeci" || vurulan=="drone_5" || vurulan == "drone_1b")
