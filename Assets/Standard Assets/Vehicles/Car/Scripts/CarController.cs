@@ -407,9 +407,10 @@ using UnityStandardAssets.Vehicles.Car;
                 {
                      vuruldu = true;
                     vurulan = hit.collider.name;
+                    string carpma = hit.collider.tag;
                    
 
-                    if(vurulan=="füzeci" || vurulan=="drone_5" || vurulan == "drone_1b")
+                    if(carpma=="füzeci" || carpma=="drone_5" || carpma == "drone_1b")
                     {
                         kucuk_pat[i].SetActive(true);
                         kucuk_pat[i].transform.position = hit.point;
