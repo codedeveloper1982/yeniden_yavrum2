@@ -119,6 +119,14 @@ public class Kontrol_denemesi : MonoBehaviour
     [SerializeField] private float fuze_sensoru_uzunlugu;
 
 
+    [Header("kývývým kodlarý")]
+    public GameObject kivilcim_prefab;
+    private GameObject[] kivilcimlar;
+    private int kivilcim_sayisi = 10,ilk_kivilcim, son_kivilcim;
+
+
+
+
 
     void Start()
     {
@@ -267,6 +275,17 @@ public class Kontrol_denemesi : MonoBehaviour
         }
         sira = 0;
         ilk = sira - (fuzesayisi - 1);
+        //////////////////////////////////////kývýlcým ayarlarý///////////////////////////
+        son_kivilcim = 0;
+        ilk_kivilcim = son_kivilcim - (kivilcim_sayisi - 1);
+
+        kivilcimlar = new GameObject[kivilcim_sayisi];
+
+        for (int i = 0; i < kivilcim_sayisi; i++)
+        {
+            kivilcimlar[i] = Instantiate(kivilcim_prefab, transform.position, Quaternion.identity);
+            kivilcimlar[i].SetActive(false);
+        }
 
     }
 
@@ -609,16 +628,35 @@ public class Kontrol_denemesi : MonoBehaviour
                     muzzle.SetActive(true);
                     muzzle.transform.localPosition = ates_konum[i];
 
-                    Vector3 fuze_ucu = muzzle.transform.position;
+                    Vector3 fuze_ucu = muzzle.transform.position+new Vector3(Random.Range(0,2),Random.Range(0,2),Random.Range(0,2));
                     //fuze_ucu.z += sensorbaslangýcý;
                     RaycastHit hit;
                     if (Physics.Raycast(fuze_ucu, muzzle.transform.forward, out hit, 15))
                     {
+                        if (hit.collider.tag == "Player") { 
+                        kivilcimlar[son_kivilcim].SetActive(true);
+                        kivilcimlar[son_kivilcim].transform.position = hit.point;
+                        kivilcimlar[son_kivilcim].transform.rotation = Quaternion.LookRotation(hit.normal);
+                        kivilcimlar[son_kivilcim].transform.SetParent(hit.collider.transform);
+                        kivilcimlar[son_kivilcim].transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
+                        son_kivilcim++;
+                        ilk_kivilcim++;
+                        if (son_kivilcim == kivilcim_sayisi)
+                        {
 
-                        Debug.Log("muzzle ile vuruldu");
+                            son_kivilcim = 0;
+                        }
+                         if (ilk_kivilcim == kivilcim_sayisi)
+                        {
 
+                             ilk_kivilcim= 0;
+                        }
+                        if (ilk_kivilcim >= 0)
+                        {
+                       kivilcimlar[ilk_kivilcim].SetActive(false);
 
-
+                        }
+                       }
                     }
                     Debug.DrawRay(fuze_ucu, muzzle.transform.forward * 15, Color.green);
 
@@ -660,7 +698,10 @@ public class Kontrol_denemesi : MonoBehaviour
                         fuzeler[sira].SetActive(true);
                         fuze_trails[sira].SetActive(true);
                         fuze_zamani[sira] = 0;
-                        hedef = player.transform.position + player.transform.forward * 5;
+                        float hedef_miktari = Random.Range(5, 7);
+                        float max_hiz = player.transform.GetComponent<CarController>().MaxSpeed;
+                        float mevcut_hiz = player.transform.GetComponent<CarController>().CurrentSpeed;
+                        hedef = player.transform.position + player.transform.forward *(hedef_miktari-(5-5*(mevcut_hiz/max_hiz)));
                          vo = Calculate_velocity(hedef, shootpoint, 1f);
                         fuzeler[sira].transform.rotation = Quaternion.LookRotation(vo);
                         sira++;
