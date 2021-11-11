@@ -29,8 +29,8 @@ public class Kontrol_denemesi : MonoBehaviour
     private CurveSample[] hedef_egri;
     private Vector3[] hedef_konum;
     public GameObject gorunur_obje;
-    private float [] gecici_konum;
-    public float sure=2,oynatma_vakti;
+    private float[] gecici_konum;
+    public float sure = 2, oynatma_vakti;
 
 
 
@@ -40,7 +40,7 @@ public class Kontrol_denemesi : MonoBehaviour
     private Spline[] drone_cizgi;
     private CurveSample[] drone_egri;
     public GameObject konum_noktasi;
-    private GameObject [] drone_konum;
+    private GameObject[] drone_konum;
     ///////drone noktalarý///////////////////////
 
 
@@ -50,7 +50,7 @@ public class Kontrol_denemesi : MonoBehaviour
     private float[] dikey_degisim;
     private float[] sag_sol;
     private float[] cik_in;
-    public float sagsol_hiz=0.05f;
+    public float sagsol_hiz = 0.03f;
     public float cikin_hiz = 0.01f;
     public int maksimum_drone_sayisi = 2;
 
@@ -59,7 +59,7 @@ public class Kontrol_denemesi : MonoBehaviour
     /*public GameObject can_bar;
     private Transform cam;*/
     // CAN BARI YAPIMINA SONRA KARAR VER.
-    private float [] dusman_cani;
+    private float[] dusman_cani;
     public GameObject patlama;
     public GameObject parcali_drone1;
 
@@ -72,12 +72,12 @@ public class Kontrol_denemesi : MonoBehaviour
     public float maxforce;
     public float radius;
     private GameObject[] infilak;
-    private int  infilak_sirasi,onceki_infilak;
-    public int infilak_sayisi=4;
+    private int infilak_sirasi, onceki_infilak;
+    public int infilak_sayisi = 4;
 
     [Header("ENNKAZ ÝLE ÝLGÝLÝ")]
-    private float toplama_suresi=3,toplamaya_basla;
-    private bool enkaz_topla=false;
+    private float toplama_suresi = 3, toplamaya_basla;
+    private bool enkaz_topla = false;
     /*
         [Header("dusman ateþleri")]
         public GameObject ates;
@@ -88,7 +88,7 @@ public class Kontrol_denemesi : MonoBehaviour
     private bool[] ates;
     private float[] ates_vakti;
     private float[] ates_araligi;
-    private float [] oburune_gec;
+    private float[] oburune_gec;
     private float[] gecis_vakti;
     private bool[] gecis_bool;
     private Vector3[] ates_konum;
@@ -103,18 +103,16 @@ public class Kontrol_denemesi : MonoBehaviour
     public GameObject fuzeatesi;
     public GameObject pat;
     public GameObject buyuk_pat;
-    private Vector3 shootpoint;// füze çýkýþ moktasý
+    private Vector3 []shootpoint;// füze çýkýþ moktasý
     public int fuzesayisi;// aktif olacak füze sayýsý
     private int sira;// aktif füze sýrasý
     private int ilk;//
-    private float timetofire = 0;// ATIÞ ZAMANI
     private Vector3 hedef;
     private float[] yon_zamani;
     private float yon_rate = 0.1f;
     private Vector3[] onceki_pozisyon;
-    private bool fuze_at;
-    Vector3 vo;
-    [SerializeField] private float firerate;
+    private bool[] fuze_at;
+    Vector3[] vo;
     [SerializeField] private float sensorbaslangýcý;
     [SerializeField] private float fuze_sensoru_uzunlugu;
 
@@ -124,7 +122,33 @@ public class Kontrol_denemesi : MonoBehaviour
     private GameObject[] kivilcimlar;
     private int kivilcim_sayisi = 10,ilk_kivilcim, son_kivilcim;
 
+    [Header("laser kodlarý")]
+    public GameObject laser_prefab;
+    private GameObject[] laserler;
+    private GameObject [] laser_pat;
+    private int laser_sayisi = 10,ilk_laser, son_laser;
+    private Vector3 laserpoint;
+    private bool laser_at;
+    [SerializeField] private float laser_sensorbaslangýcý;
+    [SerializeField] private float laser_sensoru_uzunlugu;
 
+    [Header("rocket kodlarý")]
+    private GameObject[] rocketler;// mermiler dizisi oluþturur
+    private GameObject[] rocket_trails;
+    private GameObject[] rocket_pat;
+    private float[] rocket_hiz_x,rocket_hiz_y,rocket_hiz_z;
+    public GameObject rocket;// çoðaltýlacak füze
+    private GameObject[] parent_rocket;
+
+   // private Vector3[] rocket_shootpoint;// füze çýkýþ moktasý
+    public int rocketsayisi=6;// aktif olacak füze sayýsý
+    private int rocket_sira;// aktif füze sýrasý
+    private int rocket_ilk;//
+    private float rocket_hiz = 0.2f;
+    private Vector3 rocket_hedef;
+    private bool[] rocket_at;
+    [SerializeField] private float rocket_sensorbaslangýcý;
+    [SerializeField] private float rocket_sensoru_uzunlugu;
 
 
 
@@ -235,7 +259,7 @@ public class Kontrol_denemesi : MonoBehaviour
         for (int i = 0; i < dusmanlar.Length; i++)
         {
             ates[i]=false;
-            ates_araligi[i] = Random.Range(5, 10);
+            ates_araligi[i] = Random.Range(5.0f, 10.0f);
             ates_vakti[i] = Time.time + ates_araligi[i];
             oburune_gec[i]=1;//bunu dier dronelar ile ayrý ayrý yap
             gecis_vakti[i] = Time.time + oburune_gec[i];
@@ -253,20 +277,25 @@ public class Kontrol_denemesi : MonoBehaviour
         fuze_zamani = new float[fuzesayisi];
         yon_zamani = new float[fuzesayisi];
         onceki_pozisyon = new Vector3[fuzesayisi];
-        fuze_at = false;
+        shootpoint= new Vector3[fuzesayisi];
+        vo=new Vector3[fuzesayisi];
+        fuze_at= new bool[fuzesayisi];
+        
         for (int i = 0; i < fuzesayisi; i++)
         {
-            fuzeler[i] = Instantiate(fuze, shootpoint, Quaternion.identity);
-            fuze_trails[i] = Instantiate(fuzeatesi, shootpoint, Quaternion.identity);
-            fuze_pat[i] = Instantiate(pat, shootpoint, Quaternion.identity);
-            fuze_buyuk_pat[i] = Instantiate(buyuk_pat, shootpoint, Quaternion.identity);
+            shootpoint[i] = Vector3.zero;
+            fuzeler[i] = Instantiate(fuze, shootpoint[i], Quaternion.identity);
+            fuze_trails[i] = Instantiate(fuzeatesi, shootpoint[i], Quaternion.identity);
+            fuze_pat[i] = Instantiate(pat, shootpoint[i], Quaternion.identity);
+            fuze_buyuk_pat[i] = Instantiate(buyuk_pat, shootpoint[i], Quaternion.identity);
             fuze_zamani[i] = 0;
             //mermiler[i].tag = "roket" + i;
             fuzeler[i].SetActive(false);
             fuze_trails[i].SetActive(false);
             fuze_pat[i].SetActive(false);
             fuze_buyuk_pat[i].SetActive(false);
-            onceki_pozisyon[i] = shootpoint;
+            onceki_pozisyon[i] = shootpoint[i];
+            fuze_at[i] = false;
 
             yon_zamani[i] = Time.time + yon_rate;
 
@@ -286,6 +315,50 @@ public class Kontrol_denemesi : MonoBehaviour
             kivilcimlar[i] = Instantiate(kivilcim_prefab, transform.position, Quaternion.identity);
             kivilcimlar[i].SetActive(false);
         }
+        //////////////////////////////////////laser ayarlarý///////////////////////////
+        son_laser = 0;
+        ilk_laser = son_laser - (laser_sayisi - 1);
+
+        laserler = new GameObject[laser_sayisi];
+        laser_pat= new GameObject[laser_sayisi];
+
+        for (int i = 0; i < laser_sayisi; i++)
+        {
+            laserler[i] = Instantiate(laser_prefab, transform.position, Quaternion.identity);
+            laser_pat[i] = Instantiate(pat, transform.position, Quaternion.identity);
+            laserler[i].SetActive(false);
+            laser_pat[i].SetActive(false);
+        }
+        //////////////////////////////////////rocket ayarlarý///////////////////////////
+        rocket_sira = 0;
+        rocket_ilk = rocket_sira - (rocketsayisi - 1);
+
+        rocketler = new GameObject[rocketsayisi];
+        rocket_trails= new GameObject[rocketsayisi];
+        rocket_pat = new GameObject[rocketsayisi];
+        rocket_hiz_x = new float[rocketsayisi];
+        rocket_hiz_y = new float[rocketsayisi];
+        rocket_hiz_z = new float[rocketsayisi];
+        rocket_at=new bool[rocketsayisi];
+        parent_rocket=new GameObject[rocketsayisi];
+
+        for (int i = 0; i < rocketsayisi; i++)
+        {
+            rocketler[i] = Instantiate(rocket, transform.position, Quaternion.identity);
+            rocket_trails[i] = Instantiate(fuzeatesi, transform.position, Quaternion.identity);
+            rocket_pat[i] = Instantiate(pat, transform.position, Quaternion.identity);
+            rocket_hiz_x[i] = 0.0f;
+            rocket_hiz_y[i] = 0.0f;
+            rocket_hiz_z[i] = 0.0f;
+            rocketler[i].SetActive(false);
+            rocket_trails[i].SetActive(false);
+            rocket_pat[i].SetActive(false);
+            rocket_at[i] = false;
+        }
+
+
+
+
 
     }
 
@@ -320,9 +393,9 @@ public class Kontrol_denemesi : MonoBehaviour
                 if (sag_sol[i] < yatay_degisim[i]) sag_sol[i] += sagsol_hiz;//bunlarý sonra for döngüsünde çalýþtýr.
                
                 
-                if (Mathf.Abs(cik_in[i] - dikey_degisim[i]) < 0.3f)
+                if (Mathf.Abs(cik_in[i] - dikey_degisim[i]) < 0.33f)
                 {
-                    dikey_degisim[i] = Random.Range(0.5f, 4);//bunlarý sonra for döngüsünde çalýþtýr.
+                    dikey_degisim[i] = Random.Range(0, 5);//bunlarý sonra for döngüsünde çalýþtýr.
 
                 }
 
@@ -587,7 +660,7 @@ public class Kontrol_denemesi : MonoBehaviour
 
                 if (Time.time > ates_vakti[i] + ates_araligi[i])
                 {
-                    ates_araligi[i] = Random.Range(5, 10);
+                    ates_araligi[i] = Random.Range(5.0f, 10.0f); 
                     ates_vakti[i] = Time.time + ates_araligi[i];
 
                 }
@@ -671,29 +744,25 @@ public class Kontrol_denemesi : MonoBehaviour
                         {
                             gecis_bool[i] = true;
                             ates_konum[i] = new Vector3(3, 0.6f, 0.7f);
-                            fuze_at = true;
+                            fuze_at[i] = true;
                         }
                         else
                         {
                             ates_konum[i] = new Vector3(-3, 0.6f, 0.7f);
                             gecis_bool[i] = false;
-                            fuze_at = true;
+                            fuze_at[i] = true;
 
                         }
-
-
-
-
                     }
 
-                    if (fuze_at)
+                    if (fuze_at[i])
                     {
                         GameObject fuze_shootpoint = dusmanlar[i].transform.GetChild(0).gameObject;
                         fuze_shootpoint.transform.localPosition = ates_konum[i];
-                        shootpoint = fuze_shootpoint.transform.position;
-                        fuzeler[sira].transform.position = shootpoint;
-                        fuze_trails[sira].transform.position = shootpoint;
-                        onceki_pozisyon[sira] = shootpoint;
+                        shootpoint[sira] = fuze_shootpoint.transform.position;
+                        fuzeler[sira].transform.position = shootpoint[sira];
+                        fuze_trails[sira].transform.position = shootpoint[sira];
+                        onceki_pozisyon[sira] = shootpoint[sira];
                         //mermiler[sira].transform.rotation = shootpoint;
                         fuzeler[sira].SetActive(true);
                         fuze_trails[sira].SetActive(true);
@@ -702,8 +771,8 @@ public class Kontrol_denemesi : MonoBehaviour
                         float max_hiz = player.transform.GetComponent<CarController>().MaxSpeed;
                         float mevcut_hiz = player.transform.GetComponent<CarController>().CurrentSpeed;
                         hedef = player.transform.position + player.transform.forward *(hedef_miktari-(5-5*(mevcut_hiz/max_hiz)));
-                         vo = Calculate_velocity(hedef, shootpoint, 1f);
-                        fuzeler[sira].transform.rotation = Quaternion.LookRotation(vo);
+                         vo[sira] = Calculate_velocity(hedef, shootpoint[sira], 1f);
+                        fuzeler[sira].transform.rotation = Quaternion.LookRotation(vo[sira]);
                         sira++;
                         ilk++;
                         if (sira == fuzesayisi)
@@ -727,8 +796,137 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
                         }
-                        fuze_at = false;
+                        fuze_at[i] = false;
                     }
+
+                }else if(dusmanlar[i].tag == "drone11_c")
+                {
+
+                    if (Time.time > gecis_vakti[i])
+                    {
+                        gecis_vakti[i] = Time.time + oburune_gec[i];
+                        if (gecis_bool[i] == false)
+                        {
+                            gecis_bool[i] = true;
+                            ates_konum[i] = new Vector3(0.63f, -0.09f, 0.6f);
+                            laser_at = true;
+                        }
+                        else
+                        {
+                            ates_konum[i] = new Vector3(-0.63f, -0.09f, 0.6f);
+                            gecis_bool[i] = false;
+                            laser_at = true;
+                        }
+                    }
+
+
+
+                    if (laser_at)
+                    {
+                        GameObject l_shootpoint = dusmanlar[i].transform.GetChild(0).gameObject;
+                        l_shootpoint.transform.localPosition = ates_konum[i];
+                        laserpoint = l_shootpoint.transform.position;
+                        laserler[son_laser].transform.position = laserpoint;
+                        laserler[son_laser].transform.rotation =dusmanlar[i].transform.rotation;
+                        laserler[son_laser].SetActive(true);
+
+                        son_laser++;
+                        ilk_laser++;
+                        if (son_laser == laser_sayisi)
+                        {
+                            son_laser = 0;
+                        }
+                        if (ilk_laser ==laser_sayisi )
+                        {
+                            ilk_laser = 0;
+                        }
+
+                        if (ilk_laser >= 0)
+                        {
+
+                            laserler[ilk_laser].SetActive(false);
+                            laser_pat[ilk_laser].SetActive(false);
+
+
+
+
+
+                        }
+
+
+                        laser_at = false;
+                    }
+
+                         
+
+                }else if (dusmanlar[i].tag == "drone_1b")
+                {
+
+                    if (Time.time > gecis_vakti[i])
+                    {
+                        gecis_vakti[i] = Time.time + oburune_gec[i];
+                        if (gecis_bool[i] == false)
+                        {
+                            gecis_bool[i] = true;
+                            ates_konum[i] = new Vector3(1.6f, -0.3f, 0.25f);
+                            rocket_at[i] = true;
+                        }
+                        else
+                        {
+                            ates_konum[i] = new Vector3(-1.6f, -0.3f, 0.25f);
+                            gecis_bool[i] = false;
+                             rocket_at[i]= true;
+                        }
+                    }
+
+
+
+                    if (rocket_at[i])
+                    {
+                        GameObject l_shootpoint = dusmanlar[i].transform.GetChild(0).gameObject;
+                        l_shootpoint.transform.localPosition = ates_konum[i];
+                        rocketler[rocket_sira].transform.position = l_shootpoint.transform.position;
+                        rocket_trails[rocket_sira].transform.position = l_shootpoint.transform.position;
+                        float max_hiz = player.transform.GetComponent<CarController>().MaxSpeed;
+                        float mevcut_hiz = player.transform.GetComponent<CarController>().CurrentSpeed;
+                        Vector3 yone_bak= player.transform.position + player.transform.forward * (3 - (3 - 3 * (mevcut_hiz / max_hiz)));
+                        parent_rocket[rocket_sira] = dusmanlar[i];
+                        rocketler[rocket_sira].transform.LookAt(yone_bak);
+                        rocketler[rocket_sira].SetActive(true);
+                        rocket_trails[rocket_sira].SetActive(true);
+                        rocket_hiz_x[rocket_sira] = 0.0f;
+                        rocket_hiz_y[rocket_sira] = 0.0f;
+                        rocket_hiz_z[rocket_sira] = 0.0f;
+
+
+                        rocket_sira++;
+                        rocket_ilk++;
+                        if ( rocket_sira== rocketsayisi)
+                        {
+                             rocket_sira= 0;
+                        }
+                        if ( rocket_ilk== rocketsayisi)
+                        {
+                             rocket_ilk= 0;
+                        }
+
+                        if ( rocket_ilk>= 0)
+                        {
+
+                            rocketler[rocket_ilk].SetActive(false);
+                            rocket_pat[rocket_ilk].SetActive(false);
+                            rocket_trails[rocket_ilk].SetActive(false);
+                        rocket_hiz_x[rocket_ilk] = 0.0f;
+                        rocket_hiz_y[rocket_ilk] = 0.0f;
+                        rocket_hiz_z[rocket_ilk] = 0.0f;
+
+                        }
+
+
+                        rocket_at[i] = false;
+                    }
+
+
 
                 }
 
@@ -779,7 +977,7 @@ public class Kontrol_denemesi : MonoBehaviour
 
                 }
                 fuze_zamani[i] += 0.02f;
-                fuze_gonder(fuzeler[i], vo, fuze_zamani[i]);
+                fuze_gonder(fuzeler[i], vo[i], fuze_zamani[i], shootpoint[i]);
                 Vector3 bak = fuzeler[i].transform.position - onceki_pozisyon[i];
                 fuze_trails[i].transform.position = fuzeler[i].transform.position;
                 if (bak != Vector3.zero) fuzeler[i].transform.rotation = Quaternion.LookRotation(bak);
@@ -796,7 +994,7 @@ public class Kontrol_denemesi : MonoBehaviour
                         fuze_pat[i].transform.rotation = Quaternion.LookRotation(hit.normal);                   
 
                     }
-                    else if(hit.collider.tag =="füzeci" || hit.collider.tag == "drone_5")
+                    else if(hit.collider.tag =="füzeci" || hit.collider.tag == "drone_5" ||hit.collider.tag == "drone_1b"||hit.collider.tag == "drone11_c")
                     {
 
 
@@ -821,9 +1019,102 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
         }
+
+        for (int i = 0; i < laser_sayisi; i++)
+        {
+            if (laserler[i].activeSelf == true)
+            {
+                laserler[i].transform.position += laserler[i].transform.forward * 0.5f;
+                Vector3 laser_ucu = laserler[i].transform.position;
+                laser_ucu.z += laser_sensorbaslangýcý;
+                RaycastHit hit;
+                if (Physics.Raycast(laser_ucu, laserler[i].transform.forward, out hit, laser_sensoru_uzunlugu))
+                {
+                  //    Debug.Log("laser ile vuruldun");
+                            laserler[i].SetActive(false);
+                            laser_pat[i].SetActive(true);
+                            laser_pat[i].transform.position = hit.point;
+                            //laser_pat[i].transform.SetParent(hit.collider.transform);
+                            if (hit.collider.tag == "Player")laser_pat[i].transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                            else laser_pat[i].transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
+                }
+                Debug.DrawRay(laser_ucu, laserler[i].transform.forward * laser_sensoru_uzunlugu, Color.green);
+
+            }
+
+
+
+        }
+
+
+        for (int i = 0; i < rocketsayisi; i++)
+        {
+            if (rocketler[i].activeSelf == true)
+            {
+                /*if (rocket_hiz_x[i] < 0.9f && rocket_hiz_y[i] < 0.5f && rocket_hiz_z[i] > 0.3f){
+                    Vector3 rocket_cikis = parent_rocket[i].transform.position;
+                     rocket_cikis+= parent_rocket[i].transform.right * rocket_hiz_x[i];
+                     rocket_cikis-= parent_rocket[i].transform.up * rocket_hiz_y[i];
+                    rocketler[i].transform.position = rocket_cikis;
+                    rocket_trails[i].transform.position = rocket_cikis;
+                    rocket_trails[i].SetActive(false);
+                    rocket_hiz_x[i] +=0.01f;
+                    rocket_hiz_y[i]+=0.01f;
+                    rocketler[i].transform.LookAt(player.transform);
+                   Debug.Log(rocket_hiz_x[i]+"merhaba");
+        }else
+        {    */   
+                    rocket_trails[i].SetActive(true);
+               
+                rocketler[i].transform.position += rocketler[i].transform.forward *rocket_hiz;
+                rocket_trails[i].transform.position = rocketler[i].transform.position;
+                Vector3 laser_ucu = rocketler[i].transform.position;
+                laser_ucu.z += rocket_sensorbaslangýcý;
+                RaycastHit hit;
+                if (Physics.Raycast(laser_ucu, rocketler[i].transform.forward, out hit, rocket_sensoru_uzunlugu))
+                {
+                    //    Debug.Log("laser ile vuruldun");
+
+                    if (hit.collider.tag == "drone_1b")
+                    {
+
+                        return;
+                    }else if (hit.collider.tag == "Player")
+                    {
+                    rocketler[i].SetActive(false);
+                    rocket_pat[i].SetActive(true);
+                    rocket_pat[i].transform.position = hit.point;
+                    //laser_pat[i].transform.SetParent(hit.collider.transform);                        
+                        
+                        
+                        rocket_pat[i].transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    }
+                    else
+                    {
+                    rocketler[i].SetActive(false);
+                    rocket_pat[i].SetActive(true);
+                    rocket_pat[i].transform.position = hit.point;
+                    rocket_pat[i].transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
+                    }
+                }
+                Debug.DrawRay(laser_ucu, rocketler[i].transform.forward * rocket_sensoru_uzunlugu, Color.green);
+
+       // }
+
+                
+
+
+            }
+
+
+
+        }
+
+
+
     }
 
-    private void fuze_gonder(GameObject fuze, Vector3 distance, float zaman)
+    private void fuze_gonder(GameObject fuze, Vector3 distance, float zaman,Vector3 shootpoint)
     {
         Vector3 vek = distance;
 
