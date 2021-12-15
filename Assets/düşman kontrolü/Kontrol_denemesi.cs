@@ -15,7 +15,7 @@ public class Kontrol_denemesi : MonoBehaviour
     private CurveSample[] mevcut_egriler;
     public float kirp = 0.3f;
     public GameObject[] cube;
-    public float on, arka;
+    public float on, arka,dusman_eklenen_yer;
     public bool ileri = false, geri = false;
     public float otelenme = 0.2f;
     /// <summary>
@@ -152,16 +152,39 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
 
+    [Header("mayin kodlarý")]
+    private GameObject[] mayinlar;
+    public GameObject mayin_prefab;
+    private GameObject[] mayin_pat;
+    private Vector3[] mayin_hedefi;
+
+    public int mayin_sayisi = 6;// aktif olacak füze sayýsý
+    private int mayin_sira;// aktif füze sýrasý
+    private int mayin_ilk;//
+    private bool[] mayin_birak;
+
+
+    ///////aktif düþman sayýsý      ///////////////////////
+    private int aktif_dusman_sayisi,dusman_sirasi,onceki_sira,sonraki_sira;
+    private bool diger_dusmana_gec;
+    private int [] dusman_seviyesi= { 1, 2, 3 };
+    private float obur_dusmana_gecis_vakti;
+    private float dusman_hizi =5;
+    private float oteleme_dur_kalk = 0;
+    private float uzaklik;
+
+
     void Start()
     {
-        ///////burasý on ve arkakontrol noktalarý için///////
-        konum_sirasi = new float[2];
-        cizgi_sirasi = new int[2];
-        mevcut_cizgiler = new Spline[2];
-        mevcut_egriler = new CurveSample[2];
+        ///////burasý on ve arkakontrol noktalarý için///////bide dusman ekleme yeri
+        konum_sirasi = new float[3];
+        cizgi_sirasi = new int[3];
+        mevcut_cizgiler = new Spline[3];
+        mevcut_egriler = new CurveSample[3];
         arka = kirp;
         konum_sirasi[0] = on;
         konum_sirasi[1] =  arka;
+        konum_sirasi[2] =  dusman_eklenen_yer;
         for(int i = 0; i < konum_sirasi.Length; i++) { 
         cizgi_sirasi[i] = 0;
         mevcut_cizgiler[i] = cizgiler[cizgi_sirasi[i]];
@@ -356,11 +379,35 @@ public class Kontrol_denemesi : MonoBehaviour
             rocket_at[i] = false;
         }
 
+        //////////////////////////////////////rocket ayarlarý///////////////////////////
+        ///
+        mayin_sira = 0;
+        mayin_ilk = mayin_sira - (mayin_sayisi - 1);
 
+        mayinlar = new GameObject[mayin_sayisi];
+        mayin_pat= new GameObject[mayin_sayisi];
+        mayin_birak=new bool[mayin_sayisi];
+        mayin_hedefi=new Vector3[mayin_sayisi];
+        for (int i = 0; i < mayin_sayisi; i++)
+        {
+            mayinlar[i] = Instantiate(mayin_prefab, transform.position, Quaternion.identity);
+            mayin_pat[i] = Instantiate(pat, transform.position, Quaternion.identity);
+            mayin_pat[i].SetActive(false);
+            mayinlar[i].SetActive(false); 
+        }
+        ////////////////////dusman sayýsý//////////////////
+        ///
+        
+        diger_dusmana_gec = false;
+        dusman_sirasi =0;
+        aktif_dusman_sayisi = 0;
+        onceki_sira = 0;
+        for(int i = 0; i < dusmanlar.Length; i++)
+        {
+            dusmanlar[i].SetActive(false);
 
-
-
-    }
+        }
+      }
 
     // Update is called once per frame
     void Update()
@@ -381,8 +428,20 @@ public class Kontrol_denemesi : MonoBehaviour
         {
             if (dusmanlar[i].activeSelf == true)
             {
+                uzaklik = Mathf.Abs(gecici_konum[i] - drone_sirasi[i]);
+
+                    if (uzaklik < 10.0f)
+                    {
+                        oteleme_dur_kalk = otelenme;
+
+                    }
+                    else
+                    {
+                        oteleme_dur_kalk = 0;
+                    }
+
                 Hareket_et(drone_konum[i], drone_cizgi[i], drone_egri[i], drone_sirasi[i]);//hareket kodlarý burada olsun (sensör harici olanlar)
-                Drone_hareketi(dusmanlar[i], drone_konum[i], 5, sag_sol[i], cik_in[i]);
+                Drone_hareketi(dusmanlar[i], drone_konum[i], dusman_hizi, sag_sol[i], cik_in[i]);
                 if (Mathf.Abs(sag_sol[i] - yatay_degisim[i]) < 0.3f)
                 {
                     yatay_degisim[i] = Random.Range(-5, 6);//bunlarý sonra for döngüsünde çalýþtýr.
@@ -427,10 +486,16 @@ public class Kontrol_denemesi : MonoBehaviour
 
             for (int i = 0; i < dusmanlar.Length; i++)
             {
+
                 if (dusmanlar[i].activeSelf == true)
                 {
-                    drone_sirasi[i] += otelenme;
+
+
+                    drone_sirasi[i] += oteleme_dur_kalk;
+                    
+                    
                 }
+                
             }
             ileri = false;
         }
@@ -457,8 +522,10 @@ public class Kontrol_denemesi : MonoBehaviour
             {
                 if (dusmanlar[i].activeSelf == true)
                 {
+
                     drone_sirasi[i] -= otelenme;
                 }
+                
             }
             geri = false;
         }
@@ -634,7 +701,7 @@ public class Kontrol_denemesi : MonoBehaviour
                                 toplamaya_basla = Time.time + toplama_suresi;
                                 enkaz_topla = true;
 
-
+                                aktif_dusman_sayisi--;
                                 /*patlama.SetActive(true);
                                 patlama.transform.position = dusmanlar[a].transform.position;
                                     parcali_drone1.transform.position=dusmanlar[a].transform.position;
@@ -928,6 +995,63 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
 
+                }else if (dusmanlar[i].tag == "mayinci")
+                {
+                    if (Time.time > gecis_vakti[i])
+                    {
+                        gecis_vakti[i] = Time.time + oburune_gec[i];
+                        if (gecis_bool[i] == false)
+                        {
+                            gecis_bool[i] = true;
+                            ates_konum[i] = new Vector3(0, -1.54f, 1.66f);
+                             mayin_birak[i] = true;
+                        }
+                        else
+                        {
+                            ates_konum[i] = new Vector3(0, -1.54f, 1.66f);
+                            gecis_bool[i] = false;
+                        mayin_birak[i] = true;
+                        }
+
+                    }
+
+
+                    if (mayin_birak[i] && uzaklik<10)
+                    {
+                        GameObject l_shootpoint = dusmanlar[i].transform.GetChild(0).gameObject;
+                        l_shootpoint.transform.localPosition = ates_konum[i];
+                        mayinlar[mayin_sira].transform.position = l_shootpoint.transform.position;
+                        mayinlar[mayin_sira].SetActive(true);
+                        mayin_hedefi[mayin_sira] = drone_konum[i].transform.position;
+                        mayin_hedefi[mayin_sira] += drone_konum[i].transform.right * Random.Range(-2,3);
+                        mayin_hedefi[mayin_sira].y += 0.7f;
+
+
+                        mayin_sira++;
+                        mayin_ilk++;
+                        if (mayin_sira == mayin_sayisi)
+                        {
+                            mayin_sira = 0;
+                        }
+                        if (mayin_ilk == mayin_sayisi)
+                        {
+                             mayin_ilk= 0;
+                        }
+
+                        if (mayin_ilk >= 0)
+                        {
+
+                            mayinlar[mayin_ilk].SetActive(false);
+                            mayin_pat[mayin_ilk].SetActive(false);
+
+                        }
+
+
+
+                            mayin_birak[i] = false;
+                    }
+
+
                 }
 
 
@@ -1110,9 +1234,98 @@ public class Kontrol_denemesi : MonoBehaviour
 
         }
 
+        for (int i = 0; i < mayin_sayisi; i++)
+        {
+            if (mayinlar[i].activeSelf == true)
+            {
+                mayin_hareketi(mayinlar[i], mayin_hedefi[i], 3);
+             RaycastHit[] mayin_hit;
+            mayin_hit = new RaycastHit[3];
+            int yon=-1;
+
+            for (int a = 0; a < 3; a++)
+            {
+                    if (Physics.Raycast(mayinlar[i].transform.position, Quaternion.AngleAxis(30*yon, mayinlar[i].transform.up)*mayinlar[i].transform.forward*(-1), out mayin_hit[a], 0.5f))
+                    {
+                        if (mayin_hit[a].collider.tag == "drone_1b")
+                        {
+
+                            return;
+                        }
+                        else if (mayin_hit[a].collider.tag == "Player")
+                        {
+                            mayinlar[i].SetActive(false);
+                            mayin_pat[i].SetActive(true);
+                            mayin_pat[i].transform.position =mayinlar[i].transform.position ;
+                            //laser_pat[i].transform.SetParent(hit.collider.transform);                        
 
 
-    }
+                            mayin_pat[i].transform.localScale = new Vector3(0.5f,0.5f,0.5f);
+                        }
+
+                    }
+                    Debug.DrawRay(mayinlar[i].transform.position, Quaternion.AngleAxis(30 * yon, mayinlar[i].transform.up) * mayinlar[i].transform.forward* -0.5f, Color.green);
+
+                    yon++;
+
+                }           
+            
+            }
+
+
+
+
+
+        }
+
+        ///////////////////düþman sayýsý///////////////////
+        ///
+        if (aktif_dusman_sayisi == 0)
+        {
+            if (dusman_sirasi < dusman_seviyesi.Length) { 
+            diger_dusmana_gec = true;
+
+            aktif_dusman_sayisi = dusman_seviyesi[dusman_sirasi];
+
+            sonraki_sira = onceki_sira + aktif_dusman_sayisi;
+            obur_dusmana_gecis_vakti=Time.time+ Random.Range(5.0f, 10.0f);
+                dusman_sirasi++;
+            }
+
+        }
+        if (diger_dusmana_gec) {
+            if (obur_dusmana_gecis_vakti < Time.time) {
+            for(int i = onceki_sira; i < sonraki_sira; i++)
+            {
+             dusmanlar[i].SetActive(true);
+                    drone_cizgi_sirasi[i] = cizgi_sirasi[2];
+                    drone_cizgi[i] = cizgiler[drone_cizgi_sirasi[i]];
+                    drone_sirasi[i] =konum_sirasi[2];
+                    dusmanlar[i].transform.position = cube[2].transform.position;
+                    
+                    if (Mathf.Abs(gecici_konum[i]-drone_sirasi[i])< 10.0f)
+                {
+                    oteleme_dur_kalk = otelenme;
+
+                    }
+                     else
+                     {
+                     oteleme_dur_kalk = 0;
+                    }
+
+                }
+                onceki_sira += aktif_dusman_sayisi;
+            diger_dusmana_gec = false;
+            dusman_hizi = 3;
+
+            }
+
+
+
+        }
+
+
+ }
 
     private void fuze_gonder(GameObject fuze, Vector3 distance, float zaman,Vector3 shootpoint)
     {
@@ -1209,5 +1422,20 @@ public class Kontrol_denemesi : MonoBehaviour
 
     }
 
-    
+    private void mayin_hareketi(GameObject obje, Vector3 hedef, float hiz)
+    {
+        Vector3 koordinat;
+
+        koordinat = hedef;
+
+
+
+        float x = Mathf.Lerp(obje.transform.position.x, koordinat.x, Time.deltaTime * hiz);
+        float y = Mathf.Lerp(obje.transform.position.y, koordinat.y, Time.deltaTime * hiz);
+        float z = Mathf.Lerp(obje.transform.position.z, koordinat.z, Time.deltaTime * hiz);
+
+        obje.transform.position = new Vector3(x, y, z);
+
+    }
+
 }

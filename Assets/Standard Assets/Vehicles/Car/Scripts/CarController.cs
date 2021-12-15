@@ -107,6 +107,12 @@ using UnityStandardAssets.Vehicles.Car;
 
     */
 
+    ///    SU SIÇRATMA/////////////
+    [Header("su sýçratma ayarlarý")]
+    GameObject[] su_sicratma;
+    public GameObject sicratma;
+    private int ilk_su, su_sira, su_sayisi = 3;
+    public bool suya_dokundu=false;
 
 
 
@@ -160,6 +166,18 @@ using UnityStandardAssets.Vehicles.Car;
             }
             sira = 0;
             ilk = sira-(mermisayisi-1);
+
+        su_sicratma = new GameObject[su_sayisi];
+        for (int i = 0; i < su_sayisi; i++)
+        {
+            su_sicratma[i] = Instantiate(sicratma, transform.position, Quaternion.identity);
+            su_sicratma[i].SetActive(false);
+
+        }
+        su_sira = 0;
+        ilk_su = su_sira - (su_sayisi - 1);
+
+
 
     }
         private void Update()
@@ -459,11 +477,76 @@ using UnityStandardAssets.Vehicles.Car;
 
             }
 
+        RaycastHit[] su_hit;
+        bool[] su;
+        float[] su_sensoru;
+        //bool[] havada;
+        su_hit = new RaycastHit[3];
+        su = new bool[3];
+        su_sensoru= new float[3];
+        //havada = new bool[4];
+        su_sensoru[0] = -0.5f;        
+        su_sensoru[1] = 0;
+        su_sensoru[2] = 0.5f; 
+        /* */
+        for (int i = 0; i < su_hit.Length; i++)
+        {
+            Vector3 direction = new Vector3(0,-1,0);
 
 
+
+
+            if (Physics.Raycast(transform.position + transform.forward * su_sensoru[i], direction*0.2f, out su_hit[i], 1f))
+            {
+
+                if (su_hit[i].collider.tag == "su")
+                {
+                    su[i] = true;
+                }
+                else
+                {
+                    su[i] = false;
+
+                }
+
+                if (su[i])
+                {
+                    if (su_sicratma[i].activeSelf == false) { 
+                    su_sicratma[i].transform.position = su_hit[i].point;
+                    sicratma.transform.position = su_hit[i].point;
+                    su_sicratma[i].transform.rotation = Quaternion.LookRotation(su_hit[i].normal); ; 
+                    su_sicratma[i].SetActive(true);
+                    suya_dokundu = true;
+                    }
+
+
+                }
+                  
+            }
+            /*else
+            {
+                if (lastik_hit[i].collider == null)
+                {
+
+                    havada[i] = true;
+
+                }
+                else
+                {
+                    havada[i] = false;
+
+                }
+
+            }*/
+
+            Debug.DrawRay(transform.position + transform.forward * su_sensoru[i], direction * 0.2f, Color.green);
 
 
         }
+
+
+
+    }
 
         private void GearChanging()
         {
