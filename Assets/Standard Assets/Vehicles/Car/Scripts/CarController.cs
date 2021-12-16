@@ -44,6 +44,7 @@ using UnityStandardAssets.Vehicles.Car;
         private const float k_ReversingThreshold = 0.01f;
         private float donmeal;
         private CarUserControl kontrolet;
+        private float hiza_basili, donmeye_basili;
         private float m_BrakeTorque;
 
 
@@ -184,6 +185,8 @@ using UnityStandardAssets.Vehicles.Car;
         {
             donmeal = kontrolet.donme;
             m_MaximumSteerAngle = donmeal;
+        donmeye_basili = kontrolet.h;
+        hiza_basili = kontrolet.v;
 
            // if (Input.GetKeyDown(KeyCode.K)) transform.position = baslangic;
           
@@ -218,14 +221,14 @@ using UnityStandardAssets.Vehicles.Car;
             }
 
             /////////////////////////////ANTÝ STUCK SÝSTEMÝ////////////////////////////////////////////
-            RaycastHit [] lastik_hit;
+           /* RaycastHit [] lastik_hit;
             bool[] yamac;
             bool[] havada;
             lastik_hit = new RaycastHit[4];
             yamac = new bool[4];
             havada= new bool[4];
 
-  /* */         for (int i = 0; i < 4; i++)
+           for (int i = 0; i < 4; i++)
             {
                 Vector3 direction = m_WheelColliders[i].transform.up*(-1);
 
@@ -267,7 +270,7 @@ using UnityStandardAssets.Vehicles.Car;
 
 
 
-                    if((yamac[1] || havada[1]) &&  (yamac[0] || havada[0])&& havada[2]==false && havada[2]==false ) /**/
+                    if((yamac[1] || havada[1]) &&  (yamac[0] || havada[0])&& havada[2]==false && havada[2]==false ) 
                     {
                             
                         //Debug.Log("ön tekerler boþta");
@@ -325,45 +328,52 @@ using UnityStandardAssets.Vehicles.Car;
                 //havadayken burnu yukarý bakmamasý için
                 transform.Rotate(0.1f, 0, 0);
 
+            }*/
+           if((hiza_basili==1 || hiza_basili==-1) && CurrentSpeed < 0.5f) {
+            Vector3 dikey_destek = globalGravity * gravityScale * transform.forward * (-2)*hiza_basili;
+            m_rb.AddForce(dikey_destek, ForceMode.Acceleration);
+            }
+           if((donmeye_basili==1 || donmeye_basili==-1) && CurrentSpeed < 0.5f) {
+            Vector3 yatay_destek = globalGravity * gravityScale * transform.right * (-2) * donmeye_basili;
+            m_rb.AddForce(yatay_destek, ForceMode.Acceleration);
             }
 
+        ///////////////////////////////ANTÝ STUCK SÝSTEMÝ//////////////////////////////////////
 
-            ///////////////////////////////ANTÝ STUCK SÝSTEMÝ//////////////////////////////////////
+        ////////////////////////////düþman kotrol için hit/////////////////////////////////
+        /* RaycastHit on_isin;
+         Vector3 araba = transform.position;
+         if(Physics.Raycast(araba,transform.forward,out on_isin, on_sensor_uzunlugu))
+         {
+             if(on_isin.collider.tag=="düþman kontrol")ileri_git = true;
 
-            ////////////////////////////düþman kotrol için hit/////////////////////////////////
-           /* RaycastHit on_isin;
-            Vector3 araba = transform.position;
-            if(Physics.Raycast(araba,transform.forward,out on_isin, on_sensor_uzunlugu))
-            {
-                if(on_isin.collider.tag=="düþman kontrol")ileri_git = true;
+         }
+         else
+         {
+             ileri_git = false;
+         }
 
-            }
-            else
-            {
-                ileri_git = false;
-            }
-
-            Debug.DrawRay(araba, transform.forward * on_sensor_uzunlugu, Color.green);
+         Debug.DrawRay(araba, transform.forward * on_sensor_uzunlugu, Color.green);
 */
 
-////////////////////////////düþman kotrol için hit/////////////////////////////////
-            /*Vector3 araba = transform.position;
-            araba.z += sensorbaslangýcý;
+        ////////////////////////////düþman kotrol için hit/////////////////////////////////
+        /*Vector3 araba = transform.position;
+        araba.z += sensorbaslangýcý;
 
-            RaycastHit hit;
+        RaycastHit hit;
 
-            if (Physics.Raycast(araba, transform.forward, out hit, fuze_sensoru_uzunlugu))
-            {
+        if (Physics.Raycast(araba, transform.forward, out hit, fuze_sensoru_uzunlugu))
+        {
 
 
-                Debug.Log("çarpma oldu");
+            Debug.Log("çarpma oldu");
 
-            }
-            Debug.DrawRay(araba, transform.forward*fuze_sensoru_uzunlugu, Color.green);
-            */
+        }
+        Debug.DrawRay(araba, transform.forward*fuze_sensoru_uzunlugu, Color.green);
+        */
 
-            //FÜZE UPDATE KODLARI
-            if (Input.GetMouseButton(0))
+        //FÜZE UPDATE KODLARI
+        if (Input.GetMouseButton(0))
             {
                 ates = true;
             }
