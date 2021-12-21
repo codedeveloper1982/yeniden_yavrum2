@@ -61,7 +61,7 @@ public class Kontrol_denemesi : MonoBehaviour
     // CAN BARI YAPIMINA SONRA KARAR VER.
     private float[] dusman_cani;
     public GameObject patlama;
-    public GameObject parcali_drone1;
+    public GameObject parcali_drone1,parcali_drone5,parcali_drone11c;
 
 
 
@@ -76,8 +76,11 @@ public class Kontrol_denemesi : MonoBehaviour
     public int infilak_sayisi = 4;
 
     [Header("ENNKAZ ÝLE ÝLGÝLÝ")]
-    private float toplama_suresi = 3, toplamaya_basla;
-    private bool enkaz_topla = false;
+    private float toplama_suresi = 4;
+    private float[] toplamaya_basla;
+    private string[] toplanan_drone;
+    private GameObject yerden_kaldir;
+    private bool[] enkaz_topla;
     /*
         [Header("dusman ateþleri")]
         public GameObject ates;
@@ -395,16 +398,22 @@ public class Kontrol_denemesi : MonoBehaviour
             mayin_pat[i].SetActive(false);
             mayinlar[i].SetActive(false); 
         }
-        ////////////////////dusman sayýsý//////////////////
+        ////////////////////dusman sayýsý////////////////// enkaz ile ilgili ayarlarda burada
         ///
         
         diger_dusmana_gec = false;
         dusman_sirasi =0;
         aktif_dusman_sayisi = 0;
         onceki_sira = 0;
+        toplamaya_basla = new float[dusmanlar.Length];
+        toplanan_drone= new string[dusmanlar.Length];
+        enkaz_topla= new bool[dusmanlar.Length];
+
         for(int i = 0; i < dusmanlar.Length; i++)
         {
             dusmanlar[i].SetActive(false);
+            enkaz_topla[i] = false;
+            toplamaya_basla[i] = 0;
 
         }
       }
@@ -430,7 +439,7 @@ public class Kontrol_denemesi : MonoBehaviour
             {
                 uzaklik = Mathf.Abs(gecici_konum[i] - drone_sirasi[i]);
 
-                    if (uzaklik < 10.0f)
+                    if (uzaklik < 7.0f)
                     {
                         oteleme_dur_kalk = otelenme;
 
@@ -586,11 +595,14 @@ public class Kontrol_denemesi : MonoBehaviour
 
                 if (drone_cizgi_sirasi[i] == hedef_cizgi_sirasi[i])
                 {
+                    float yaklasma;
+                    if (uzaklik < 7) yaklasma = 0.05f;
+                    else yaklasma = 0.2f;
+                    
 
 
-
-                    if (drone_sirasi[i] < gecici_konum[i]) drone_sirasi[i] += 0.05f;
-                    if (drone_sirasi[i] > gecici_konum[i]) drone_sirasi[i] -= 0.05f;
+                    if (drone_sirasi[i] < gecici_konum[i]) drone_sirasi[i] +=yaklasma;
+                    if (drone_sirasi[i] > gecici_konum[i]) drone_sirasi[i] -=yaklasma;
 
                 }
                 else if (drone_cizgi_sirasi[i] == cizgiler.Length - 1 && hedef_cizgi_sirasi[i] == 0)
@@ -681,7 +693,9 @@ public class Kontrol_denemesi : MonoBehaviour
                             {
                                 infilak[infilak_sirasi].SetActive(true);
                                 infilak[infilak_sirasi].transform.position = dusmanlar[a].transform.position;
-                                Patla(dusmanlar[a], parcali_drone1);
+                                if(dusmanlar[a].tag=="drone_1b")Patla(dusmanlar[a], parcali_drone1);
+                                else if(dusmanlar[a].tag=="drone_5")Patla(dusmanlar[a], parcali_drone5);
+                                else if(dusmanlar[a].tag=="drone11_c")Patla(dusmanlar[a], parcali_drone11c);                                
                                 /*parcali_drone1.transform.position=dusmanlar[a].transform.position;
                                 parcali_drone1.SetActive(true);
                                 dusmanlar[a].SetActive(false);
@@ -698,9 +712,9 @@ public class Kontrol_denemesi : MonoBehaviour
                                 infilak[onceki_infilak].SetActive(false);
                                 infilak_sirasi++;
                                 if (infilak_sirasi == 3) infilak_sirasi = 0;
-                                toplamaya_basla = Time.time + toplama_suresi;
-                                enkaz_topla = true;
-
+                                toplamaya_basla[a] = Time.time + toplama_suresi;
+                                enkaz_topla[a] = true;
+                                toplanan_drone[a] = dusmanlar[a].tag;
                                 aktif_dusman_sayisi--;
                                 /*patlama.SetActive(true);
                                 patlama.transform.position = dusmanlar[a].transform.position;
@@ -1066,25 +1080,29 @@ public class Kontrol_denemesi : MonoBehaviour
 
             }
 
-
-
-
-        }
-        if (enkaz_topla)
-        {
-
-            if (toplamaya_basla < Time.time)
+            if (enkaz_topla[i])
             {
-                foreach (Transform t in parcali_drone1.transform)
+
+                if (toplamaya_basla[i] < Time.time)
                 {
 
-                    t.localPosition = Vector3.zero;
-                    parcali_drone1.SetActive(false);
+                    if (toplanan_drone[i] == "drone_1b") yerden_kaldir = parcali_drone1;
+                    else if (toplanan_drone[i] == "drone_5") yerden_kaldir = parcali_drone5;
+                    else if (toplanan_drone[i] == "drone11_c") yerden_kaldir = parcali_drone11c;
+                    foreach (Transform t in yerden_kaldir.transform)
+                    {
+
+                        t.localPosition = Vector3.zero;
+                        yerden_kaldir.SetActive(false);
+                    }
+
+
+                    enkaz_topla[i] = false;
                 }
 
 
-                enkaz_topla = false;
             }
+
 
 
         }
@@ -1287,7 +1305,10 @@ public class Kontrol_denemesi : MonoBehaviour
 
             aktif_dusman_sayisi = dusman_seviyesi[dusman_sirasi];
 
+
+            
             sonraki_sira = onceki_sira + aktif_dusman_sayisi;
+                if (sonraki_sira > dusmanlar.Length) sonraki_sira = dusmanlar.Length;
             obur_dusmana_gecis_vakti=Time.time+ Random.Range(5.0f, 10.0f);
                 dusman_sirasi++;
             }
@@ -1315,6 +1336,8 @@ public class Kontrol_denemesi : MonoBehaviour
 
                 }
                 onceki_sira += aktif_dusman_sayisi;
+                
+
             diger_dusmana_gec = false;
             dusman_hizi = 3;
 
