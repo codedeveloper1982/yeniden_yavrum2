@@ -61,7 +61,7 @@ public class Kontrol_denemesi : MonoBehaviour
     // CAN BARI YAPIMINA SONRA KARAR VER.
     private float[] dusman_cani;
     public GameObject patlama;
-    public GameObject parcali_drone1,parcali_drone5,parcali_drone11c;
+    public GameObject parcali_drone1,parcali_drone5,parcali_drone11c,parcali_mayinci,parcali_drone6;
 
 
 
@@ -695,7 +695,9 @@ public class Kontrol_denemesi : MonoBehaviour
                                 infilak[infilak_sirasi].transform.position = dusmanlar[a].transform.position;
                                 if(dusmanlar[a].tag=="drone_1b")Patla(dusmanlar[a], parcali_drone1);
                                 else if(dusmanlar[a].tag=="drone_5")Patla(dusmanlar[a], parcali_drone5);
-                                else if(dusmanlar[a].tag=="drone11_c")Patla(dusmanlar[a], parcali_drone11c);                                
+                                else if(dusmanlar[a].tag=="drone11_c")Patla(dusmanlar[a], parcali_drone11c);
+                                else if(dusmanlar[a].tag=="mayinci")Patla(dusmanlar[a],parcali_mayinci);
+                                else if(dusmanlar[a].tag=="füzeci")Patla(dusmanlar[a],parcali_drone6);                                
                                 /*parcali_drone1.transform.position=dusmanlar[a].transform.position;
                                 parcali_drone1.SetActive(true);
                                 dusmanlar[a].SetActive(false);
@@ -1089,6 +1091,8 @@ public class Kontrol_denemesi : MonoBehaviour
                     if (toplanan_drone[i] == "drone_1b") yerden_kaldir = parcali_drone1;
                     else if (toplanan_drone[i] == "drone_5") yerden_kaldir = parcali_drone5;
                     else if (toplanan_drone[i] == "drone11_c") yerden_kaldir = parcali_drone11c;
+                    else if (toplanan_drone[i] == "mayinci") yerden_kaldir = parcali_mayinci;
+                    else if (toplanan_drone[i] == "füzeci") yerden_kaldir = parcali_drone6;
                     foreach (Transform t in yerden_kaldir.transform)
                     {
 
