@@ -19,6 +19,7 @@ TagManager:
   - drone11_c
   - su
   - mayinci
+  - drone_x
   layers:
   - Default
   - TransparentFX

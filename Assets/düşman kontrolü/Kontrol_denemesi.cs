@@ -177,6 +177,16 @@ public class Kontrol_denemesi : MonoBehaviour
     private float uzaklik;
 
 
+    [Header("mavi laser kodlarý")]
+    public GameObject mavi_laser_prefab;
+    private GameObject[] mavi_laserler;
+    private GameObject[] mavi_laser_pat;
+    private int mavi_laser_sayisi = 20, mavi_ilk_laser, mavi_son_laser;
+    private Vector3 mavi_laserpoint;
+    private bool mavi_laser_at;
+    [SerializeField] private float mavi_laser_sensorbaslangýcý;
+    [SerializeField] private float mavi_laser_sensoru_uzunlugu;
+
     void Start()
     {
         ///////burasý on ve arkakontrol noktalarý için///////bide dusman ekleme yeri
@@ -287,7 +297,10 @@ public class Kontrol_denemesi : MonoBehaviour
             ates[i]=false;
             ates_araligi[i] = Random.Range(5.0f, 10.0f);
             ates_vakti[i] = Time.time + ates_araligi[i];
-            oburune_gec[i]=1;//bunu dier dronelar ile ayrý ayrý yap
+            if (dusmanlar[i].tag == "drone_x") oburune_gec[i] = 0.1f;
+            else oburune_gec[i] = 1;//bunu dier dronelar ile ayrý ayrý yap
+
+
             gecis_vakti[i] = Time.time + oburune_gec[i];
             gecis_bool[i]=false;
         }
@@ -416,7 +429,22 @@ public class Kontrol_denemesi : MonoBehaviour
             toplamaya_basla[i] = 0;
 
         }
-      }
+
+        //////////////////////////////////////mavi laser ayarlarý///////////////////////////
+        mavi_son_laser = 0;
+        mavi_ilk_laser = mavi_son_laser - (mavi_laser_sayisi - 1);
+
+        mavi_laserler = new GameObject[mavi_laser_sayisi];
+        mavi_laser_pat = new GameObject[mavi_laser_sayisi];
+
+        for (int i = 0; i < mavi_laser_sayisi; i++)
+        {
+            mavi_laserler[i] = Instantiate(mavi_laser_prefab, transform.position, Quaternion.identity);
+            mavi_laser_pat[i] = Instantiate(pat, transform.position, Quaternion.identity);
+            mavi_laserler[i].SetActive(false);
+            mavi_laser_pat[i].SetActive(false);
+        }
+    }
 
     // Update is called once per frame
     void Update()
@@ -1069,6 +1097,69 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
                 }
+                else if (dusmanlar[i].tag == "drone_x")
+                {
+
+                    if (Time.time > gecis_vakti[i])
+                    {
+                        GameObject l_shootpoint = dusmanlar[i].transform.GetChild(0).gameObject;
+                        ates_konum[i] = l_shootpoint.transform.localPosition;
+                        gecis_vakti[i] = Time.time + oburune_gec[i];
+                        if (gecis_bool[i] == false)
+                        {
+                            gecis_bool[i] = true;
+                            ates_konum[i].x = ates_konum[i].x * (-1);
+                            mavi_laser_at = true;
+                        }
+                        else
+                        {
+                            ates_konum[i].x = ates_konum[i].x * (-1);
+                            gecis_bool[i] = false;
+                            mavi_laser_at = true;
+                        }
+                    }
+
+
+
+                    if (mavi_laser_at)
+                    {
+                        GameObject l_shootpoint = dusmanlar[i].transform.GetChild(0).gameObject;
+                        l_shootpoint.transform.localPosition = ates_konum[i];
+                        mavi_laserpoint = l_shootpoint.transform.position;
+                        mavi_laserler[mavi_son_laser].transform.position = mavi_laserpoint;
+                        mavi_laserler[mavi_son_laser].transform.rotation = dusmanlar[i].transform.rotation;
+                        mavi_laserler[mavi_son_laser].SetActive(true);
+
+                        mavi_son_laser++;
+                        mavi_ilk_laser++;
+                        if (mavi_son_laser == mavi_laser_sayisi)
+                        {
+                            mavi_son_laser = 0;
+                        }
+                        if (mavi_ilk_laser == mavi_laser_sayisi)
+                        {
+                            mavi_ilk_laser = 0;
+                        }
+
+                        if (mavi_ilk_laser >= 0)
+                        {
+
+                            mavi_laserler[mavi_ilk_laser].SetActive(false);
+                            mavi_laser_pat[mavi_ilk_laser].SetActive(false);
+
+
+
+
+
+                        }
+
+
+                        mavi_laser_at = false;
+                    }
+
+
+
+                }
 
 
             }
@@ -1191,6 +1282,33 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
         }
+
+        for (int i = 0; i < mavi_laser_sayisi; i++)
+        {
+            if (mavi_laserler[i].activeSelf == true)
+            {
+                mavi_laserler[i].transform.position += mavi_laserler[i].transform.forward * 0.6f;
+                Vector3 mavi_laser_ucu = mavi_laserler[i].transform.position;
+                mavi_laser_ucu.z += mavi_laser_sensorbaslangýcý;
+                RaycastHit hit;
+                if (Physics.Raycast(mavi_laser_ucu, mavi_laserler[i].transform.forward, out hit, mavi_laser_sensoru_uzunlugu))
+                {
+                    //    Debug.Log("laser ile vuruldun");
+                    mavi_laserler[i].SetActive(false);
+                    mavi_laser_pat[i].SetActive(true);
+                    mavi_laser_pat[i].transform.position = hit.point;
+                    //laser_pat[i].transform.SetParent(hit.collider.transform);
+                    if (hit.collider.tag == "Player") mavi_laser_pat[i].transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    else mavi_laser_pat[i].transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
+                }
+                Debug.DrawRay(mavi_laser_ucu, mavi_laserler[i].transform.forward * mavi_laser_sensoru_uzunlugu, Color.green);
+
+            }
+
+
+
+        }
+
 
 
         for (int i = 0; i < rocketsayisi; i++)
