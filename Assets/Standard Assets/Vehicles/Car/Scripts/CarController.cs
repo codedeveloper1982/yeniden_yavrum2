@@ -115,15 +115,18 @@ using UnityStandardAssets.Vehicles.Car;
     private int ilk_su, su_sira, su_sayisi = 3;
     public bool suya_dokundu=false;
 
+    [Header("patlama sesi")]
+    public GameObject patlama_sesi;
 
 
 
 
     // Use this for initialization
     private void Start()
-        {           
- 
-            m_WheelMeshLocalRotations = new Quaternion[4];
+        {
+
+       Application.targetFrameRate = 60;
+        m_WheelMeshLocalRotations = new Quaternion[4];
             for (int i = 0; i < 4; i++)
             {
                 m_WheelMeshLocalRotations[i] = m_WheelMeshes[i].transform.localRotation;
@@ -330,11 +333,11 @@ using UnityStandardAssets.Vehicles.Car;
 
             }*/
            if((hiza_basili==1 || hiza_basili==-1) && CurrentSpeed < 0.5f) {
-            Vector3 dikey_destek = globalGravity * gravityScale * transform.forward * (-2)*hiza_basili;
+            Vector3 dikey_destek = globalGravity * gravityScale * transform.forward * (-3)*hiza_basili;
             m_rb.AddForce(dikey_destek, ForceMode.Acceleration);
             }
            if((donmeye_basili==1 || donmeye_basili==-1) && CurrentSpeed < 0.5f) {
-            Vector3 yatay_destek = globalGravity * gravityScale * transform.right * (-2) * donmeye_basili;
+            Vector3 yatay_destek = globalGravity * gravityScale * transform.right * (-3) * donmeye_basili;
             m_rb.AddForce(yatay_destek, ForceMode.Acceleration);
             }
 
@@ -373,6 +376,7 @@ using UnityStandardAssets.Vehicles.Car;
         */
 
         //FÜZE UPDATE KODLARI
+        if (kontrolet.control_degis == false) { 
         if (Input.GetMouseButton(0))
             {
                 ates = true;
@@ -382,6 +386,14 @@ using UnityStandardAssets.Vehicles.Car;
             {
                 ates = false;
             }
+        }
+        else
+        {
+
+
+        }
+
+
             if (ates && Time.time >= timetofire)
             {
                 timetofire = Time.time + 1.0f / firerate;
@@ -449,10 +461,11 @@ using UnityStandardAssets.Vehicles.Car;
                     patlama[i].SetActive(true);
                     patlama[i].transform.position = hit.point;
                     patlama[i].transform.rotation = Quaternion.LookRotation(hit.normal);
+
                        }
 
                     mermiler[i].SetActive(false);
-
+                        patlama_sesi.transform.GetComponent<AudioSource>().Play(0);
 
                 }
                 Debug.DrawRay(fuze_ucu,mermiler[i].transform.forward*fuze_sensoru_uzunlugu,Color.green);

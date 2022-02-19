@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.Vehicles.Car;
 
 
-    public class Cameracontroller : MonoBehaviour
+public class Cameracontroller : MonoBehaviour
     {
 
         public Transform car;
@@ -18,6 +19,7 @@ using UnityEngine;
         public float rotation_vector;
         [SerializeField] private float ileriye_alma;
          private bool verial;
+    public bool ileriye_git;
         // public Transform on_kısım;
 
 
@@ -95,5 +97,68 @@ using UnityEngine;
             transform.Rotate(ileriye_alma, 0, 0);
 
         }
+
+    public void ileri_down()
+    {
+
+        car.transform.GetComponent<CarUserControl>().ileriye_git = true;
+
     }
+    public void ileri_up()
+    {
+
+        car.transform.GetComponent<CarUserControl>().ileriye_git = false;
+
+    }
+    public void geri_down()
+    {
+
+        car.transform.GetComponent<CarUserControl>().geriye_git = true;
+
+    }
+    public void geri_up()
+    {
+
+        car.transform.GetComponent<CarUserControl>().geriye_git = false;
+
+    }
+    public void saga_down()
+    {
+
+        car.transform.GetComponent<CarUserControl>().saga_don = true;
+
+    }
+    public void saga_up()
+    {
+
+        car.transform.GetComponent<CarUserControl>().saga_don = false;
+
+    }
+    public void sola_down()
+    {
+
+        car.transform.GetComponent<CarUserControl>().sola_don = true;
+
+    }
+    public void sola_up()
+    {
+
+        car.transform.GetComponent<CarUserControl>().sola_don = false;
+
+    }
+
+    public void ates_down()
+    {
+
+        car.transform.GetComponent<CarController>().ates = true;
+
+    }
+    public void ates_up()
+    {
+
+         car.transform.GetComponent<CarController>().ates= false;
+
+    }
+
+}
 

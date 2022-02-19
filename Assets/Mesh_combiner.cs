@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
  
-
+[RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(MeshRenderer))]
+[RequireComponent(typeof(MeshCollider))]
 public class Mesh_combiner : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -18,6 +20,7 @@ public class Mesh_combiner : MonoBehaviour
         if (Time.time > bekle) { 
             CombineMesh();
             gameObject.isStatic = true;
+            transform.
             transform.GetComponent<Mesh_combiner>().enabled = false;
 
         }

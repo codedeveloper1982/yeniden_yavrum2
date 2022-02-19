@@ -36,7 +36,75 @@ namespace SplineMesh
         }
         public void dag_ekle()
         {
-            GameObject newObj = new GameObject("kayalýklar");
+            Spline cizgi = gameObject.transform.GetComponent<Spline>();
+
+            Debug.Log(cizgi.Length);
+            float toplam=0,kalan;
+
+            for(int i = 0; i < 10; i++)
+            {
+
+
+
+                if(toplam < cizgi.Length) {
+                kalan = toplam + 70;
+                
+                if (kalan < cizgi.Length)
+                {
+                    Debug.Log(toplam + "   " + (kalan));
+                    GameObject newObj = new GameObject("kaya" + i);
+
+                    newObj.transform.SetParent(gameObject.transform);
+                    newObj.transform.localPosition = Vector3.zero;
+                    newObj.transform.localRotation = Quaternion.identity;
+                    newObj.AddComponent(typeof(ExampleSower));
+                    var ozellikler = newObj.GetComponent<ExampleSower>();
+                    prefab = GameObject.Find("atlas_kaya3");
+                    ozellikler.prefab = prefab;
+                    ozellikler.scale = 40;
+                    ozellikler.spacing = 1.9f;
+                    ozellikler.offset = 14.7f;
+
+                    ozellikler.baslangic = toplam;
+                    ozellikler.son = kalan;
+                    ozellikler.dik_dur = true;
+                    ozellikler.iki_tarafa_da = true;
+
+
+
+                    toplam += 70;
+                }
+                else
+                {
+                    Debug.Log(toplam + "   " + cizgi.Length);
+                    Debug.Log(toplam + "   " + (kalan));
+                    GameObject newObj = new GameObject("kaya" + i);
+
+                    newObj.transform.SetParent(gameObject.transform);
+                    newObj.transform.localPosition = Vector3.zero;
+                    newObj.transform.localRotation = Quaternion.identity;
+                    newObj.AddComponent(typeof(ExampleSower));
+                    var ozellikler = newObj.GetComponent<ExampleSower>();
+                    prefab = GameObject.Find("atlas_kaya3");
+                    ozellikler.prefab = prefab;
+                    ozellikler.scale = 40;
+                    ozellikler.spacing = 1.9f;
+                    ozellikler.offset = 14.7f;
+
+                    ozellikler.baslangic = toplam;
+                    ozellikler.son =cizgi.Length;
+                    ozellikler.dik_dur = true;
+                    ozellikler.iki_tarafa_da = true;
+                    toplam += 70;
+
+                }
+                }
+
+
+            }
+
+            /*
+            GameObject newObj = new GameObject("kaya"+i);
 
             newObj.transform.SetParent(hedef_cizgi.transform);
             newObj.transform.localPosition = Vector3.zero;
@@ -48,12 +116,13 @@ namespace SplineMesh
             ozellikler.scale = 40;
             ozellikler.spacing = 1.9f;
             ozellikler.offset = 14.7f;
+
             ozellikler.baslangic = 0;
             ozellikler.son = 70;
             ozellikler.dik_dur = true;
             ozellikler.iki_tarafa_da= true;
 
-
+*/
         }
 
         public void Sona_yamac_ekle()
@@ -61,13 +130,13 @@ namespace SplineMesh
 
             GameObject newObj = new GameObject("yamaç");
 
-            newObj.transform.SetParent(hedef_cizgi.transform);
+            newObj.transform.SetParent(gameObject.transform);
             newObj.transform.localPosition = Vector3.zero;
             newObj.transform.localRotation = Quaternion.identity;
             newObj.AddComponent(typeof(ExampleFollowSpline));
             var ozellikler = newObj.GetComponent<ExampleFollowSpline>();
             prefab = GameObject.Find("yamac");
-            ozellikler.spline = hedef_cizgi.GetComponent<Spline>();
+            ozellikler.spline = gameObject.GetComponent<Spline>();
             ozellikler.Follower = prefab;
             ozellikler.sona_tak = true;
             ozellikler.ters_cevir = true;
@@ -79,13 +148,13 @@ namespace SplineMesh
 
             GameObject newObj = new GameObject("baþ kýsým");
 
-            newObj.transform.SetParent(hedef_cizgi.transform);
+            newObj.transform.SetParent(gameObject.transform);
             newObj.transform.localPosition = Vector3.zero;
             newObj.transform.localRotation = Quaternion.identity;
             newObj.AddComponent(typeof(ExampleFollowSpline));
             var ozellikler = newObj.GetComponent<ExampleFollowSpline>();
             prefab = GameObject.Find("yamac");
-            ozellikler.spline = hedef_cizgi.GetComponent<Spline>();
+            ozellikler.spline = gameObject.GetComponent<Spline>();
             ozellikler.Follower = prefab;
             ozellikler.sona_tak = false;
             ozellikler.ters_cevir = false;
@@ -96,13 +165,13 @@ namespace SplineMesh
 
             GameObject newObj = new GameObject("kýrýk köprü");
 
-            newObj.transform.SetParent(hedef_cizgi.transform);
+            newObj.transform.SetParent(gameObject.transform);
             newObj.transform.localPosition = Vector3.zero;
             newObj.transform.localRotation = Quaternion.identity;
             newObj.AddComponent(typeof(ExampleFollowSpline));
             var ozellikler = newObj.GetComponent<ExampleFollowSpline>();
             prefab = GameObject.Find("kirik_kopru");
-            ozellikler.spline = hedef_cizgi.GetComponent<Spline>();
+            ozellikler.spline = gameObject.GetComponent<Spline>();
             ozellikler.Follower = prefab;
             ozellikler.sona_tak = true;
             ozellikler.ters_cevir = true;
@@ -112,13 +181,13 @@ namespace SplineMesh
 
             GameObject newObj = new GameObject("kýrýk köprü");
 
-            newObj.transform.SetParent(hedef_cizgi.transform);
+            newObj.transform.SetParent(gameObject.transform);
             newObj.transform.localPosition = Vector3.zero;
             newObj.transform.localRotation = Quaternion.identity;
             newObj.AddComponent(typeof(ExampleFollowSpline));
             var ozellikler = newObj.GetComponent<ExampleFollowSpline>();
             prefab = GameObject.Find("kirik_kopru");
-            ozellikler.spline = hedef_cizgi.GetComponent<Spline>();
+            ozellikler.spline = gameObject.GetComponent<Spline>();
             ozellikler.Follower = prefab;
             ozellikler.sona_tak = false;
             ozellikler.ters_cevir = false;

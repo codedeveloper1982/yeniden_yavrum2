@@ -43,6 +43,11 @@ namespace SplineMesh
             {
                 tasi_ve_sekil.cizginin_basina_bagla();
             }
+            if (GUILayout.Button("yol ekle"))
+            {
+                tasi_ve_sekil.yol_ekle();
+            }
+
         }
 
 
