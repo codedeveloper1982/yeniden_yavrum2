@@ -20,10 +20,13 @@ public class Cameracontroller : MonoBehaviour
         [SerializeField] private float ileriye_alma;
          private bool verial;
     public bool ileriye_git;
-        // public Transform on_kısım;
+    private RaycastHit saghit,arkahit,solhit;
+    private float sola_donus=0;
+    private int sagsol;
+    // public Transform on_kısım;
 
 
-        private void FixedUpdate()
+    private void FixedUpdate()
         {
         verial = car.transform.GetComponent<CarController>().suya_dokundu;
         if (verial)
@@ -37,13 +40,52 @@ public class Cameracontroller : MonoBehaviour
         {
             takip = car;
         Vector3 local_velocity = car.InverseTransformDirection(car.GetComponent<Rigidbody>().velocity);
-            if (local_velocity.z < -0.5f)
+
+            /*ısın_gonder(transform,transform.right*(-1),1f,saghit,sag_carpma);
+
+             float uzaklık = Vector3.Distance(saghit.point, transform.position);
+             if(sag_carpma)Debug.Log(saghit.collider.name);
+ */
+                if (Physics.Raycast(transform.position, transform.right * (-1), out saghit, 5))
+                {
+
+
+                   if (sola_donus<100) sola_donus += 0.1f ;
+                sagsol = -1;
+
+                }
+                else if(Physics.Raycast(transform.position, transform.right , out solhit, 5))
+                {
+                   if (sola_donus> -100) sola_donus -= 0.1f ;
+                sagsol = 1;
+                }
+            else
             {
-                rotation_vector = car.eulerAngles.y + 100;
+                sola_donus = 0;
+            }
+                Debug.DrawRay(transform.position, transform.right * (-1) * 5, Color.green);
+                Debug.DrawRay(transform.position, transform.right* 5, Color.green);
+            if (Physics.Raycast(transform.position, transform.forward * (-1), out arkahit, 5))
+            {
+                if (distance > 0.3f) { distance -= 0.02f; }
             }
             else
             {
-                rotation_vector = car.eulerAngles.y;
+                if (distance < 3) distance += 0.02f;
+            }
+            Debug.DrawRay(transform.position, transform.forward * (-1) * 5, Color.green);
+
+
+
+            if (local_velocity.z < -0.5f)
+            {
+
+
+                rotation_vector = car.eulerAngles.y+100*sagsol;
+            }
+            else
+            {
+                rotation_vector = car.eulerAngles.y-sola_donus;
 
             }
             float accelaration = car.GetComponent<Rigidbody>().velocity.magnitude;
@@ -81,10 +123,11 @@ public class Cameracontroller : MonoBehaviour
             float wantedheight = takip.position.y + height;
             float myangle = transform.eulerAngles.y;
             float myheight = transform.position.y;
+             float mydistance = distance;
 
             myangle = Mathf.LerpAngle(myangle, wantedangle, rotationdamping * Time.deltaTime);
             myheight = Mathf.LerpAngle(myheight, wantedheight, heightdamping * Time.deltaTime);
-
+            mydistance = Mathf.LerpAngle(mydistance, distance, heightdamping * Time.deltaTime);
 
 
             Quaternion currentrotation = Quaternion.Euler(0, myangle, 0);
@@ -97,6 +140,8 @@ public class Cameracontroller : MonoBehaviour
             transform.Rotate(ileriye_alma, 0, 0);
 
         }
+
+
 
     public void ileri_down()
     {

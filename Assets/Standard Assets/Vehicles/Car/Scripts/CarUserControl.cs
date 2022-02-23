@@ -32,36 +32,38 @@ namespace UnityStandardAssets.Vehicles.Car
 
         private void FixedUpdate()
         {
-            // pass the input to the car!
+            // pass the input to the car!,
+            h = Input.GetAxis("Horizontal");
+            v = Input.GetAxis("Vertical");
 
-            if (control_degis == false)
-            {
-                h = CrossPlatformInputManager.GetAxis("Horizontal");
-                v = CrossPlatformInputManager.GetAxis("Vertical");
-            }
-            else
-            {
-                if (m_Car.CurrentSpeed > m_Car.MaxSpeed - 5 && geriye_git == false)
-                {
-                    v = 1;
-                }
-                else { 
+            /* if (control_degis == false)
+             {
+                 //h = CrossPlatformInputManager.GetAxis("Horizontal");
+                 //v = CrossPlatformInputManager.GetAxis("Vertical");
+             }
+             else
+             {
+                 if (m_Car.CurrentSpeed > m_Car.MaxSpeed - 5 && geriye_git == false)
+                 {
+                     v = 1;
+                 }
+                 else { 
 
-                if (ileriye_git == true)
-                {
-                    v = 1;
+                 if (ileriye_git == true)
+                 {
+                     v = 1;
 
-                }
-                else if (geriye_git == true) v = -1;
-                else
-                {
-                    v = 0;
-                }
-            }
-                if (saga_don == true) h = 1;
-                else if (sola_don == true) h = -1;
-                else h = 0;
-            }
+                 }
+                 else if (geriye_git == true) v = -1;
+                 else
+                 {
+                     v = 0;
+                 }
+             }
+                 if (saga_don == true) h = 1;
+                 else if (sola_don == true) h = -1;
+                 else h = 0;
+             }*/
 
             speed = m_Car.CurrentSpeed;
 

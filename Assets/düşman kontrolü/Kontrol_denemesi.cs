@@ -878,10 +878,10 @@ public class Kontrol_denemesi : MonoBehaviour
                         fuzeler[sira].SetActive(true);
                         fuze_trails[sira].SetActive(true);
                         fuze_zamani[sira] = 0;
-                        float hedef_miktari = Random.Range(5, 7);
+                        float hedef_miktari = Random.Range(4, 5);
                         float max_hiz = player.transform.GetComponent<CarController>().MaxSpeed;
                         float mevcut_hiz = player.transform.GetComponent<CarController>().CurrentSpeed;
-                        hedef = player.transform.position + player.transform.forward *(hedef_miktari-(5-5*(mevcut_hiz/max_hiz)));
+                        hedef = player.transform.position + player.transform.forward *(hedef_miktari-(hedef_miktari-hedef_miktari*(mevcut_hiz/max_hiz)));
                          vo[sira] = Calculate_velocity(hedef, shootpoint[sira], 1f);
                         fuzeler[sira].transform.rotation = Quaternion.LookRotation(vo[sira]);
                         sira++;
@@ -1213,7 +1213,7 @@ public class Kontrol_denemesi : MonoBehaviour
                     onceki_pozisyon[i] = fuzeler[i].transform.position;
 
                 }
-                fuze_zamani[i] += 0.02f;
+                fuze_zamani[i] += 0.035f;
                 fuze_gonder(fuzeler[i], vo[i], fuze_zamani[i], shootpoint[i]);
                 Vector3 bak = fuzeler[i].transform.position - onceki_pozisyon[i];
                 fuze_trails[i].transform.position = fuzeler[i].transform.position;
@@ -1228,7 +1228,8 @@ public class Kontrol_denemesi : MonoBehaviour
                     {
                         fuze_pat[i].SetActive(true);
                         fuze_pat[i].transform.position = hit.point;
-                        fuze_pat[i].transform.rotation = Quaternion.LookRotation(hit.normal);                   
+                        fuze_pat[i].transform.rotation = Quaternion.LookRotation(hit.normal);
+                        Debug.Log("vuruldu" + i);
 
                     }
                     else if(hit.collider.tag =="füzeci" || hit.collider.tag == "drone_5" ||hit.collider.tag == "drone_1b"||hit.collider.tag == "drone11_c")
