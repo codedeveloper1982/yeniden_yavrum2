@@ -9,7 +9,8 @@ namespace SplineMesh
 
     public class Yol_sekillerdir_editor: Editor
     {
-
+        private int nokta_sayisi;
+        private float ekleme_zamani;
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
@@ -177,6 +178,29 @@ namespace SplineMesh
             }
             GUILayout.EndHorizontal();
 
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("eklenecek nokta sayýsý");
+            nokta_sayisi= EditorGUILayout.IntField(nokta_sayisi);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("otomatik nokta ekle"))
+            {
+                Spline cizgi = kopya.kopya_cizgiler[0];
+                int node_sayisi = cizgi.nodes.Count;
+                int baslangic= Random.Range(0,node_sayisi-nokta_sayisi);
+                Debug.Log(baslangic);
+
+                for (int i = 0; i < nokta_sayisi; i++)
+                {
+                    kopya.ileri_nokta_ekle();
+                    kopya.generate_nokta(cizgi, baslangic, baslangic+1);
+                    baslangic++;
+
+                }
+            }
+
+            GUILayout.EndHorizontal();
 
 
         }

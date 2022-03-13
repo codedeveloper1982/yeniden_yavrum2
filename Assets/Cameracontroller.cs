@@ -18,7 +18,7 @@ public class Cameracontroller : MonoBehaviour
         public float defaultPOV;
         public float rotation_vector;
         [SerializeField] private float ileriye_alma;
-         private bool verial;
+         private bool verial,sola_degme_var=false,saga_degme_var=false;
     public bool ileriye_git;
     private RaycastHit saghit,arkahit,solhit;
     private float sola_donus=0;
@@ -46,26 +46,39 @@ public class Cameracontroller : MonoBehaviour
              float uzaklık = Vector3.Distance(saghit.point, transform.position);
              if(sag_carpma)Debug.Log(saghit.collider.name);
  */
-                if (Physics.Raycast(transform.position, transform.right * (-1), out saghit, 5))
+
+
+               // if (sola_donus > -100) sola_donus -= 1f;
+
+
+            if (Physics.Raycast(transform.position, transform.right * (-1), out saghit, 3))
                 {
 
 
-                   if (sola_donus<100) sola_donus += 0.1f ;
-                sagsol = -1;
+                if (local_velocity.z < -0.5f)
+                {
+                    sagsol = -1;
+                }
+                saga_degme_var = true;
 
                 }
-                else if(Physics.Raycast(transform.position, transform.right , out solhit, 5))
+                else if(Physics.Raycast(transform.position, transform.right , out solhit, 3))
                 {
-                   if (sola_donus> -100) sola_donus -= 0.1f ;
-                sagsol = 1;
+                if (local_velocity.z < -0.5f)
+                {
+                    sagsol = 1;
+                }
+                sola_degme_var= true;
+
                 }
             else
             {
-                sola_donus = 0;
+                saga_degme_var = false;
+                sola_degme_var = false;
             }
-                Debug.DrawRay(transform.position, transform.right * (-1) * 5, Color.green);
-                Debug.DrawRay(transform.position, transform.right* 5, Color.green);
-            if (Physics.Raycast(transform.position, transform.forward * (-1), out arkahit, 5))
+                Debug.DrawRay(transform.position, transform.right * (-1) * 3, Color.green);
+                Debug.DrawRay(transform.position, transform.right* 3, Color.green);
+            if (Physics.Raycast(transform.position, transform.forward * (-1), out arkahit, 3))
             {
                 if (distance > 0.3f) { distance -= 0.02f; }
             }
@@ -73,22 +86,33 @@ public class Cameracontroller : MonoBehaviour
             {
                 if (distance < 3) distance += 0.02f;
             }
-            Debug.DrawRay(transform.position, transform.forward * (-1) * 5, Color.green);
+            Debug.DrawRay(transform.position, transform.forward * (-1) * 3, Color.green);
 
 
 
             if (local_velocity.z < -0.5f)
             {
 
-
-                rotation_vector = car.eulerAngles.y+100*sagsol;
+                if (sola_donus < 100) sola_donus += 1f;
+                rotation_vector = car.eulerAngles.y+sola_donus*sagsol;
             }
             else
             {
-                rotation_vector = car.eulerAngles.y-sola_donus;
+                if (sola_donus > 0.5)
+                {
+                    if ((sola_degme_var == false && saga_degme_var == false))
+                    {
+                        sola_donus -= 1f;
+                    } 
+
+                }
+                else
+                {
+                    sola_donus = 0;
+                }
+                rotation_vector = car.eulerAngles.y+sola_donus * sagsol;
 
             }
-            float accelaration = car.GetComponent<Rigidbody>().velocity.magnitude;
         }
 
 

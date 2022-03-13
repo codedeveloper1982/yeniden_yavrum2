@@ -9,7 +9,7 @@ namespace SplineMesh
 {
     public class Yol_sekillendirme : MonoBehaviour
     {
-        public GameObject[] kopya_cizgiler;
+        public Spline[] kopya_cizgiler;
         private Spline kopya_cizgi, sekilnenecek;
         public bool tersten_al;
         SplineNode selection;
@@ -235,6 +235,64 @@ namespace SplineMesh
              Vector3 yeni_buyukluk = sekilnenecek.nodes[son_nokta].Direction - sekilnenecek.nodes[son_nokta].Position;
            sekilnenecek.nodes[son_nokta].Direction = sekilnenecek.nodes[son_nokta].Position + yeni_buyukluk.normalized * 4;            
         }
+
+        public void generate_nokta(Spline cizgi, int bas, int son)
+        {
+            Vector3 yonal = cizgi.nodes[son].Position - cizgi.nodes[bas].Position;
+            Vector2 yonal_2d = new Vector2(yonal.x, yonal.z);
+            float dikey_deðiþim = yonal.y;
+            Vector3 ileri_vector = (cizgi.nodes[bas].Direction - cizgi.nodes[bas].Position).normalized;
+
+            Vector2 dikey_birim = new Vector2(ileri_vector.x, ileri_vector.z);
+            Vector2 yatay_birim = new Vector2((-1) * ileri_vector.z, ileri_vector.x);
+            float aci = Vector2.Angle(yonal_2d, yatay_birim);
+
+
+            //float dikey_buyukluk = yonal / dikey_birim;
+
+
+            float yatay_buyukluk = yonal.magnitude * Mathf.Cos((aci / 180) * Mathf.PI);
+            float dikey_buyukluk = yonal.magnitude * Mathf.Sin((aci / 180) * Mathf.PI);
+
+            int son_nokta = sekilnenecek.nodes.Count - 1;
+
+            Debug.Log(yonal.magnitude + "  " + aci + "     " + yatay_birim);
+            Vector3 yeni_yon = (sekilnenecek.nodes[son_nokta-1].Direction - sekilnenecek.nodes[son_nokta-1].Position).normalized;
+            Vector3 dikey_yon = new Vector3(yeni_yon.x, 0, yeni_yon.z);
+            Vector3 yatay_yon = new Vector3((-1) * yeni_yon.z, 0, yeni_yon.x);
+
+
+
+            sekilnenecek.nodes[son_nokta].Position = sekilnenecek.nodes[son_nokta-1].Position + dikey_yon * dikey_buyukluk + yatay_yon * yatay_buyukluk;
+            sekilnenecek.nodes[son_nokta].Position += new Vector3(0, dikey_deðiþim, 0);
+
+            //DÝRECTÝON KOPYALAMA
+            yonal = cizgi.nodes[son].Direction - cizgi.nodes[bas].Position;
+            yonal_2d = new Vector2(yonal.x, yonal.z);
+            dikey_deðiþim = yonal.y;
+            ileri_vector = (cizgi.nodes[bas].Direction - cizgi.nodes[bas].Position).normalized;
+
+            dikey_birim = new Vector2(ileri_vector.x, ileri_vector.z);
+            yatay_birim = new Vector2((-1) * ileri_vector.z, ileri_vector.x);
+            aci = Vector2.Angle(yonal_2d, yatay_birim);
+
+
+            //float dikey_buyukluk = yonal / dikey_birim;
+
+
+            yatay_buyukluk = yonal.magnitude * Mathf.Cos((aci / 180) * Mathf.PI);
+            dikey_buyukluk = yonal.magnitude * Mathf.Sin((aci / 180) * Mathf.PI);
+
+            yeni_yon = (sekilnenecek.nodes[son_nokta-1].Direction - sekilnenecek.nodes[son_nokta-1].Position).normalized;
+            dikey_yon = new Vector3(yeni_yon.x, 0, yeni_yon.z);
+            yatay_yon = new Vector3((-1) * yeni_yon.z, 0, yeni_yon.x);
+
+            sekilnenecek.nodes[son_nokta].Direction = sekilnenecek.nodes[son_nokta-1].Position + dikey_yon * dikey_buyukluk + yatay_yon * yatay_buyukluk;
+            sekilnenecek.nodes[son_nokta].Direction += new Vector3(0, dikey_deðiþim, 0);
+
+
+        }
+
 
 
     }
