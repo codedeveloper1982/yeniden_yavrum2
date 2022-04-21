@@ -61,7 +61,7 @@ public class Kontrol_denemesi : MonoBehaviour
     // CAN BARI YAPIMINA SONRA KARAR VER.
     private float[] dusman_cani;
     public GameObject patlama;
-    public GameObject parcali_drone1,parcali_drone5,parcali_drone11c,parcali_mayinci,parcali_drone6,parcali_fuze_canavari;
+    public GameObject parcali_drone1,parcali_drone5,parcali_drone11c,parcali_mayinci,parcali_drone6,parcali_fuze_canavari,parcali_sonuncu;
 
 
 
@@ -811,7 +811,8 @@ public class Kontrol_denemesi : MonoBehaviour
                                 else if(dusmanlar[a].tag=="drone11_c")Patla(dusmanlar[a], parcali_drone11c);
                                 else if(dusmanlar[a].tag=="mayinci")Patla(dusmanlar[a],parcali_mayinci);
                                 else if(dusmanlar[a].tag=="füzeci")Patla(dusmanlar[a],parcali_drone6);
-                                else if(dusmanlar[a].tag== "fuzeci_canavar") Patla(dusmanlar[a],parcali_fuze_canavari);                               
+                                else if(dusmanlar[a].tag== "fuzeci_canavar") Patla(dusmanlar[a],parcali_fuze_canavari);
+                                else if(dusmanlar[a].tag== "sonuncu") Patla(dusmanlar[a],parcali_sonuncu);                                
                                 /*parcali_drone1.transform.position=dusmanlar[a].transform.position;
                                 parcali_drone1.SetActive(true);
                                 dusmanlar[a].SetActive(false);
@@ -1530,6 +1531,7 @@ public class Kontrol_denemesi : MonoBehaviour
                     else if (toplanan_drone[i] == "mayinci") yerden_kaldir = parcali_mayinci;
                     else if (toplanan_drone[i] == "füzeci") yerden_kaldir = parcali_drone6;
                     else if (toplanan_drone[i] == "fuzeci_canavar") yerden_kaldir = parcali_fuze_canavari;
+                    else if (toplanan_drone[i] == "sonuncu") yerden_kaldir = parcali_sonuncu;
                     foreach (Transform t in yerden_kaldir.transform)
                     {
 
