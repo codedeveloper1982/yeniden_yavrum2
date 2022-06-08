@@ -119,6 +119,11 @@ using UnityStandardAssets.Vehicles.Car;
     public GameObject patlama_sesi;
 
 
+    /// /////////arabanýn patlmasý  ///////////
+    private GameObject yangin, araba_patlama;
+    public bool fail;
+
+
 
 
     // Use this for initialization
@@ -181,7 +186,12 @@ using UnityStandardAssets.Vehicles.Car;
         su_sira = 0;
         ilk_su = su_sira - (su_sayisi - 1);
 
+        araba_patlama= GameObject.FindGameObjectWithTag("araba_patlama");
+        yangin = GameObject.FindGameObjectWithTag("yangýn");
 
+        araba_patlama.SetActive(false);
+        yangin.SetActive(false);
+        fail = false;
 
     }
         private void Update()
@@ -394,7 +404,7 @@ using UnityStandardAssets.Vehicles.Car;
         }
 
 
-            if (ates && Time.time >= timetofire)
+            if (ates && Time.time >= timetofire && fail==false)
             {
                 timetofire = Time.time + 1.0f / firerate;
                 mermiler[sira].transform.position = shootpoint.transform.position;
@@ -567,6 +577,19 @@ using UnityStandardAssets.Vehicles.Car;
 
         }
 
+        ///////////araba patlama ayarlarý//////
+        ///
+        if (Input.GetKeyDown(KeyCode.L)) fail = true;
+
+        if (fail == true)
+        {
+            yangin.SetActive(true);
+            araba_patlama.SetActive(true);
+        yangin.transform.position = transform.position +transform.forward*(-0.2f)+transform.up*0.1f ;
+        araba_patlama.transform.position = transform.position;
+            kontrolet.carpat = true;
+        }   
+//+transform.forward*(-0.2f)+transform.up*0.1f ;
 
 
     }

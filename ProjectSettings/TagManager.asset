@@ -22,6 +22,8 @@ TagManager:
   - drone_x
   - fuzeci_canavar
   - sonuncu
+  - "yang\u0131n"
+  - araba_patlama
   layers:
   - Default
   - TransparentFX

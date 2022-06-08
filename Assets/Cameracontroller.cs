@@ -18,7 +18,7 @@ public class Cameracontroller : MonoBehaviour
         public float defaultPOV;
         public float rotation_vector;
         [SerializeField] private float ileriye_alma;
-         private bool verial,sola_degme_var=false,saga_degme_var=false;
+         private bool verial,arabapatladi,sola_degme_var=false,saga_degme_var=false;
     public bool ileriye_git;
     private RaycastHit saghit,arkahit,solhit;
     private float sola_donus=0;
@@ -29,12 +29,18 @@ public class Cameracontroller : MonoBehaviour
     private void FixedUpdate()
         {
         verial = car.transform.GetComponent<CarController>().suya_dokundu;
+        arabapatladi = car.transform.GetComponent<CarController>().fail;
         if (verial)
         {
 
-            Debug.Log("suya değme verisi alındı.");
             takip = car.transform.GetComponent<CarController>().sicratma.transform;
             height = 6;
+        }else if (arabapatladi)
+        {
+            if (distance < 6) {
+                distance += 0.02f;
+                height += 0.01f;
+            }
         }
         else
         {
@@ -48,9 +54,9 @@ public class Cameracontroller : MonoBehaviour
  */
 
 
-               // if (sola_donus > -100) sola_donus -= 1f;
+            // if (sola_donus > -100) sola_donus -= 1f;
 
-
+           
             if (Physics.Raycast(transform.position, transform.right * (-1), out saghit, 3))
                 {
 
