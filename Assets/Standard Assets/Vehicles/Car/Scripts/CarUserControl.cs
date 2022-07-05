@@ -92,7 +92,7 @@ namespace UnityStandardAssets.Vehicles.Car
                  else h = 0;
              }*/
 
-            eksilen_donme = 22 * (m_Car.CurrentSpeed / m_Car.MaxSpeed);
+            eksilen_donme = 21 * (m_Car.CurrentSpeed / m_Car.MaxSpeed);
 
             donme = 40 - eksilen_donme;
             speed = m_Car.CurrentSpeed;
@@ -130,7 +130,7 @@ namespace UnityStandardAssets.Vehicles.Car
            // ses1.pitch=Mathf.Lerp(ses1.pitch, picth1, 0.05f);
            // ses1.volume = 1 - revs;
             if (1 - revs > 0.005f) pic_miktar = 1 - revs;
-            else if (1 - revs < 0.01f) pic_miktar = 0.005f;
+            else if (1 - revs < 0.01f) pic_miktar = 0.003f;
 
             picth2=Mathf.Lerp(picth2, hedef_pic, pic_miktar);
             ses2.pitch = picth2;

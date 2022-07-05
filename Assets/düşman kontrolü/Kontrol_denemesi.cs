@@ -220,7 +220,8 @@ public class Kontrol_denemesi : MonoBehaviour
     private Vector3 roket_konum;
     private int kullanilan_silah;
 
-
+    //araba hýzýný alýyoruz
+    private float araba_hizi;
 
     void Start()
     {
@@ -536,7 +537,7 @@ public class Kontrol_denemesi : MonoBehaviour
     {
 
 
-        if (Vector3.Distance(cube[0].transform.position, player.transform.position) < 15.0f)
+        if (Vector3.Distance(cube[0].transform.position, player.transform.position) < 17.0f)
         {
             ileri = true;
         }
@@ -544,6 +545,8 @@ public class Kontrol_denemesi : MonoBehaviour
         {
             geri = true;
         }
+
+        araba_hizi= player.transform.GetComponent<CarController>().CurrentSpeed;
 
 
         for (int i = 0; i < dusmanlar.Length; i++)
@@ -566,22 +569,23 @@ public class Kontrol_denemesi : MonoBehaviour
                 Drone_hareketi(dusmanlar[i], drone_konum[i], dusman_hizi, sag_sol[i], cik_in[i]);
                 if (Mathf.Abs(sag_sol[i] - yatay_degisim[i]) < 0.3f)
                 {
-                    yatay_degisim[i] = Random.Range(-5, 6);//bunlarý sonra for döngüsünde çalýþtýr.
+                    yatay_degisim[i] = Random.Range(-5, 6);
 
                 }
 
-                if (sag_sol[i] > yatay_degisim[i]) sag_sol[i] -= sagsol_hiz;//bunlarý sonra for döngüsünde çalýþtýr.
-                if (sag_sol[i] < yatay_degisim[i]) sag_sol[i] += sagsol_hiz;//bunlarý sonra for döngüsünde çalýþtýr.
+                if (sag_sol[i] > yatay_degisim[i]) sag_sol[i] -= sagsol_hiz;
+                if (sag_sol[i] < yatay_degisim[i]) sag_sol[i] += sagsol_hiz;
                
                 
                 if (Mathf.Abs(cik_in[i] - dikey_degisim[i]) < 0.33f)
                 {
-                    dikey_degisim[i] = Random.Range(0, 5);//bunlarý sonra for döngüsünde çalýþtýr.
-
+                   if(araba_hizi<3)dikey_degisim[i] = Random.Range(2, 4);
+                   else dikey_degisim[i] = Random.Range(0, 5);
+                    Debug.Log("diey deðiþim "+dikey_degisim[i]);
                 }
 
-                if (cik_in[i] > dikey_degisim[i]) cik_in[i] -= cikin_hiz;//bunlarý sonra for döngüsünde çalýþtýr.
-                if (cik_in[i] < dikey_degisim[i]) cik_in[i] += cikin_hiz;//bunlarý sonra for döngüsünde çalýþtýr.
+                if (cik_in[i] > dikey_degisim[i]) cik_in[i] -= cikin_hiz;
+                if (cik_in[i] < dikey_degisim[i]) cik_in[i] += cikin_hiz;
 
 
             }
@@ -660,7 +664,19 @@ public class Kontrol_denemesi : MonoBehaviour
             {
                 if (Mathf.Abs(gecici_konum[i] - drone_sirasi[i]) < 0.2f)
                 {
+                    if(araba_hizi < 3)
+                    { 
+                        
+                        hedef_sirasi[i] = Random.Range(14, 23);
+
+                    }
+                    else
+                    {
+
                     hedef_sirasi[i] = Random.Range(2, 11);
+                    }
+
+
 
 
                 }

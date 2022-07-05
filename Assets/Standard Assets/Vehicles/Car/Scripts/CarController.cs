@@ -124,7 +124,8 @@ using UnityStandardAssets.Vehicles.Car;
     public bool fail;
 
 
-
+    /// /////////öne eðim verme  ///////////
+    private float max_egim = 14,mevcut_egim;
 
     // Use this for initialization
     private void Start()
@@ -193,25 +194,33 @@ using UnityStandardAssets.Vehicles.Car;
         yangin.SetActive(false);
         fail = false;
 
+
     }
         private void Update()
         {
-            donmeal = kontrolet.donme;
+        
+        donmeal = kontrolet.donme;
             m_MaximumSteerAngle = donmeal;
         donmeye_basili = kontrolet.h;
         hiza_basili = kontrolet.v;
 
-           // if (Input.GetKeyDown(KeyCode.K)) transform.position = baslangic;
-          
-            
+        // if (Input.GetKeyDown(KeyCode.K)) transform.position = baslangic;
+
+        mevcut_egim = transform.localEulerAngles.x;
             //ARABA ÝÇÝN ÖZEL GRAVÝTY OLUÞTURUYORUZ
             
             gravityScale = 1 - azaltma * (CurrentSpeed / MaxSpeed);
             Vector3 gravity = globalGravity * gravityScale * Vector3.up;
-            m_rb.AddForce(gravity, ForceMode.Acceleration);
+           m_rb.AddForce(gravity, ForceMode.Acceleration);
             m_rb.drag=0.5f-(0.5f-0.01f)* (CurrentSpeed / MaxSpeed);
+        if (mevcut_egim > max_egim) mevcut_egim = 0;
 
-            if ((transform.rotation.x<-0.002f || transform.rotation.x>0.002f) && CurrentSpeed<10)
+
+
+            m_rb.AddForceAtPosition(Vector3.up * (-1) * (80-80*(mevcut_egim/max_egim)), transform.position + transform.forward * 2.5f);
+
+
+        if ((transform.rotation.x<-0.002f || transform.rotation.x>0.002f) && CurrentSpeed<10)
             {
                 m_rb.drag= 0.01f;
                 globalGravity = -2;
@@ -232,6 +241,8 @@ using UnityStandardAssets.Vehicles.Car;
                 m_rb.AddForce(ileri, ForceMode.Acceleration);
 
             }
+
+             // transform.Rotate(Vector3.right,0.5f*(CurrentSpeed / MaxSpeed));
 
             /////////////////////////////ANTÝ STUCK SÝSTEMÝ////////////////////////////////////////////
            /* RaycastHit [] lastik_hit;
@@ -342,12 +353,12 @@ using UnityStandardAssets.Vehicles.Car;
                 transform.Rotate(0.1f, 0, 0);
 
             }*/
-           if((hiza_basili==1 || hiza_basili==-1) && CurrentSpeed < 0.5f) {
-            Vector3 dikey_destek = globalGravity * gravityScale * transform.forward * (-3)*hiza_basili;
+           if((hiza_basili==1 || hiza_basili==-1) && CurrentSpeed < 1.5f) {
+            Vector3 dikey_destek = globalGravity * gravityScale * transform.forward * (-5)*hiza_basili;
             m_rb.AddForce(dikey_destek, ForceMode.Acceleration);
             }
-           if((donmeye_basili==1 || donmeye_basili==-1) && CurrentSpeed < 0.5f) {
-            Vector3 yatay_destek = globalGravity * gravityScale * transform.right * (-3) * donmeye_basili;
+           if((donmeye_basili==1 || donmeye_basili==-1) && CurrentSpeed < 1.5f) {
+            Vector3 yatay_destek = globalGravity * gravityScale * transform.right * (-5) * donmeye_basili;
             m_rb.AddForce(yatay_destek, ForceMode.Acceleration);
             }
 
