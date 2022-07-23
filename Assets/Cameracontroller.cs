@@ -7,7 +7,7 @@ using UnityStandardAssets.Vehicles.Car;
 public class Cameracontroller : MonoBehaviour
     {
 
-        public Transform car;
+        private Transform car;
     private Transform takip;
 
         public float distance;
@@ -24,7 +24,10 @@ public class Cameracontroller : MonoBehaviour
     private float sola_donus=0;
     private int sagsol;
     // public Transform on_kısım;
-
+    private void Start()
+    {
+        car = GameObject.FindGameObjectWithTag("Player").transform;
+    }
 
     private void FixedUpdate()
         {
@@ -225,13 +228,13 @@ public class Cameracontroller : MonoBehaviour
     public void ates_down()
     {
 
-        car.transform.GetComponent<CarController>().ates = true;
+        car.transform.GetComponent<CarUserControl>().ates = true;
 
     }
     public void ates_up()
     {
 
-         car.transform.GetComponent<CarController>().ates= false;
+         car.transform.GetComponent<CarUserControl>().ates= false;
 
     }
 

@@ -2,19 +2,16 @@ using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityStandardAssets.CrossPlatformInput;
 
-namespace UnityStandardAssets.Vehicles.Car
-{
-    [RequireComponent(typeof(CarController))]
+namespace UnityStandardAssets.Vehicles.Car {
     public class CarUserControl : MonoBehaviour
     {
         private CarController m_Car; // the car controller we want to use
-        public GameObject car;
+        //private GameObject car;
         public float speed_tork, reverse_tork;
         public float speed;
         public float donme,eksilen_donme,h,v,p;
-        public bool control_degis, ileriye_git,geriye_git,saga_don,sola_don,carpat;
+        public bool control_degis, ileriye_git, geriye_git, saga_don, sola_don, carpat, ates;
         public AudioSource  ses2;//,ses3;ses1,
         private float  en_alt_ses2, en_ust_ses2;//, en_alt_ses3, en_ust_ses3;en_alt_ses1, en_ust_ses1,
         private float revs;
@@ -25,21 +22,20 @@ namespace UnityStandardAssets.Vehicles.Car
 
 
 
+
         private void Awake()
         {
             // get the car controller
-            m_Car = GetComponent<CarController>();
+            m_Car =transform.GetComponent<CarController>();
 
+            ses2 = transform.GetComponent<AudioSource>();
 
-           // en_alt_ses1 = 0.6f;
-           // en_ust_ses1 = 1.0f;
             en_alt_ses2 = 0.8f;
             en_ust_ses2 = 1.3f;
-           // en_alt_ses3 = .6f;
-           // en_ust_ses3 = 1.0f;
+
             carpat = false;
             revs = 20;
-            //picth1 = en_alt_ses1 + (en_ust_ses1 - en_alt_ses1) * (revs);
+
             picth2 = 1;
 
         }
@@ -94,7 +90,7 @@ namespace UnityStandardAssets.Vehicles.Car
 
             eksilen_donme = 21 * (m_Car.CurrentSpeed / m_Car.MaxSpeed);
 
-            donme = 40 - eksilen_donme;
+            donme = 35 - eksilen_donme;
             speed = m_Car.CurrentSpeed;
 
 
@@ -173,3 +169,4 @@ namespace UnityStandardAssets.Vehicles.Car
 
     }
 }
+

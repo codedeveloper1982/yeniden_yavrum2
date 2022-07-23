@@ -14,10 +14,11 @@ using UnityStandardAssets.Vehicles.Car;
     }
 
 
-
     public class CarController : MonoBehaviour
     {
         [SerializeField] private CarDriveType m_CarDriveType = CarDriveType.FourWheelDrive;
+  
+
         [SerializeField] private WheelCollider[] m_WheelColliders = new WheelCollider[4];
         [SerializeField] private GameObject[] m_WheelMeshes = new GameObject[4];
         [SerializeField] private Vector3 m_CentreOfMassOffset;
@@ -97,6 +98,7 @@ using UnityStandardAssets.Vehicles.Car;
     public RaycastHit hit;
     public bool vuruldu;
     public string vurulan;
+
     public GameObject kucuk_patlama;
 
 
@@ -127,13 +129,84 @@ using UnityStandardAssets.Vehicles.Car;
     /// /////////öne eðim verme  ///////////
     private float max_egim = 14,mevcut_egim;
 
+    /// /////////araba çeþidi ayarý ///////////
+    private string araba;
+    private float timetobullet, bulletrate=20.0f;
+    public GameObject bullet_trace;
+    private GameObject[] siluetler;
+    private int siluet_sayisi = 20, ilk_siluet, sira_siluet;
+    private float menzil_uzunlugu=30;
+    public GameObject kivilcim_ana;
+    private GameObject[] kivilcimlar;
+    private int kivilcim_sayisi = 10, ilk_kivilcim, son_kivilcim;
+
+
     // Use this for initialization
     private void Start()
         {
+        araba = transform.name;
+
+        if(araba=="ücüncü prototip")
+        {
+            azaltma = 0.84f;
+
+        }else if(araba=="birinci_prototip")
+        {
+            azaltma = 0.86f;
+
+            siluetler = new GameObject[siluet_sayisi];
+            for (int i = 0; i < siluet_sayisi; i++)
+            {
+
+
+                siluetler[i] = GameObject.Instantiate(bullet_trace, transform.position, Quaternion.identity);
+                siluetler[i].SetActive(false);
+
+            }
+            sira_siluet = 0;
+            ilk_siluet = sira_siluet - (siluet_sayisi - 1);
+            timetobullet = Time.time + 1.0f / bulletrate;
+
+            ////////////////////////////////////////////
+
+            son_kivilcim = 0;
+            ilk_kivilcim = son_kivilcim - (kivilcim_sayisi - 1);
+
+            kivilcimlar = new GameObject[kivilcim_sayisi];
+
+            for (int i = 0; i < kivilcim_sayisi; i++)
+            {
+                kivilcimlar[i] = Instantiate(kivilcim_ana, transform.position, Quaternion.identity);
+                kivilcimlar[i].SetActive(false);
+            }
+
+
+
+
+        }
+
 
        Application.targetFrameRate = 60;
         m_WheelMeshLocalRotations = new Quaternion[4];
-            for (int i = 0; i < 4; i++)
+
+        m_WheelMeshes[0] = GameObject.Find("fr");
+        m_WheelMeshes[1] = GameObject.Find("fl");
+        m_WheelMeshes[2] = GameObject.Find("rl");
+        m_WheelMeshes[3] = GameObject.Find("rr");
+
+        m_WheelColliders[0] = GameObject.Find("fr (1)").transform.GetComponent<WheelCollider>();
+        m_WheelColliders[1] = GameObject.Find("fl (1)").transform.GetComponent<WheelCollider>();
+        m_WheelColliders[2] = GameObject.Find("rl (1)").transform.GetComponent<WheelCollider>();
+        m_WheelColliders[3] = GameObject.Find("rr (1)").transform.GetComponent<WheelCollider>();
+
+
+
+
+
+
+
+
+        for (int i = 0; i < 4; i++)
             {
                 m_WheelMeshLocalRotations[i] = m_WheelMeshes[i].transform.localRotation;
 
@@ -193,9 +266,18 @@ using UnityStandardAssets.Vehicles.Car;
         araba_patlama.SetActive(false);
         yangin.SetActive(false);
         fail = false;
-
-
+        
     }
+
+
+
+
+
+
+
+
+
+
         private void Update()
         {
         
@@ -413,7 +495,7 @@ using UnityStandardAssets.Vehicles.Car;
 
 
         }
-
+         if(araba=="ücüncü prototip") {
 
             if (ates && Time.time >= timetofire && fail==false)
             {
@@ -466,7 +548,7 @@ using UnityStandardAssets.Vehicles.Car;
 
                 if(Physics.Raycast(fuze_ucu,mermiler[i].transform.forward,out hit, fuze_sensoru_uzunlugu))
                 {
-                     vuruldu = true;
+                    vuruldu = true;
                     vurulan = hit.collider.name;
                     string carpma = hit.collider.tag;
                    
@@ -519,7 +601,139 @@ using UnityStandardAssets.Vehicles.Car;
 
 
 
+            } 
+        
+        }else if (araba=="birinci_prototip") {
+         if(ates==true && fail==false)
+            {
+
+                GameObject fisek = transform.GetChild(5).gameObject;
+
+                fisek.SetActive(true);
+                Vector3 sapma;
+                sapma=new Vector3(UnityEngine.Random.Range(0.0f, 0.5f), UnityEngine.Random.Range(0.0f, 0.9f),UnityEngine.Random.Range(0.0f, 0.9f));
+                Vector3 sapma2=new Vector3(UnityEngine.Random.Range(0.0f, 0.2f), UnityEngine.Random.Range(0.0f, 0.2f),UnityEngine.Random.Range(0.0f, 0.2f));
+
+
+                RaycastHit bullet_hit;               
+                /* GameObject bullet_trace = transform.GetChild(8).gameObject;
+                float buyukluk = UnityEngine.Random.Range(1.2f, 0.2f);*/
+
+                if (Time.time >= timetobullet)
+                {
+
+                    siluetler[sira_siluet].SetActive(true);
+                    siluetler[sira_siluet].transform.position = fisek.transform.position+sapma2;
+                    siluetler[sira_siluet].transform.rotation = fisek.transform.rotation;
+
+                    sira_siluet++;
+                    ilk_siluet++;
+                    if (sira_siluet == siluet_sayisi)
+                    {
+                        sira_siluet = 0;
+                    }
+                    if (ilk_siluet == siluet_sayisi)
+                    {
+                        ilk_siluet = 0;
+                    }
+
+                    if (ilk_siluet >= 0)
+                    {
+
+                        siluetler[ilk_siluet].SetActive(false);
+
+
+                    }
+
+
+
+
+                    if (Physics.Raycast(fisek.transform.position+sapma,fisek.transform.forward, out bullet_hit,menzil_uzunlugu))
+                    {
+
+
+
+                        kivilcimlar[son_kivilcim].SetActive(true);
+                        kivilcimlar[son_kivilcim].transform.position = bullet_hit.point;
+                        kivilcimlar[son_kivilcim].transform.rotation = Quaternion.LookRotation(bullet_hit.normal);
+                        kivilcimlar[son_kivilcim].transform.SetParent(bullet_hit.collider.transform);
+                        if (bullet_hit.collider.tag != "Untagged")
+                        {
+                            vuruldu = true;
+                            vurulan = bullet_hit.collider.name;
+                            kivilcimlar[son_kivilcim].transform.localScale = new Vector3(3.8f, 3.8f, 3.8f);
+
+
+                        }
+                        else
+                        {
+                            kivilcimlar[son_kivilcim].transform.localScale = new Vector3(1.8f, 1.8f, 1.8f);
+                        }
+
+                        son_kivilcim++;
+                        ilk_kivilcim++;
+                        if (son_kivilcim == kivilcim_sayisi)
+                        {
+
+                            son_kivilcim = 0;
+                        }
+                        if (ilk_kivilcim == kivilcim_sayisi)
+                        {
+
+                            ilk_kivilcim = 0;
+                        }
+                        if (ilk_kivilcim >= 0)
+                        {
+                            kivilcimlar[ilk_kivilcim].SetActive(false);
+
+                        }
+
+
+
+
+                    }
+                    Debug.DrawRay(fisek.transform.position + sapma, fisek.transform.forward*menzil_uzunlugu , Color.green);
+
+
+
+
+
+                    
+                    timetobullet = Time.time + 1.0f / bulletrate;
+                   /* bullet_trace.SetActive(true);
+                    bullet_trace.transform.localScale = new Vector3(-0.05f, -0.05f, -7.5f) * buyukluk;*/
+                }
+                else
+                {
+                   // bullet_trace.SetActive(false);
+
+                }
+
+
             }
+            else
+            {
+                transform.GetChild(5).gameObject.SetActive(false);
+            }
+
+            for (int i = 0; i < siluetler.Length; i++)
+            {
+                if (siluetler[i].activeSelf == true)
+                {
+
+
+                    siluetler[i].transform.position += siluetler[i].transform.forward * UnityEngine.Random.Range(150, 200) * Time.deltaTime;
+
+
+
+
+                }
+
+
+
+
+            }
+        }
 
         RaycastHit[] su_hit;
         bool[] su;

@@ -806,6 +806,49 @@ public class Kontrol_denemesi : MonoBehaviour
             if (player.GetComponent<CarController>().vuruldu == true)
             {
                 string isim = player.GetComponent<CarController>().vurulan;
+                if (dusmanlar[i].name == isim)
+                {
+
+                    dusman_cani[i] -= 2;
+                    player.GetComponent<CarController>().vuruldu = false;
+                    if (dusman_cani[i] == 0 || dusman_cani[i] < 0)
+                    {
+                        infilak[infilak_sirasi].SetActive(true);
+                        infilak[infilak_sirasi].transform.position = dusmanlar[i].transform.position;
+                        if (dusmanlar[i].tag == "drone_1b") Patla(dusmanlar[i], parcali_drone1);
+                        else if (dusmanlar[i].tag == "drone_5") Patla(dusmanlar[i], parcali_drone5);
+                        else if (dusmanlar[i].tag == "drone11_c") Patla(dusmanlar[i], parcali_drone11c);
+                        else if (dusmanlar[i].tag == "mayinci") Patla(dusmanlar[i], parcali_mayinci);
+                        else if (dusmanlar[i].tag == "füzeci") Patla(dusmanlar[i], parcali_drone6);
+                        else if (dusmanlar[i].tag == "fuzeci_canavar") Patla(dusmanlar[i], parcali_fuze_canavari);
+                        else if (dusmanlar[i].tag == "sonuncu") Patla(dusmanlar[i], parcali_sonuncu);
+                        /*parcali_drone1.transform.position=dusmanlar[a].transform.position;
+                        parcali_drone1.SetActive(true);
+                        dusmanlar[a].SetActive(false);
+*/
+
+
+
+                        onceki_infilak = infilak_sirasi + 2;
+                        if (onceki_infilak == infilak_sayisi || onceki_infilak > infilak_sayisi)
+                        {
+                            onceki_infilak = onceki_infilak - infilak_sayisi;
+
+                        }
+                        infilak[onceki_infilak].SetActive(false);
+                        infilak_sirasi++;
+                        if (infilak_sirasi == 3) infilak_sirasi = 0;
+                        toplamaya_basla[i] = Time.time + toplama_suresi;
+                        enkaz_topla[i] = true;
+                        toplanan_drone[i] = dusmanlar[i].tag;
+                        aktif_dusman_sayisi--;
+
+
+
+                    }
+
+                }
+                /*
                 // RaycastHit carp = player.GetComponent<CarController>().hit;
 
                 for (int a = 0; a < dusmanlar.Length; a++)
@@ -828,13 +871,13 @@ public class Kontrol_denemesi : MonoBehaviour
                                 else if(dusmanlar[a].tag=="mayinci")Patla(dusmanlar[a],parcali_mayinci);
                                 else if(dusmanlar[a].tag=="füzeci")Patla(dusmanlar[a],parcali_drone6);
                                 else if(dusmanlar[a].tag== "fuzeci_canavar") Patla(dusmanlar[a],parcali_fuze_canavari);
-                                else if(dusmanlar[a].tag== "sonuncu") Patla(dusmanlar[a],parcali_sonuncu);                                
+                                else if(dusmanlar[a].tag== "sonuncu") Patla(dusmanlar[a],parcali_sonuncu);   */                             
                                 /*parcali_drone1.transform.position=dusmanlar[a].transform.position;
                                 parcali_drone1.SetActive(true);
                                 dusmanlar[a].SetActive(false);
 */
 
-
+                /*
 
                                 onceki_infilak = infilak_sirasi + 2;
                                 if (onceki_infilak == infilak_sayisi || onceki_infilak > infilak_sayisi)
@@ -855,16 +898,16 @@ public class Kontrol_denemesi : MonoBehaviour
                                     parcali_drone1.SetActive(true);
 
                                     dusmanlar[a].SetActive(false);*/
-                            }
+                 /*           }
 
                         }
                     }
                 }
 
 
+*/
 
 
-                player.GetComponent<CarController>().vuruldu = false;
 
             }
             //////////// ates etme kodlarý///////////////////
@@ -1593,7 +1636,6 @@ public class Kontrol_denemesi : MonoBehaviour
                         fuze_pat[i].SetActive(true);
                         fuze_pat[i].transform.position = hit.point;
                         fuze_pat[i].transform.rotation = Quaternion.LookRotation(hit.normal);
-                        Debug.Log("vuruldu" + i);
 
                     }
                     else if(hit.collider.tag =="füzeci" || hit.collider.tag == "drone_5" ||hit.collider.tag == "drone_1b"||hit.collider.tag == "drone11_c")
