@@ -285,6 +285,41 @@ namespace SplineMesh
             ozellikler.sona_tak = true;
             ozellikler.ters_cevir = true;
         }
+        public void b_kasis_ekle()
+        {
+
+            GameObject newObj = new GameObject("baþ kasis");
+
+            newObj.transform.SetParent(hedef_cizgi.transform);
+            newObj.transform.localPosition = Vector3.zero;
+            newObj.transform.localRotation = Quaternion.identity;
+            newObj.AddComponent(typeof(ExampleFollowSpline));
+            var ozellikler = newObj.GetComponent<ExampleFollowSpline>();
+            prefab = GameObject.Find("kasis");
+            ozellikler.spline = hedef_cizgi.GetComponent<Spline>();
+            ozellikler.Follower = prefab;
+            ozellikler.sona_tak = false;
+            ozellikler.ters_cevir = false;
+        }
+
+        public void s_kasis_ekle()
+        {
+
+            GameObject newObj = new GameObject("son kasis");
+
+            newObj.transform.SetParent(hedef_cizgi.transform);
+            newObj.transform.localPosition = Vector3.zero;
+            newObj.transform.localRotation = Quaternion.identity;
+            newObj.AddComponent(typeof(ExampleFollowSpline));
+            var ozellikler = newObj.GetComponent<ExampleFollowSpline>();
+            prefab = GameObject.Find("kasis");
+            ozellikler.spline = hedef_cizgi.GetComponent<Spline>();
+            ozellikler.Follower = prefab;
+            ozellikler.sona_tak = true;
+            ozellikler.ters_cevir = true;
+        }
+
+
 
 
 

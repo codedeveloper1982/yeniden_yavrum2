@@ -87,6 +87,16 @@ namespace SplineMesh
                 ekle.sona_dere();
 
             }
+            if (GUILayout.Button("baþa kasis ekle"))
+            {
+                ekle.b_kasis_ekle();
+            }
+
+            if (GUILayout.Button("sona kasis ekle"))
+            {
+                ekle.s_kasis_ekle();
+            }
+
 
 
         }
