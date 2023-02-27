@@ -64,7 +64,7 @@ using UnityStandardAssets.Vehicles.Car;
         GameObject[] mermiler;// mermiler dizisi oluþturur
         GameObject[] roket_trails;
         GameObject[] patlama;
-    GameObject[] kucuk_pat;
+        GameObject[] kucuk_pat;
         public GameObject bullet;// çoðaltýlacak füze
         public GameObject roketatesi;
         public GameObject pat;
@@ -140,17 +140,69 @@ using UnityStandardAssets.Vehicles.Car;
     private GameObject[] kivilcimlar;
     private int kivilcim_sayisi = 10, ilk_kivilcim, son_kivilcim;
 
+    [Header("LAZER AYARLARI")]
+
+    // LAZER AYARLARI
+    public float lazer_mesafesi;
+    public GameObject lr;
+    public GameObject lazer_yakan;
+    private GameObject[] lazeratesler;
+    private int l_ates_sayisi = 70, ilk_lazer_ates, son_lazer_ates;
+    private float lazeruzunluðu;
+    public GameObject degen;
+
+    //kursun  ayarlarý
+
+    [Header("kursun")]
+
+    GameObject[] kursunlar;// kursunlar dizisi oluþturur
+    public int kursunsayisi;// aktif olacak füze sayýsý
+    public GameObject kursun;
+    private int kursun_sirasi, kursun_ilk;
+    public float kursun_sensoru_uzunlugu;
 
     // Use this for initialization
     private void Start()
         {
         araba = transform.name;
 
+
+          shootpoint = GameObject.FindGameObjectWithTag("atisnoktasi");
+
         if(araba=="ücüncü prototip")
         {
             azaltma = 0.84f;
 
-        }else if(araba=="birinci_prototip")
+            mermiler = new GameObject[mermisayisi];
+            roket_trails = new GameObject[mermisayisi];
+            patlama = new GameObject[mermisayisi];
+            kucuk_pat = new GameObject[mermisayisi];
+
+
+            for (int i = 0; i < mermisayisi; i++)
+            {
+                mermiler[i] = Instantiate(bullet, shootpoint.transform.position, Quaternion.identity);
+                roket_trails[i] = Instantiate(roketatesi, shootpoint.transform.position, Quaternion.identity);
+                patlama[i] = Instantiate(pat, shootpoint.transform.position, Quaternion.identity);
+                kucuk_pat[i] = Instantiate(kucuk_patlama, shootpoint.transform.position, Quaternion.identity);
+                //mermiler[i].tag = "roket" + i;
+                mermiler[i].SetActive(false);
+                roket_trails[i].SetActive(false);
+                patlama[i].SetActive(false);
+                kucuk_pat[i].SetActive(false);
+
+
+
+
+
+            }
+            sira = 0;
+            ilk = sira - (mermisayisi - 1);
+
+
+
+        }
+        else if(araba=="birinci_prototip")
         {
             azaltma = 0.86f;
 
@@ -183,10 +235,62 @@ using UnityStandardAssets.Vehicles.Car;
 
 
 
+        }else if(araba== "ikinci_prototip")
+        {
+
+
+
+
+            azaltma = 0.84f;
+
+            // lazer ile ilgili ayarlar
+            lr.SetActive(false);
+            degen.SetActive(false);
+
+
+            son_lazer_ates = 0;
+            ilk_lazer_ates = son_lazer_ates - (l_ates_sayisi - 1);
+
+            lazeratesler = new GameObject[l_ates_sayisi];
+
+            for (int i = 0; i < l_ates_sayisi; i++)
+            {
+                lazeratesler[i] = Instantiate(lazer_yakan, transform.position, Quaternion.identity);
+                lazeratesler[i].SetActive(false);
+            }
+
+            lazer_yakan.SetActive(false);
+
+
+
+
+
+        }
+        else if (araba== "dördüncü_prototip")
+        {
+            azaltma = 0.84f;
+
+            kursunlar = new GameObject[kursunsayisi];
+            kucuk_pat = new GameObject[kursunsayisi];
+
+            for (int i = 0; i < kursunsayisi; i++)
+            {
+                kursunlar[i] = Instantiate(kursun, shootpoint.transform.position, Quaternion.identity);
+                kucuk_pat[i] = Instantiate(kucuk_patlama, shootpoint.transform.position, Quaternion.identity);
+                //kursunlar[i].tag = "roket" + i;
+                kursunlar[i].SetActive(false);
+                kucuk_pat[i].SetActive(false);
+            }
+
+            kursun_sirasi = 0;
+            kursun_ilk = kursun_sirasi - (kursunsayisi - 1);
+
+
+
         }
 
 
-       Application.targetFrameRate = 60;
+        Application.targetFrameRate = 60;
         m_WheelMeshLocalRotations = new Quaternion[4];
 
         m_WheelMeshes[0] = GameObject.Find("fr");
@@ -224,31 +328,6 @@ using UnityStandardAssets.Vehicles.Car;
 
             //FÜZE KODLARI
 
-            mermiler = new GameObject[mermisayisi];
-            roket_trails=new GameObject[mermisayisi];
-            patlama =new GameObject[mermisayisi];
-            kucuk_pat=new GameObject[mermisayisi];
-
-            shootpoint = GameObject.FindGameObjectWithTag("atisnoktasi");
-            for (int i = 0; i < mermisayisi; i++)
-            {
-                mermiler[i] = Instantiate(bullet, shootpoint.transform.position, Quaternion.identity);
-                roket_trails[i]= Instantiate(roketatesi, shootpoint.transform.position, Quaternion.identity);
-                patlama[i]= Instantiate(pat, shootpoint.transform.position, Quaternion.identity);
-                kucuk_pat[i]= Instantiate(kucuk_patlama, shootpoint.transform.position, Quaternion.identity);
-                //mermiler[i].tag = "roket" + i;
-                mermiler[i].SetActive(false);
-                roket_trails[i].SetActive(false);
-                patlama[i].SetActive(false);
-                kucuk_pat[i].SetActive(false);
-
-
-
-
-
-            }
-            sira = 0;
-            ilk = sira-(mermisayisi-1);
 
         su_sicratma = new GameObject[su_sayisi];
         for (int i = 0; i < su_sayisi; i++)
@@ -733,9 +812,169 @@ using UnityStandardAssets.Vehicles.Car;
 
 
             }
-        }
+        }else if (araba == "ikinci_prototip")
+        {
+            if (ates == true && fail == false)
+            {
+                lr.SetActive(true);
+                lr.transform.localScale = new Vector3(lr.transform.localScale.x, lr.transform.localScale.y, lazeruzunluðu);
+                lr.transform.position = shootpoint.transform.position;
+                lr.transform.rotation= shootpoint.transform.rotation;
+                Vector3 namlu = shootpoint.transform.position;//ýþýn baþlangýþ noktasý
+                RaycastHit laser_hit;//ýþýn çarpmasý belirlenecek
+                if (Physics.Raycast(namlu, shootpoint.transform.forward, out laser_hit, lazer_mesafesi))
+                {
 
-        RaycastHit[] su_hit;
+                    lazeruzunluðu =(0.5f+Vector3.Distance(shootpoint.transform.position, laser_hit.point)) * 0.25f;
+
+                    lr.transform.localScale = new Vector3(lr.transform.localScale.x, lr.transform.localScale.y,lazeruzunluðu);
+                   
+
+                    lazer_yakan.SetActive(true);
+                    lazer_yakan.transform.position = laser_hit.point;
+
+                    lazeratesler[son_lazer_ates].SetActive(true);
+                    lazeratesler[son_lazer_ates].transform.position = laser_hit.point;
+                    lazeratesler[son_lazer_ates].transform.rotation = Quaternion.LookRotation(laser_hit.normal);
+                    lazeratesler[son_lazer_ates].transform.SetParent(laser_hit.collider.transform);
+
+
+                    degen.SetActive(true);
+
+                    degen.transform.position = laser_hit.point;
+                    degen.transform.rotation = Quaternion.LookRotation(laser_hit.normal);
+                    degen.transform.position = degen.transform.position + degen.transform.forward * 0.1f;
+
+
+
+
+                    if (laser_hit.collider.tag != "Untagged")
+                    {
+                        vuruldu = true;
+                        vurulan = laser_hit.collider.name;
+                        lazeratesler[son_lazer_ates].transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+
+
+                    }
+                    else
+                    {
+
+                        lazeratesler[son_lazer_ates].transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+                    }
+
+
+
+                    son_lazer_ates++;
+                    ilk_lazer_ates++;
+                    if (son_lazer_ates == l_ates_sayisi)
+                    {
+
+                        son_lazer_ates = 0;
+                    }
+                    if (ilk_lazer_ates == l_ates_sayisi)
+                    {
+
+                        ilk_lazer_ates = 0;
+                    }
+                    if (ilk_lazer_ates >= 0)
+                    {
+                        lazeratesler[ilk_lazer_ates].SetActive(false);
+
+                    }
+
+
+
+                    }
+                    else
+                {
+
+                    lazeruzunluðu += 0.5f;
+                    degen.SetActive(false);
+
+                }
+                Debug.DrawRay(namlu, shootpoint.transform.forward * lazer_mesafesi, Color.green);
+
+            }
+            else
+            {
+                lr.SetActive(false);
+                lazer_yakan.SetActive(false);
+                lazeruzunluðu = 0;
+                degen.SetActive(false);
+            }
+
+
+
+        }else if(araba== "dördüncü_prototip")
+        {
+            if (ates && Time.time >= timetofire && fail == false)
+            {
+                timetofire = Time.time + 1.0f / firerate;
+                kursunlar[kursun_sirasi].transform.position = shootpoint.transform.position;
+                kursunlar[kursun_sirasi].transform.rotation = shootpoint.transform.rotation;
+                kursunlar[kursun_sirasi].SetActive(true);
+                kursun_sirasi++;
+                kursun_ilk++;
+                if (kursun_sirasi == kursunsayisi)
+                {
+                    kursun_sirasi = 0;
+                }
+                if (kursun_ilk == kursunsayisi)
+                {
+                    kursun_ilk = 0;
+                }
+
+                if (kursun_ilk >= 0)
+                {
+
+                    kursunlar[kursun_ilk].SetActive(false);
+                    kucuk_pat[kursun_ilk].SetActive(false);
+
+
+
+
+                }
+
+
+
+            }
+
+            for (int i = 0; i < kursunsayisi; i++)
+            {
+
+                if (kursunlar[i].activeSelf == true)
+                {
+                    kursunlar[i].transform.position += kursunlar[i].transform.forward * (speed * Time.deltaTime);
+
+                    Vector3 kursun_ucu = kursunlar[i].transform.position;
+                    kursun_ucu.z += sensorbaslangýcý;
+
+
+
+                    if (Physics.Raycast(kursun_ucu, kursunlar[i].transform.forward, out hit, kursun_sensoru_uzunlugu))
+                    {
+                        vuruldu = true;
+                        vurulan = hit.collider.name;
+
+                        kucuk_pat[i].SetActive(true);
+                        kucuk_pat[i].transform.position = hit.point;
+                        kucuk_pat[i].transform.rotation = Quaternion.LookRotation(hit.normal);
+
+
+                        kursunlar[i].SetActive(false);
+
+                    }
+                    Debug.DrawRay(kursun_ucu, kursunlar[i].transform.forward * kursun_sensoru_uzunlugu, Color.green);
+
+                }
+
+
+                }
+
+
+            }
+
+            RaycastHit[] su_hit;
         bool[] su;
         float[] su_sensoru;
         //bool[] havada;
@@ -754,7 +993,7 @@ using UnityStandardAssets.Vehicles.Car;
 
 
 
-            if (Physics.Raycast(transform.position + transform.forward * su_sensoru[i], direction*0.2f, out su_hit[i], 1f))
+            if (Physics.Raycast(transform.position + transform.forward * su_sensoru[i], direction*0.2f, out su_hit[i], 2f))
             {
 
                 if (su_hit[i].collider.tag == "su")
@@ -769,6 +1008,7 @@ using UnityStandardAssets.Vehicles.Car;
 
                 if (su[i])
                 {
+                    
                     if (su_sicratma[i].activeSelf == false) { 
                     su_sicratma[i].transform.position = su_hit[i].point;
                     sicratma.transform.position = su_hit[i].point;
