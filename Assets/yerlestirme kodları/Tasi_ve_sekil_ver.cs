@@ -50,8 +50,11 @@ namespace SplineMesh{
             float rate = cizgi.nodes.Count - 1;
             int son_nokta=cizgi.nodes.Count - 1;
             CurveSample sample = cizgi.GetSample(rate);
+            Vector3 son_dir = cizgi.transform.position + cizgi.nodes[son_nokta].Direction;
+            Vector3 son_pos = cizgi.transform.position + cizgi.nodes[son_nokta].Position;
 
-            Vector3 yonal = cizgi.nodes[son_nokta].Direction - cizgi.nodes[son_nokta].Position;
+
+            Vector3 yonal = son_dir - son_pos;
             yonal = yonal.normalized;
             sekilnenecek.nodes[0].Position = new Vector3(0, 0, 0);
             sekilnenecek.nodes[0].Direction = sekilnenecek.nodes[0].Position + yonal*4;

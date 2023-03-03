@@ -203,6 +203,26 @@ namespace SplineMesh
             GUILayout.EndHorizontal();
 
 
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("çizgi kopyala"))
+            {
+                Spline cizgi = kopya.kopya_cizgiler[0];
+                int node_sayisi = cizgi.nodes.Count;
+                int baslangic = 1;
+                Debug.Log(baslangic);
+
+                for (int i = 0; i < nokta_sayisi; i++)
+                {
+                    kopya.ileri_nokta_ekle();
+                    kopya.generate_nokta(cizgi, baslangic, baslangic + 1);
+                    baslangic++;
+
+                }
+            }
+
+            GUILayout.EndHorizontal();
+
+
         }
 
 

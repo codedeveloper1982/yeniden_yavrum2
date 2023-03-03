@@ -75,7 +75,7 @@ namespace SplineMesh {
                 } else {
                     Tools.current = Tool.None;
                     if (selection == null && spline.nodes.Count > 0)
-                        selection = spline.nodes[0];
+                        selection = spline.nodes[spline.nodes.Count-1];
                 }
             }
 
