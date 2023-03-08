@@ -106,6 +106,42 @@ namespace SplineMesh{
 
         }
 
+        public void kopru_uzunluk()
+        {
+            Spline sekilnenecek = transform.GetComponent<Spline>();
+
+            Vector3 son_dir = sekilnenecek.nodes[1].Position;
+            Vector3 son_pos = sekilnenecek.nodes[0].Position;
+
+
+            Vector3 yonal = son_dir - son_pos;
+            yonal = yonal.normalized;
+
+            sekilnenecek.nodes[1].Position = sekilnenecek.nodes[0].Position + yonal * 50.5f;
+            sekilnenecek.nodes[1].Direction = sekilnenecek.nodes[1].Position + yonal * 4;
+
+        }
+
+
+        public void son_nokta_bagla()
+        {
+            Spline sekilnenecek = transform.GetComponent<Spline>();
+
+            cizgi = Sonuna_eklenecek_cizgi.GetComponent<Spline>();
+
+            int son_nokta = sekilnenecek.nodes.Count - 1;
+
+            Vector3 son_dir = cizgi.transform.position + cizgi.nodes[0].Direction;
+            Vector3 son_pos = cizgi.transform.position + cizgi.nodes[0].Position;
+            Vector3 kendi_pos = transform.position;
+            Vector3 uzaklýk_al = son_pos - kendi_pos;
+
+            Vector3 yonal = son_dir - son_pos;
+            yonal = yonal.normalized;
+            sekilnenecek.nodes[son_nokta].Position = uzaklýk_al;
+            sekilnenecek.nodes[son_nokta].Direction = sekilnenecek.nodes[son_nokta].Position + yonal * 4;
+
+        }
 
 
 

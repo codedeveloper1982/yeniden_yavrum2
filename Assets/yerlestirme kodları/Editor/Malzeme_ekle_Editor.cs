@@ -50,13 +50,6 @@ namespace SplineMesh
 
             }
 
-            if (GUILayout.Button("yol ekle"))
-            {
-
-                ekle.yol_ekle();
-
-            }
-
             if (GUILayout.Button("tünel ekle"))
             {
 
@@ -96,7 +89,10 @@ namespace SplineMesh
             {
                 ekle.s_kasis_ekle();
             }
-
+            if (GUILayout.Button("combiner ekle"))
+            {
+                ekle.Combiner_ekle();
+            }
 
 
         }

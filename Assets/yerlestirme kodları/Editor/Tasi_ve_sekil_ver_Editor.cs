@@ -47,6 +47,14 @@ namespace SplineMesh
             {
                 tasi_ve_sekil.yol_ekle();
             }
+            if (GUILayout.Button("köprü uzunluðu ver"))
+            {
+                tasi_ve_sekil.kopru_uzunluk();
+            }
+            if (GUILayout.Button("son noktayý baðla"))
+            {
+                tasi_ve_sekil.son_nokta_bagla();
+            }
 
         }
 

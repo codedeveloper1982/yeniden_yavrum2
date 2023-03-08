@@ -20,7 +20,6 @@ public class Mesh_combiner : MonoBehaviour
         if (Time.time > bekle) { 
             CombineMesh();
             gameObject.isStatic = true;
-            transform.
             transform.GetComponent<Mesh_combiner>().enabled = false;
 
         }
@@ -49,7 +48,7 @@ public class Mesh_combiner : MonoBehaviour
 
         transform.localScale = new Vector3(1, 1, 1);
         transform.rotation = Quaternion.identity;
-        transform.position = Vector3.zero;
+        transform.position = new Vector3(0, -1, 0);
 
 
 

@@ -7,16 +7,102 @@ namespace SplineMesh
 {
     public class Malzeme_ekle : MonoBehaviour
     {
-        public GameObject hedef_cizgi;
+        private GameObject hedef_cizgi;
         private GameObject prefab;
         private Mesh yol;
         private Material mat;
+        public GameObject[] combiner_eklenecek;
+        private GameObject[] gecici;
 
 
         public void agac_ekle()
         {
-            GameObject newObj = new GameObject("agac");
+            Spline cizgi = gameObject.transform.GetComponent<Spline>();
+            gecici = new GameObject[20];
+            Debug.Log(cizgi.Length);
+            float toplam = 10, kalan;
 
+            for (int i = 0; i < 10; i++)
+            {
+
+
+
+                if (toplam < cizgi.Length)
+                {
+                    kalan = toplam + 70;
+
+                    if (kalan < cizgi.Length)
+                    {
+
+                        GameObject newObj = new GameObject("agac" + i);
+
+                        newObj.transform.SetParent(gameObject.transform);
+                        newObj.transform.localPosition = Vector3.zero;
+                        newObj.transform.localRotation = Quaternion.identity;
+                        newObj.AddComponent(typeof(ExampleSower));
+                        var ozellikler = newObj.GetComponent<ExampleSower>();
+                        prefab = GameObject.Find("_gac3");
+                        ozellikler.prefab = prefab;
+                        ozellikler.scale = 25;
+                        ozellikler.spacing = 10.29f;
+                        ozellikler.offset = 4.9f;
+
+                        ozellikler.baslangic = toplam;
+                        ozellikler.son = kalan;
+                        ozellikler.dik_dur = true;
+                        ozellikler.iki_tarafa_da = true;
+
+                        toplam += 70;
+
+                        gecici[i] = newObj;
+
+
+                    }
+                    else
+                    {
+                        Debug.Log(toplam + "   " + cizgi.Length);
+                        Debug.Log(toplam + "   " + (kalan));
+                        GameObject newObj = new GameObject("agac" + i);
+
+                        newObj.transform.SetParent(gameObject.transform);
+                        newObj.transform.localPosition = Vector3.zero;
+                        newObj.transform.localRotation = Quaternion.identity;
+                        newObj.AddComponent(typeof(ExampleSower));
+                        var ozellikler = newObj.GetComponent<ExampleSower>();
+                        prefab = GameObject.Find("_gac3");
+                        ozellikler.prefab = prefab;
+                        ozellikler.scale = 25;
+                        ozellikler.spacing = 10.29f;
+                        ozellikler.offset = 4.9f;
+
+                        ozellikler.baslangic = toplam;
+                        ozellikler.son = cizgi.Length;
+                        ozellikler.dik_dur = true;
+                        ozellikler.iki_tarafa_da = true;
+                        toplam += 70;
+
+
+                        gecici[i] = newObj;
+                        combiner_eklenecek = new GameObject[i+1];
+
+                    }
+                }
+
+
+
+
+
+            }
+                for (int i = 0; i < combiner_eklenecek.Length; i++)
+                {
+                    combiner_eklenecek[i] = gecici[i];
+
+                }
+
+
+            /*
+            GameObject newObj = new GameObject("agac");
+            hedef_cizgi = gameObject;
             newObj.transform.SetParent(hedef_cizgi.transform);
             newObj.transform.localPosition = Vector3.zero;
             newObj.transform.localRotation = Quaternion.identity;
@@ -32,12 +118,12 @@ namespace SplineMesh
             ozellikler.dik_dur = true;
             ozellikler.iki_tarafa_da= true;
 
-
+*/
         }
         public void dag_ekle()
         {
             Spline cizgi = gameObject.transform.GetComponent<Spline>();
-
+            gecici = new GameObject[20];
             Debug.Log(cizgi.Length);
             float toplam=0,kalan;
 
@@ -71,8 +157,8 @@ namespace SplineMesh
                     ozellikler.iki_tarafa_da = true;
 
 
-
-                    toplam += 70;
+                        gecici[i] = newObj;
+                        toplam += 70;
                 }
                 else
                 {
@@ -97,9 +183,18 @@ namespace SplineMesh
                     ozellikler.iki_tarafa_da = true;
                     toplam += 70;
 
-                }
+                        gecici[i] = newObj;
+                        combiner_eklenecek = new GameObject[i + 1];
+
+                    }
                 }
 
+
+            }
+
+            for (int i = 0; i < combiner_eklenecek.Length; i++)
+            {
+                combiner_eklenecek[i] = gecici[i];
 
             }
 
@@ -199,7 +294,7 @@ namespace SplineMesh
         {
 
             GameObject newObj = new GameObject("köprü");
-
+            hedef_cizgi = gameObject;
             newObj.transform.SetParent(hedef_cizgi.transform);
             newObj.transform.localPosition = Vector3.zero;
             newObj.transform.localRotation = Quaternion.identity;
@@ -214,26 +309,10 @@ namespace SplineMesh
 
 
 
-
-        public void yol_ekle()
-        {
-            hedef_cizgi.AddComponent(typeof(SplineMeshTiling));
-            var ozellikler = hedef_cizgi.GetComponent<SplineMeshTiling>();
-            yol = GameObject.Find("atlas_yol").GetComponent<MeshFilter>().mesh;
-            mat = GameObject.Find("atlas_yol").GetComponent<MeshRenderer>().material;
-            ozellikler.mesh = yol;
-            ozellikler.material = mat;
-            ozellikler.rotation.y = 90;
-            ozellikler.curveSpace = true;
-            ozellikler.mode = MeshBender.FillingMode.StretchToInterval;
-
-
-        }
-
         public void tunel_ekle()
         {
             GameObject newObj = new GameObject("tunel");
-
+            hedef_cizgi = gameObject;
             newObj.transform.SetParent(hedef_cizgi.transform);
             newObj.transform.localPosition = Vector3.zero;
             newObj.transform.localRotation = Quaternion.identity;
@@ -256,7 +335,7 @@ namespace SplineMesh
         {
 
             GameObject newObj = new GameObject("baþ dere kýyýsý");
-
+            hedef_cizgi = gameObject;
             newObj.transform.SetParent(hedef_cizgi.transform);
             newObj.transform.localPosition = Vector3.zero;
             newObj.transform.localRotation = Quaternion.identity;
@@ -273,7 +352,7 @@ namespace SplineMesh
         {
 
             GameObject newObj = new GameObject("sona dere kýyýsý");
-
+            hedef_cizgi = gameObject;
             newObj.transform.SetParent(hedef_cizgi.transform);
             newObj.transform.localPosition = Vector3.zero;
             newObj.transform.localRotation = Quaternion.identity;
@@ -289,7 +368,7 @@ namespace SplineMesh
         {
 
             GameObject newObj = new GameObject("baþ kasis");
-
+            hedef_cizgi = gameObject;
             newObj.transform.SetParent(hedef_cizgi.transform);
             newObj.transform.localPosition = Vector3.zero;
             newObj.transform.localRotation = Quaternion.identity;
@@ -306,7 +385,7 @@ namespace SplineMesh
         {
 
             GameObject newObj = new GameObject("son kasis");
-
+            hedef_cizgi = gameObject;
             newObj.transform.SetParent(hedef_cizgi.transform);
             newObj.transform.localPosition = Vector3.zero;
             newObj.transform.localRotation = Quaternion.identity;
@@ -319,7 +398,28 @@ namespace SplineMesh
             ozellikler.ters_cevir = true;
         }
 
+        public void Combiner_ekle() 
+        {
+            for (int i = 0; i < combiner_eklenecek.Length; i++)
+            {
+                combiner_eklenecek[i].transform.GetChild(0).gameObject.AddComponent(typeof(MeshFilter));
+                combiner_eklenecek[i].transform.GetChild(0).gameObject.AddComponent(typeof(MeshRenderer));
+                combiner_eklenecek[i].transform.GetChild(0).gameObject.AddComponent(typeof(MeshCollider));
+                combiner_eklenecek[i].transform.GetChild(0).gameObject.AddComponent(typeof(Mesh_combiner));
 
+                Transform ogul = combiner_eklenecek[i].transform.GetChild(0).gameObject.transform;
+
+                UnityEditorInternal.ComponentUtility.CopyComponent(ogul.GetComponentInParent<ExampleSower>().prefab.GetComponent<MeshFilter>());
+                UnityEditorInternal.ComponentUtility.PasteComponentValues(ogul.GetComponent<MeshFilter>());
+
+                UnityEditorInternal.ComponentUtility.CopyComponent(ogul.GetComponentInParent<ExampleSower>().prefab.GetComponent<MeshRenderer>());
+                UnityEditorInternal.ComponentUtility.PasteComponentValues(ogul.GetComponent<MeshRenderer>());
+
+
+            }
+            combiner_eklenecek = new GameObject[0];
+
+        }
 
 
 
