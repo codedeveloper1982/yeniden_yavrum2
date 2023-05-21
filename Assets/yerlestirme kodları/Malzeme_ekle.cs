@@ -422,6 +422,38 @@ namespace SplineMesh
         }
 
 
+        public void tunel_sonu_ekle()
+        {
+
+            GameObject newObj = new GameObject("tünel_sonu");
+
+            newObj.transform.SetParent(gameObject.transform);
+            newObj.transform.localPosition = Vector3.zero;
+            newObj.transform.localRotation = Quaternion.identity;
+            newObj.AddComponent(typeof(ExampleFollowSpline));
+            var ozellikler = newObj.GetComponent<ExampleFollowSpline>();
+            prefab = GameObject.Find("tünel_ucu_tepelik");
+            ozellikler.spline = gameObject.GetComponent<Spline>();
+            ozellikler.Follower = prefab;
+            ozellikler.sona_tak = true;
+            ozellikler.ters_cevir = false;
+        }
+        public void tunel_basi_ekle()
+        {
+
+            GameObject newObj = new GameObject("tünel_baþý");
+
+            newObj.transform.SetParent(gameObject.transform);
+            newObj.transform.localPosition = Vector3.zero;
+            newObj.transform.localRotation = Quaternion.identity;
+            newObj.AddComponent(typeof(ExampleFollowSpline));
+            var ozellikler = newObj.GetComponent<ExampleFollowSpline>();
+            prefab = GameObject.Find("tünel_ucu_tepelik");
+            ozellikler.spline = gameObject.GetComponent<Spline>();
+            ozellikler.Follower = prefab;
+            ozellikler.sona_tak = false;
+            ozellikler.ters_cevir = true;
+        }
 
     }
 }

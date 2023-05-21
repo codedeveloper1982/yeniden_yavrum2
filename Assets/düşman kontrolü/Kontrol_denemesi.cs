@@ -170,7 +170,7 @@ public class Kontrol_denemesi : MonoBehaviour
     ///////aktif düþman sayýsý      ///////////////////////
     private int aktif_dusman_sayisi,dusman_sirasi,onceki_sira,sonraki_sira;
     private bool diger_dusmana_gec;
-    private int [] dusman_seviyesi= { 3, 2, 3 };
+    private int [] dusman_seviyesi= { 1, 1, 1,1,1 };
     private float obur_dusmana_gecis_vakti;
     private float dusman_hizi =5;
     private float oteleme_dur_kalk = 0;
@@ -222,6 +222,33 @@ public class Kontrol_denemesi : MonoBehaviour
 
     //araba hýzýný alýyoruz
     private float araba_hizi;
+
+
+    [Header("coin ayarlarý")]
+    public Material mat;
+    public Texture[] tex;
+    private float coin_gec = 0.02f, coin_time;
+    public int coin_sira;
+
+    /// <summary>
+    /// //////////////////burasýndan öncesii coin dönmesi, sonrasý ise  coin eklemeile ilgili
+    /// </summary>
+    public GameObject coin_objesi;
+    public float coin_sensoru;
+
+    private GameObject[] coinler;
+    private int coin_sayisi = 9, ilk_coin, son_coin;
+
+    private CurveSample coin_egrisi;
+    private bool coin_yerlesim,hepsi_toplandi;
+    private int coin_tarafi;
+    private int debug_sayisi = 0;
+
+    private int [] coin_eklenme_zamani;
+    private int coin_yeri_sayisi = 3;
+    private int coin_yer_al,siradaki_yer;
+    private GameObject arka_kýsým;
+
 
     void Start()
     {
@@ -530,6 +557,48 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
 
+
+
+        //////////////////coin ayarlarý//////////////////
+
+        coin_time = Time.time + coin_gec;
+        coin_sira = 0;
+        mat.mainTexture = tex[coin_sira];
+
+        /////////////////////////// burasýndan sonrasý 
+
+        son_coin = 0;
+        ilk_coin = son_coin - (coin_sayisi - 1);
+
+        coinler = new GameObject[coin_sayisi];
+
+        for (int i = 0; i < coin_sayisi; i++)
+        {
+            coinler[i] = Instantiate(coin_objesi, transform.position, Quaternion.identity);
+            coinler[i].SetActive(false);
+        }
+        coin_yerlesim = false;
+       
+
+        
+        Random.InitState(System.DateTime.Now.Millisecond);
+
+        coin_eklenme_zamani = new int[coin_yeri_sayisi];
+        siradaki_yer = 0;
+        for (int i = 0; i < coin_yeri_sayisi; i++)
+        {
+
+            coin_eklenme_zamani[i] = dusmanlar.Length * i / coin_yeri_sayisi;//BURADA CÝZGÝLERÝ SONRA DUSMANLAR YAP
+            
+
+        }
+        hepsi_toplandi = true;
+        coin_yer_al = 0;
+
+        ///////////////////////////BURASI AR KISIMI ÝSÝMLENDÝRMEK ÝÇÝN ////////////////
+        arka_kýsým = GameObject.Find("düþman kontrol arka kýsým");
+
+
     }
 
     // Update is called once per frame
@@ -541,7 +610,7 @@ public class Kontrol_denemesi : MonoBehaviour
         {
             ileri = true;
         }
-        if (Vector3.Distance(cube[1].transform.position, player.transform.position) < 10.0f)
+        if (Vector3.Distance(cube[1].transform.position, player.transform.position) < 30.0f)
         {
             geri = true;
         }
@@ -581,7 +650,7 @@ public class Kontrol_denemesi : MonoBehaviour
                 {
                    if(araba_hizi<3)dikey_degisim[i] = Random.Range(2, 4);
                    else dikey_degisim[i] = Random.Range(0, 5);
-                    Debug.Log("diey deðiþim "+dikey_degisim[i]);
+                   
                 }
 
                 if (cik_in[i] > dikey_degisim[i]) cik_in[i] -= cikin_hiz;
@@ -606,9 +675,21 @@ public class Kontrol_denemesi : MonoBehaviour
                     if (cizgi_sirasi[i] == cizgiler.Length) cizgi_sirasi[i] = 0;//bu konum deðil karýþtýrma
                     mevcut_cizgiler[i] = cizgiler[cizgi_sirasi[i]];
                     konum_sirasi[i] = kirp;
+
                 }
 
+
+                coin_yer_al = cizgi_sirasi[i]+1;
+                if (coin_yer_al == cizgiler.Length) coin_yer_al = 0;
+                Debug.Log(coin_yer_al + "               " + cizgi_sirasi[i]+"       "+ cizgiler[coin_yer_al].name);
+                if (cizgiler[coin_yer_al].Length<52) {coin_yer_al = cizgi_sirasi[i]+2; }
+
+                if (coin_yer_al == cizgiler.Length) coin_yer_al = 0;
+
+
             }
+
+            Debug.Log("coin  yeri:"+coin_yer_al);
 
             for (int i = 0; i < dusmanlar.Length; i++)
             {
@@ -920,7 +1001,6 @@ public class Kontrol_denemesi : MonoBehaviour
                     ates_araligi[i] = Random.Range(5.0f, 10.0f); 
                     ates_vakti[i] = Time.time + ates_araligi[i];
                 kullanilan_silah = Random.Range(1, 4);
-                Debug.Log(kullanilan_silah);
                 }
 
 
@@ -958,7 +1038,7 @@ public class Kontrol_denemesi : MonoBehaviour
                     muzzle.SetActive(true);
                     muzzle.transform.localPosition = ates_konum[i];
 
-                    Vector3 fuze_ucu = muzzle.transform.position+new Vector3(Random.Range(0,2),Random.Range(0,2),Random.Range(0,2));
+                    Vector3 fuze_ucu = muzzle.transform.position +new Vector3(Random.Range(-0.5f, 0.5f),Random.Range(-0.5f, 0.5f),Random.Range(-0.5f, 0.5f));
                     //fuze_ucu.z += sensorbaslangýcý;
                     RaycastHit hit;
                     if (Physics.Raycast(fuze_ucu, muzzle.transform.forward, out hit, 15))
@@ -1338,7 +1418,6 @@ public class Kontrol_denemesi : MonoBehaviour
 
                 if (canavar_fuze_at[i])
                 {
-                    Debug.Log("kod ulaþtý buraya" + ates[i]);
                     GameObject fuze_shootpoint = dusmanlar[i].transform.GetChild(0).gameObject;
                     fuze_shootpoint.transform.localPosition = ates_konum[i];
                     canavar_shootpoint[canavar_sira] = fuze_shootpoint.transform.position;
@@ -1674,7 +1753,7 @@ public class Kontrol_denemesi : MonoBehaviour
                 RaycastHit hit;
                 if (Physics.Raycast(laser_ucu, laserler[i].transform.forward, out hit, laser_sensoru_uzunlugu))
                 {
-                  //    Debug.Log("laser ile vuruldun");
+                  
                             laserler[i].SetActive(false);
                             laser_pat[i].SetActive(true);
                             laser_pat[i].transform.position = hit.point;
@@ -1700,7 +1779,7 @@ public class Kontrol_denemesi : MonoBehaviour
                 RaycastHit hit;
                 if (Physics.Raycast(mavi_laser_ucu, mavi_laserler[i].transform.forward, out hit, mavi_laser_sensoru_uzunlugu))
                 {
-                    //    Debug.Log("laser ile vuruldun");
+                   
                     mavi_laserler[i].SetActive(false);
                     mavi_laser_pat[i].SetActive(true);
                     mavi_laser_pat[i].transform.position = hit.point;
@@ -1732,7 +1811,7 @@ public class Kontrol_denemesi : MonoBehaviour
                     rocket_hiz_x[i] +=0.01f;
                     rocket_hiz_y[i]+=0.01f;
                     rocketler[i].transform.LookAt(player.transform);
-                   Debug.Log(rocket_hiz_x[i]+"merhaba");
+                  
         }else
         {    */   
                     rocket_trails[i].SetActive(true);
@@ -1744,7 +1823,7 @@ public class Kontrol_denemesi : MonoBehaviour
                 RaycastHit hit;
                 if (Physics.Raycast(laser_ucu, rocketler[i].transform.forward, out hit, rocket_sensoru_uzunlugu))
                 {
-                    //    Debug.Log("laser ile vuruldun");
+                   
 
                     if (hit.collider.tag == "drone_1b" || hit.collider.tag == "sonuncu")
                     {
@@ -1852,7 +1931,6 @@ public class Kontrol_denemesi : MonoBehaviour
                         canavar_fuze_pat[i].SetActive(true);
                         canavar_fuze_pat[i].transform.position = hit.point;
                         canavar_fuze_pat[i].transform.rotation = Quaternion.LookRotation(hit.normal);
-                        Debug.Log("vuruldu" + i);
 
                     }
                     else if (hit.collider.tag == "füzeci" || hit.collider.tag == "drone_5" || hit.collider.tag == "drone_1b" || hit.collider.tag == "drone11_c")
@@ -1921,7 +1999,7 @@ public class Kontrol_denemesi : MonoBehaviour
 
                 }
                 onceki_sira += aktif_dusman_sayisi;
-                
+
 
             diger_dusmana_gec = false;
             dusman_hizi = 3;
@@ -1932,10 +2010,94 @@ public class Kontrol_denemesi : MonoBehaviour
 
         }
 
+        ////////////////////////coin ayarlarý////////////////////////
+        if (coin_yerlesim==true)
+        {
+            for (int i = 0; i < coin_sayisi; i++)
+            {
+                
 
- }
+                coinler[i].SetActive(true);
 
-    private void fuze_gonder(GameObject fuze, Vector3 distance, float zaman,Vector3 shootpoint)
+           Hareket_et(coinler[i], cizgiler[coin_yer_al], coin_egrisi, (cizgiler[coin_yer_al].Length)/2+3*i);
+
+            coinler[i].transform.position = coinler[i].transform.position +new Vector3(0, 0.5f, 0);
+            coinler[i].transform.position = coinler[i].transform.position + coinler[i].transform.right * coin_tarafi*2;
+          
+
+
+            }
+
+
+            
+
+            coin_yerlesim = false;
+        
+        }
+
+
+
+        ///////////////////////////burasý coin materyali ile ilgili/////////////////////
+        if (coin_time < Time.time)
+        {
+
+            coin_time = Time.time + coin_gec;
+            coin_sira++;
+
+            if (coin_sira == tex.Length) coin_sira = 0;
+        }
+
+        mat.mainTexture = tex[coin_sira];
+        hepsi_toplandi = true;
+        for (int i = 0; i < coin_sayisi; i++)
+        {
+            if (coinler[i].activeSelf == true)
+            {
+
+                hepsi_toplandi = false;
+                Vector3 coin_ucu = coinler[i].transform.position;
+                Vector3 coin_yonu = player.transform.position - coin_ucu;
+                coin_yonu = coin_yonu.normalized;
+
+                RaycastHit coin_hit;
+                if (Physics.Raycast(coin_ucu, coin_yonu, out coin_hit, coin_sensoru))
+                {
+                    if (coin_hit.collider.tag == "Player") { 
+                    coinler[i].SetActive(false);
+                    }
+                }
+                Debug.DrawRay(coin_ucu, coin_yonu * coin_sensoru, Color.green);
+
+                float mesafe = Vector3.Distance(coinler[i].transform.position, arka_kýsým.transform.position);
+                if( mesafe <3.5f)coinler[i].SetActive(false);
+            }
+
+
+
+
+        }
+
+
+            if (coin_eklenme_zamani[siradaki_yer] < onceki_sira && onceki_sira>0 && coin_yerlesim==false && hepsi_toplandi==true)
+            {
+                
+                 
+
+                coin_yerlesim = true ;
+            coin_tarafi = Random.Range(0, 2) * 2 - 1;
+            if (siradaki_yer!=coin_yeri_sayisi-1)siradaki_yer++;
+
+            }
+
+
+
+
+
+    }
+
+
+
+        private void fuze_gonder(GameObject fuze, Vector3 distance, float zaman,Vector3 shootpoint)
     {
         Vector3 vek = distance;
 

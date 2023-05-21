@@ -366,14 +366,19 @@ using UnityStandardAssets.Vehicles.Car;
         hiza_basili = kontrolet.v;
 
         // if (Input.GetKeyDown(KeyCode.K)) transform.position = baslangic;
+        float yeni_azaltma;
+
+        if (donmeye_basili != 0) yeni_azaltma = 0.7f;
+        else yeni_azaltma = azaltma;
+
 
         mevcut_egim = transform.localEulerAngles.x;
             //ARABA ÝÇÝN ÖZEL GRAVÝTY OLUÞTURUYORUZ
             
-            gravityScale = 1 - azaltma * (CurrentSpeed / MaxSpeed);
+            gravityScale = 1 - yeni_azaltma * (CurrentSpeed / (MaxSpeed+donmeye_basili));
             Vector3 gravity = globalGravity * gravityScale * Vector3.up;
            m_rb.AddForce(gravity, ForceMode.Acceleration);
-            m_rb.drag=0.5f-(0.5f-0.01f)* (CurrentSpeed / MaxSpeed);
+            m_rb.drag=0.5f-(0.5f-0.01f)* (CurrentSpeed / (MaxSpeed+donmeye_basili));
         if (mevcut_egim > max_egim) mevcut_egim = 0;
 
 

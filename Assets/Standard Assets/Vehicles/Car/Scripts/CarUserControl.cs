@@ -88,7 +88,7 @@ namespace UnityStandardAssets.Vehicles.Car {
                  else h = 0;
              }*/
 
-            eksilen_donme = 21 * (m_Car.CurrentSpeed / m_Car.MaxSpeed);
+            eksilen_donme = 24 * (m_Car.CurrentSpeed / m_Car.MaxSpeed);
 
             donme = 35 - eksilen_donme;
             speed = m_Car.CurrentSpeed;

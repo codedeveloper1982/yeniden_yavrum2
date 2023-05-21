@@ -93,8 +93,14 @@ namespace SplineMesh
             {
                 ekle.Combiner_ekle();
             }
-
-
+            if (GUILayout.Button("tünelsonu"))
+            {
+                ekle.tunel_sonu_ekle();
+            }
+            if (GUILayout.Button("tünelbaþý"))
+            {
+                ekle.tunel_basi_ekle();
+            }
         }
     }
 }

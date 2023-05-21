@@ -21,12 +21,13 @@ public class Cameracontroller : MonoBehaviour
          private bool verial,arabapatladi,sola_degme_var=false,saga_degme_var=false;
     public bool ileriye_git;
     private RaycastHit saghit,arkahit,solhit;
-    private float sola_donus=0;
+    private float sola_donus=0,donus_hiz;
     private int sagsol;
     // public Transform on_kısım;
     private void Start()
     {
         car = GameObject.FindGameObjectWithTag("Player").transform;
+        donus_hiz = .5f;
     }
 
     private void FixedUpdate()
@@ -64,19 +65,19 @@ public class Cameracontroller : MonoBehaviour
                 {
 
 
-                if (local_velocity.z < -0.5f)
-                {
-                    sagsol = -1;
-                }
-                saga_degme_var = true;
 
+                    sagsol = -1;
+                
+                saga_degme_var = true;
+                
                 }
                 else if(Physics.Raycast(transform.position, transform.right , out solhit, 3))
                 {
-                if (local_velocity.z < -0.5f)
-                {
+                
+
+
                     sagsol = 1;
-                }
+                
                 sola_degme_var= true;
 
                 }
@@ -99,10 +100,10 @@ public class Cameracontroller : MonoBehaviour
 
 
 
-            if (local_velocity.z < -0.5f)
+            if (local_velocity.z < -0.5f || sola_degme_var == true || saga_degme_var == true)
             {
 
-                if (sola_donus < 100) sola_donus += 1f;
+                if (sola_donus < 100) sola_donus += donus_hiz;
                 rotation_vector = car.eulerAngles.y+sola_donus*sagsol;
             }
             else
@@ -111,7 +112,7 @@ public class Cameracontroller : MonoBehaviour
                 {
                     if ((sola_degme_var == false && saga_degme_var == false))
                     {
-                        sola_donus -= 1f;
+                        sola_donus -= donus_hiz;
                     } 
 
                 }

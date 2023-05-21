@@ -7,6 +7,9 @@ onBoardingDoNotAskAgain = true
 showPackageIndexes = false
 showStatusBar = false
 scopes = {
+	"last_search.F4034D60" = "düş"
+	"OpenInspectorPreview.F4034D60" = "0"
+	"currentGroup.F4034D60" = "scene"
 }
 providers = {
 	expression = {
