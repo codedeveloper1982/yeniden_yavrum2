@@ -2063,7 +2063,10 @@ public class Kontrol_denemesi : MonoBehaviour
                 if (Physics.Raycast(coin_ucu, coin_yonu, out coin_hit, coin_sensoru))
                 {
                     if (coin_hit.collider.tag == "Player") { 
+                        Camera.main.GetComponent<Cameracontroller>().kaybolan=coinler[i].transform.position;
+                        Camera.main.GetComponent<Cameracontroller>().para_goster = true;
                     coinler[i].SetActive(false);
+
                     }
                 }
                 Debug.DrawRay(coin_ucu, coin_yonu * coin_sensoru, Color.green);

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Vehicles.Car;
+using UnityEngine.UI;
+
 
 
 public class Cameracontroller : MonoBehaviour
@@ -24,10 +26,73 @@ public class Cameracontroller : MonoBehaviour
     private float sola_donus=0,donus_hiz;
     private int sagsol;
     // public Transform on_kısım;
+
+
+    [Header("COİN AYARLARI")]
+    /// ///////////////// BURASI COİNLERLE İLGİLİ BÖLME////////////////
+    public Sprite[] coinler;
+    public Image para;
+    private Image[] paralar;
+    private float coin_time, coin_bekle = 0.01f, coinx, coiny;
+    private int coin_sira;
+    public GameObject canvas;
+    private int para_sayisi = 6, ilk_para, sira_para;
+    public Text skortxt;
+    public Vector3 kaybolan;
+    public bool para_goster=false;
+
+
+
+
+
+
+
+
+
+
     private void Start()
     {
         car = GameObject.FindGameObjectWithTag("Player").transform;
         donus_hiz = .5f;
+
+        /// ///////////////// BURASI COİNLERLE İLGİLİ BÖLME////////////////
+        for (int i = 0; i < 32; i++)
+        {
+            if (i<10)
+            {
+            coinler[i] = Resources.Load<Sprite>("sprite/coin000" + i);
+            }
+            else { 
+            coinler[i] = Resources.Load<Sprite>("sprite/coin00" + i);
+            }
+
+
+        }
+
+
+        sira_para = 0;
+        ilk_para = sira_para - (para_sayisi - 1);
+
+
+
+        coin_time = Time.time + coin_bekle;
+        coin_sira = 0;
+        para.sprite = coinler[coin_sira];
+        ////////////////////////////////////////////////////
+        paralar = new Image[para_sayisi];
+        for (int i = 0; i < para_sayisi; i++)
+        {
+
+            paralar[i] = Image.Instantiate(para);
+            //paralar[i].enabled = false;
+            paralar[i].rectTransform.SetParent(canvas.transform);
+            paralar[i].sprite = coinler[coin_sira];
+            paralar[i].rectTransform.position = para.rectTransform.position;
+        }
+
+
+
+
     }
 
     private void FixedUpdate()
@@ -148,10 +213,86 @@ public class Cameracontroller : MonoBehaviour
              height = 1.2f;
          }*/
 
+        if (para_goster)
+        {
+        Vector2 screenxy = Camera.main.WorldToScreenPoint(kaybolan);
+
+
+
+
+        paralar[sira_para].gameObject.SetActive(true);
+        paralar[sira_para].rectTransform.position = screenxy;
+        sira_para++;
+        ilk_para++;
+        if (sira_para == para_sayisi - 1) sira_para = 0;
+        if (ilk_para == para_sayisi - 1) ilk_para = 0;
+        if (ilk_para >= 0) paralar[ilk_para].gameObject.SetActive(false);
+            para_goster = false;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        if (Time.time > coin_time)
+        {
+            coin_time = Time.time + coin_bekle;
+
+
+
+            for (int i = 0; i < para_sayisi; i++)
+            {
+                if (paralar[i].isActiveAndEnabled == true)
+                {
+
+                    paralar[i].sprite = coinler[coin_sira];
+                    coinx = paralar[i].rectTransform.position.x;
+                    coiny = paralar[i].rectTransform.position.y;
+
+                    coinx = Mathf.Lerp(coinx, skortxt.rectTransform.position.x, 0.05f);
+                    coiny = Mathf.Lerp(coiny, skortxt.rectTransform.position.y, 0.05f);
+                    paralar[i].rectTransform.position = new Vector2(coinx, coiny);
+
+
+
+                    if (Vector2.Distance(paralar[i].rectTransform.position,skortxt.rectTransform.position)<1)
+                    {
+                        paralar[i].gameObject.SetActive(false);
+                    }
+                }
+
+
+
+
+            }
+            coin_sira++;
+            if (coin_sira == coinler.Length) coin_sira = 0;
 
 
         }
-        private void LateUpdate()
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+    private void LateUpdate()
         {
             float wantedangle = rotation_vector;
             float wantedheight = takip.position.y + height;
