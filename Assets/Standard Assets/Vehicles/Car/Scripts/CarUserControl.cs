@@ -59,6 +59,7 @@ namespace UnityStandardAssets.Vehicles.Car {
             }
             revs = m_Car.CurrentSpeed / m_Car.MaxSpeed;
 
+           
             /* if (control_degis == false)
              {
                  //h = CrossPlatformInputManager.GetAxis("Horizontal");

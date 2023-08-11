@@ -170,7 +170,7 @@ public class Kontrol_denemesi : MonoBehaviour
     ///////aktif düþman sayýsý      ///////////////////////
     private int aktif_dusman_sayisi,dusman_sirasi,onceki_sira,sonraki_sira;
     private bool diger_dusmana_gec;
-    private int [] dusman_seviyesi= { 1, 1, 1,1,1 };
+    private int [] dusman_seviyesi= { 1 };
     private float obur_dusmana_gecis_vakti;
     private float dusman_hizi =5;
     private float oteleme_dur_kalk = 0;
@@ -250,6 +250,16 @@ public class Kontrol_denemesi : MonoBehaviour
     private GameObject arka_kýsým;
 
 
+
+    /// <summary>
+    /// //////////////////HARABE ARABA AYARLARI//////////////////////////////////////
+    /// </summary>
+
+    private float harabe_uzunluk, harabe_cik,har_y,har_z,max_y,max_z;
+
+
+
+
     void Start()
     {
         ///////burasý on ve arkakontrol noktalarý için///////bide dusman ekleme yeri
@@ -262,7 +272,7 @@ public class Kontrol_denemesi : MonoBehaviour
         konum_sirasi[1] =  arka;
         konum_sirasi[2] =  dusman_eklenen_yer;
         for(int i = 0; i < konum_sirasi.Length; i++) { 
-        cizgi_sirasi[i] = 0;
+        cizgi_sirasi[i] = 10;
         mevcut_cizgiler[i] = cizgiler[cizgi_sirasi[i]];
         Hareket_et(cube[i],mevcut_cizgiler[i],mevcut_egriler[i],konum_sirasi[i]);
             }
@@ -599,6 +609,16 @@ public class Kontrol_denemesi : MonoBehaviour
         arka_kýsým = GameObject.Find("düþman kontrol arka kýsým");
 
 
+
+
+        /// //////////////////HARABE ARABA AYARLARI//////////////////////////////////////
+
+        harabe_uzunluk = 6.5f;
+
+        harabe_cik = 0.015f;
+        max_y = 1f;
+        max_z = 2.8f;
+
     }
 
     // Update is called once per frame
@@ -634,8 +654,80 @@ public class Kontrol_denemesi : MonoBehaviour
                         oteleme_dur_kalk = 0;
                     }
 
+
+
+
+
+
                 Hareket_et(drone_konum[i], drone_cizgi[i], drone_egri[i], drone_sirasi[i]);//hareket kodlarý burada olsun (sensör harici olanlar)
-                Drone_hareketi(dusmanlar[i], drone_konum[i], dusman_hizi, sag_sol[i], cik_in[i]);
+
+                Vector3 harabe_bas =dusmanlar[i].transform.position+new Vector3(0,0.3f,0);
+                RaycastHit harabe_hit;
+                for (int j = 0; j < 20; j++)
+                {
+                    //float harabe_aci = j * Mathf.PI / 36;
+
+                    har_y = (j+1) * max_y / 20;
+                    // Vector3 harabe_yon = drone_konum[i].transform.up * Mathf.Sin(harabe_aci) +(-1)* drone_konum[i].transform.forward * Mathf.Cos(harabe_aci);
+
+                    har_z = Mathf.Sqrt(max_z * max_z*(1 - (har_y*har_y)/(max_y*max_y)));
+
+
+                    Vector3 harabe_yon = drone_konum[i].transform.up * har_y + (-1) * drone_konum[i].transform.forward * har_z;
+                    harabe_yon *= -1;
+                    //float yeni_uzunluk = harabe_uzunluk - 5.5f * Mathf.Sin(harabe_aci);
+                    float yeni_uzunluk = Mathf.Sqrt(har_y * har_y + har_z * har_z);
+
+
+                    if (Physics.Raycast(harabe_bas, harabe_yon, out harabe_hit, yeni_uzunluk))
+                    {
+                        if (harabe_hit.collider.tag=="harabe" || harabe_hit.collider.tag == "rampa")
+                        {
+                            cik_in[i] += harabe_cik;
+
+                        }
+
+
+
+
+                    }
+                    Debug.DrawRay(harabe_bas, harabe_yon * yeni_uzunluk, Color.green);
+                    
+                    
+                    harabe_yon = drone_konum[i].transform.up * har_y +  drone_konum[i].transform.forward * har_z;
+                    harabe_yon *= -1;
+                  
+                    
+                    if (Physics.Raycast(harabe_bas, harabe_yon, out harabe_hit, yeni_uzunluk))
+                    {
+                        if (harabe_hit.collider.tag=="harabe")
+                        {
+                            cik_in[i] += harabe_cik;
+                            /*
+
+                            if (harabe_hit.collider.tag == "rampa")
+                            {
+
+                                Debug.Log(j+". ýþýn deði " );
+                            }
+*/
+                        }
+
+
+
+
+                    }
+
+                     Debug.DrawRay(harabe_bas, harabe_yon * yeni_uzunluk, Color.green);
+                    
+                }
+
+  
+
+
+
+                Drone_hareketi(dusmanlar[i], drone_konum[i], dusman_hizi,0,cik_in[i]);//sag_sol[i]
+
                 if (Mathf.Abs(sag_sol[i] - yatay_degisim[i]) < 0.3f)
                 {
                     yatay_degisim[i] = Random.Range(-5, 6);
@@ -648,8 +740,9 @@ public class Kontrol_denemesi : MonoBehaviour
                 
                 if (Mathf.Abs(cik_in[i] - dikey_degisim[i]) < 0.33f)
                 {
-                   if(araba_hizi<3)dikey_degisim[i] = Random.Range(2, 4);
-                   else dikey_degisim[i] = Random.Range(0, 5);
+                   if(araba_hizi<3)dikey_degisim[i] =Random.Range(0.3f, 0.7f); // bunlar eski deðerler   2, 4   0, 5
+                   
+                   else dikey_degisim[i] = Random.Range(0.3f, 0.7f);
                    
                 }
 
@@ -681,7 +774,7 @@ public class Kontrol_denemesi : MonoBehaviour
 
                 coin_yer_al = cizgi_sirasi[i]+1;
                 if (coin_yer_al == cizgiler.Length) coin_yer_al = 0;
-                Debug.Log(coin_yer_al + "               " + cizgi_sirasi[i]+"       "+ cizgiler[coin_yer_al].name);
+              
                 if (cizgiler[coin_yer_al].Length<52) {coin_yer_al = cizgi_sirasi[i]+2; }
 
                 if (coin_yer_al == cizgiler.Length) coin_yer_al = 0;
@@ -689,7 +782,7 @@ public class Kontrol_denemesi : MonoBehaviour
 
             }
 
-            Debug.Log("coin  yeri:"+coin_yer_al);
+
 
             for (int i = 0; i < dusmanlar.Length; i++)
             {

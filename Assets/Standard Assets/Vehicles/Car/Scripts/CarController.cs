@@ -519,11 +519,11 @@ using UnityStandardAssets.Vehicles.Car;
                 transform.Rotate(0.1f, 0, 0);
 
             }*/
-           if((hiza_basili==1 || hiza_basili==-1) && CurrentSpeed < 1.5f) {
+           if((hiza_basili==1 || hiza_basili==-1) && CurrentSpeed < 3.5f) {
             Vector3 dikey_destek = globalGravity * gravityScale * transform.forward * (-5)*hiza_basili;
             m_rb.AddForce(dikey_destek, ForceMode.Acceleration);
             }
-           if((donmeye_basili==1 || donmeye_basili==-1) && CurrentSpeed < 1.5f) {
+           if((donmeye_basili==1 || donmeye_basili==-1) && CurrentSpeed < 3.5f) {
             Vector3 yatay_destek = globalGravity * gravityScale * transform.right * (-5) * donmeye_basili;
             m_rb.AddForce(yatay_destek, ForceMode.Acceleration);
             }
