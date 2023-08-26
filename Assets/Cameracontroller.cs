@@ -41,8 +41,8 @@ public class Cameracontroller : MonoBehaviour
     public Text skortxt;
     public Vector3 kaybolan;
     public bool para_goster = false;
-    private float yan_carpma,yan_isin_uzunluk,arka_isin_uzunluk,carpma_mesafesi,donme_ust,yaklasma;
-    private GameObject kup;
+    private float yan_carpma,yan_isin_uzunluk,arka_isin_uzunluk,carpma_mesafesi,donme_ust,yaklasma,fark,mydistance;
+    private GameObject kup,dur_kup;//dur_kup silmen gerekebilir
     
 
 
@@ -58,7 +58,7 @@ public class Cameracontroller : MonoBehaviour
 
         car = GameObject.FindGameObjectWithTag("Player").transform;
         donus_hiz = 0.9f;
-        yan_isin_uzunluk = 2.1f;
+        yan_isin_uzunluk = 2.5f;
         arka_isin_uzunluk = 2.5f;
 
 
@@ -97,13 +97,15 @@ public class Cameracontroller : MonoBehaviour
             paralar[i].rectTransform.position = para.rectTransform.position;
         }
 
-
+        sagsol = 1;
         yan_carpma = 1;
         donme_ust = 90;
         dur = false;
         sola_donus = 0;
         kup=GameObject.Find("gorunmez_kup");  //sonra sil
-
+        dur_kup=GameObject.Find("dur_kup");//sonra sil
+        rotation_vector = car.eulerAngles.y + sola_donus * sagsol;
+        transform.position = car.transform.position + new Vector3(0, 5, 0);
     }
 
     private void FixedUpdate()
@@ -126,7 +128,8 @@ public class Cameracontroller : MonoBehaviour
         else
         {
             takip = car;
-        
+
+
 
 
 
@@ -143,18 +146,33 @@ public class Cameracontroller : MonoBehaviour
                 
                 saga_degme_var = true;
 
-                if (sola_donus<10)sola_donus += 1.5f;
-                transform.position += transform.right * 0.03f;                
+                /* if (sola_donus<20)sola_donus += 0.5f;
+*/
+               // yan_carpma = Vector3.Distance(saghit.point,transform.position);
+
+
+                //if (yan_carpma<3.5f) transform.position+= transform.right * 0.01f;
+
+
+
                 }
                 else if(Physics.Raycast(transform.position, yan_yon*(-1) , out solhit, yan_isin_uzunluk))
                 {
 
 
-                if (sola_donus<10)sola_donus += 1.5f;
+                /* if (sola_donus<20)sola_donus += 0.5f;
                 
-                    
-                
-                transform.position += transform.right * 0.03f*(-1);  
+ */              
+
+               // yan_carpma = Vector3.Distance(solhit.point,transform.position);
+
+                //if (yan_carpma<2.5f)transform.position+= transform.right * 0.01f* (-1);
+
+
+
+
+
+
 
 
                 sagsol = 1;
@@ -196,14 +214,14 @@ public class Cameracontroller : MonoBehaviour
 
             if (arka_degme || sola_degme_var || saga_degme_var)
             {
-                if ((gidis_hiz > 15 && local_velocity.z > 0))
+               /* if ((gidis_hiz > 19 && local_velocity.z > 0))
                 {
                 dur = false;
                 }
                 else
-                {
+                {*/
                     dur = true;
-                }
+               // }
 
             }
             else
@@ -213,14 +231,62 @@ public class Cameracontroller : MonoBehaviour
 
 
 
+            fark = car.eulerAngles.y - transform.eulerAngles.y;
+
+            if (fark < 0)
+            {
+                fark = fark + 360;
+            }
 
 
 
-            if (local_velocity.z < -0.5f)
+            if (fark > 180)
+            {
+                fark = 360 - fark;
+            }
+
+
+
+
+
+
+
+            gidis_hiz = car.transform.GetComponent<CarController>().CurrentSpeed;
+            hiz_oranı = ((gidis_hiz + 2) / car.transform.GetComponent<CarController>().MaxSpeed);
+            mesafe = Vector3.Distance(takip.transform.position, transform.position);
+
+            yaklasma = 10 * hiz_oranı * ((distance) / mesafe);
+            if (dur)
+            {
+
+                if (mesafe > distance)
+                {
+
+
+                    konuma_gel(transform, takip.transform.position + new Vector3(0, height, 0), Time.deltaTime * yaklasma / 3);
+
+
+
+                }
+                sola_donus = fark;
+                mydistance = mesafe;
+
+
+            }
+            else
+            {
+
+                konuma_gel(transform, kup.transform.position, Time.deltaTime * yaklasma);
+
+
+            }
+
+            /////////////////////////////////////////////////////////////////////////////////////////////
+            if (local_velocity.z < -0.5f && dur == false)
             {
 
 
-                if (sola_donus<donme_ust)
+                if (sola_donus < donme_ust)
                 {
 
                     sola_donus += donus_hiz;
@@ -232,7 +298,7 @@ public class Cameracontroller : MonoBehaviour
 
 
 
-            }else if (local_velocity.z >0 /*||local_velocity.z ==0*/)
+            } else if (local_velocity.z > 0 && dur == false)
             {
 
 
@@ -246,14 +312,14 @@ public class Cameracontroller : MonoBehaviour
 
 
             }
-            else
+            else if(dur==false)
             {
                 sola_donus = 0;
             }
 
 
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -267,56 +333,53 @@ public class Cameracontroller : MonoBehaviour
 
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-           rotation_vector = car.eulerAngles.y+sola_donus * sagsol;
-
-
-        gidis_hiz = car.transform.GetComponent<CarController>().CurrentSpeed;
-        hiz_oranı = (gidis_hiz / car.transform.GetComponent<CarController>().MaxSpeed);
-        mesafe = Vector3.Distance(takip.transform.position, transform.position);
-
-        yaklasma = 10 * hiz_oranı*(distance/mesafe);
-            if (dur)
+ if (sola_donus < 30) { 
+        if (sola_degme_var)
         {
-
-         if (mesafe > distance+2.1f)
-            {
-
-
-            
-            konuma_gel(transform, takip.transform.position+new Vector3(0,height,0), Time.deltaTime );  
-
-
-            }
-
-        }
-        else
-        {
-           // if (yaklasma < 20) yaklasma += 0.01f;
-
-            konuma_gel(transform, kup.transform.position, Time.deltaTime * yaklasma);
-
-
+            sola_donus += 0.5f;
         }
 
+        if (saga_degme_var)
+        {
+            sola_donus += 0.5f;
+        }
+
+        
+
+}
 
 
 
+
+
+
+ rotation_vector = car.eulerAngles.y+sola_donus * sagsol;
 
             transform.LookAt(takip);
             transform.Rotate(ileriye_alma, 0, 0);
+
+
+
+
+        Debug.Log(sola_donus + "               " + fark);
+
+
+
+
+        /*
+
+        float aci = car.eulerAngles.y + fark * sagsol;
+        Quaternion dur_don = Quaternion.Euler(0, aci, 0);
+        dur_kup.transform.position = takip.transform.position;
+        dur_kup.transform.position -= dur_don * Vector3.forward * mesafe;
+
+        Vector3 yeni_temp = dur_kup.transform.position;
+        yeni_temp.y = takip.transform.position.y + height;
+        dur_kup.transform.position = yeni_temp;
+        dur_kup.transform.LookAt(takip);
+
+
+*/
 
 
         /*
@@ -465,7 +528,7 @@ public class Cameracontroller : MonoBehaviour
             float wantedheight = takip.position.y + height;
             float myangle = kup.transform.eulerAngles.y;
             float myheight = kup.transform.position.y;
-            float mydistance = distance;
+             mydistance = distance;
 
             myangle = Mathf.LerpAngle(myangle, wantedangle, rotationdamping * Time.deltaTime);
             myheight = Mathf.LerpAngle(myheight, wantedheight, heightdamping * Time.deltaTime);
@@ -474,7 +537,7 @@ public class Cameracontroller : MonoBehaviour
 
             Quaternion currentrotation = Quaternion.Euler(0, myangle, 0);
             kup.transform.position = takip.position; //new Vector3(car.transform.position.x, car.transform.position.y, car.transform.position.z+ileriye_alma);
-            kup.transform.position -= currentrotation * Vector3.forward * distance;
+            kup.transform.position -= currentrotation * Vector3.forward * mydistance;
 
             
             Vector3 temp = kup.transform.position;
@@ -482,6 +545,10 @@ public class Cameracontroller : MonoBehaviour
             kup.transform.position = temp;
             kup.transform.LookAt(takip);
             //transform.Rotate(ileriye_alma, 0, 0);
+
+
+
+
 
         
 
