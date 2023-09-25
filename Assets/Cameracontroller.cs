@@ -25,7 +25,7 @@ public class Cameracontroller : MonoBehaviour
     private RaycastHit saghit,arkahit,solhit;
     private float sola_donus=0,donus_hiz,gidis_hiz,hiz_oranı,mesafe;
     private int sagsol;
-    private Vector3 yeni_konum, local_velocity;
+    private Vector3 yeni_konum, local_velocity,hedef_konum,coin_ucu,arkayon;
     // public Transform on_kısım;
 
 
@@ -39,9 +39,9 @@ public class Cameracontroller : MonoBehaviour
     public GameObject canvas;
     private int para_sayisi = 6, ilk_para, sira_para;
     public Text skortxt;
-    public Vector3 kaybolan;
-    public bool para_goster = false;
-    private float yan_carpma,yan_isin_uzunluk,arka_isin_uzunluk,carpma_mesafesi,donme_ust,yaklasma,fark,mydistance;
+    public Vector3 kaybolan,kamera_yon;
+    public bool para_goster = false,don=false;
+    private float yan_carpma,yan_isin_uzunluk,arka_isin_uzunluk,carpma_mesafesi,donme_ust,yaklasma,fark,mydistance,kamera_uzunluk=1;
     private GameObject kup,dur_kup;//dur_kup silmen gerekebilir
     
 
@@ -58,8 +58,8 @@ public class Cameracontroller : MonoBehaviour
 
         car = GameObject.FindGameObjectWithTag("Player").transform;
         donus_hiz = 0.9f;
-        yan_isin_uzunluk = 2.5f;
-        arka_isin_uzunluk = 2.5f;
+        yan_isin_uzunluk = 1.2f;
+        arka_isin_uzunluk = 2.0f;
 
 
         /// ///////////////// BURASI COİNLERLE İLGİLİ BÖLME////////////////
@@ -104,8 +104,9 @@ public class Cameracontroller : MonoBehaviour
         sola_donus = 0;
         kup=GameObject.Find("gorunmez_kup");  //sonra sil
         dur_kup=GameObject.Find("dur_kup");//sonra sil
-        rotation_vector = car.eulerAngles.y + sola_donus * sagsol;
-        transform.position = car.transform.position + new Vector3(0, 5, 0);
+       // rotation_vector = car.eulerAngles.y + sola_donus * sagsol;
+       // transform.position = car.transform.position + new Vector3(0, 5, 0);
+        yaklasma = 8;
     }
 
     private void FixedUpdate()
@@ -137,48 +138,28 @@ public class Cameracontroller : MonoBehaviour
 
             /////////////////////////////////////YAN IŞIN ////////////////////////////////
 
-            Vector3 yan_yon = transform.right * (-1); 
+            Vector3 yan_yon = takip.transform.right * (-1); 
             
-            if (Physics.Raycast(transform.position, yan_yon, out saghit, yan_isin_uzunluk))
+            if (Physics.Raycast(takip.transform.position, yan_yon, out saghit, yan_isin_uzunluk))
                 {
 
                 sagsol = -1;
                 
                 saga_degme_var = true;
 
-                /* if (sola_donus<20)sola_donus += 0.5f;
-*/
-               // yan_carpma = Vector3.Distance(saghit.point,transform.position);
-
-
-                //if (yan_carpma<3.5f) transform.position+= transform.right * 0.01f;
+                if (sola_donus < 45) sola_donus +=donus_hiz*2 ;
 
 
 
                 }
-                else if(Physics.Raycast(transform.position, yan_yon*(-1) , out solhit, yan_isin_uzunluk))
+                else if(Physics.Raycast(takip.transform.position, yan_yon*(-1) , out solhit, yan_isin_uzunluk))
                 {
-
-
-                /* if (sola_donus<20)sola_donus += 0.5f;
-                
- */              
-
-               // yan_carpma = Vector3.Distance(solhit.point,transform.position);
-
-                //if (yan_carpma<2.5f)transform.position+= transform.right * 0.01f* (-1);
-
-
-
-
-
-
 
 
                 sagsol = 1;
                 
                 sola_degme_var= true;
-                  
+                if (sola_donus < 45) sola_donus += donus_hiz*2;                
 
                 }
                 else
@@ -187,12 +168,12 @@ public class Cameracontroller : MonoBehaviour
                 sola_degme_var = false;
 
                       }
-                Debug.DrawRay(transform.position, yan_yon * yan_isin_uzunluk, Color.green);
-                Debug.DrawRay(transform.position, yan_yon * (-1) * yan_isin_uzunluk, Color.green);
-
-      
+                Debug.DrawRay(takip.transform.position, yan_yon * yan_isin_uzunluk, Color.green);
+                Debug.DrawRay(takip.transform.position, yan_yon * (-1) * yan_isin_uzunluk, Color.green);
 
 
+
+            /*
 
               //////////////////////////////////////ARKA IŞIN///////////////////////////////  
 
@@ -214,80 +195,22 @@ public class Cameracontroller : MonoBehaviour
 
             if (arka_degme || sola_degme_var || saga_degme_var)
             {
-               /* if ((gidis_hiz > 19 && local_velocity.z > 0))
-                {
-                dur = false;
-                }
-                else
-                {*/
-                    dur = true;
-               // }
-
+                dur = true;
             }
             else
             {
                 dur = false;
             }
 
+*/
 
-
-            fark = car.eulerAngles.y - transform.eulerAngles.y;
-
-            if (fark < 0)
-            {
-                fark = fark + 360;
-            }
-
-
-
-            if (fark > 180)
-            {
-                fark = 360 - fark;
-            }
-
-
-
-
-
-
-
-            gidis_hiz = car.transform.GetComponent<CarController>().CurrentSpeed;
-            hiz_oranı = ((gidis_hiz + 2) / car.transform.GetComponent<CarController>().MaxSpeed);
-            mesafe = Vector3.Distance(takip.transform.position, transform.position);
-
-            yaklasma = 10 * hiz_oranı * ((distance) / mesafe);
-            if (dur)
-            {
-
-                if (mesafe > distance)
-                {
-
-
-                    konuma_gel(transform, takip.transform.position + new Vector3(0, height, 0), Time.deltaTime * yaklasma / 3);
-
-
-
-                }
-                sola_donus = fark;
-                mydistance = mesafe;
-
-
-            }
-            else
-            {
-
-                konuma_gel(transform, kup.transform.position, Time.deltaTime * yaklasma);
-
-
-            }
-
-            /////////////////////////////////////////////////////////////////////////////////////////////
-            if (local_velocity.z < -0.5f && dur == false)
+            if (local_velocity.z < -0.5f)
             {
 
 
                 if (sola_donus < donme_ust)
                 {
+
 
                     sola_donus += donus_hiz;
                 }
@@ -298,122 +221,120 @@ public class Cameracontroller : MonoBehaviour
 
 
 
-            } else if (local_velocity.z > 0 && dur == false)
+            }
+            else if (local_velocity.z > 0 && !(sola_degme_var || saga_degme_var))
             {
 
 
-                if (sola_donus>0.5)
+                if (sola_donus > 0.5)
                 {
-              sola_donus -= donus_hiz;
-                }else{
-                
+                    sola_donus -= donus_hiz;
+                }
+                else
+                {
+
                     sola_donus = 0;
                 }
 
 
             }
-            else if(dur==false)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+        if (dur)
+        {
+            sola_donus = transform.eulerAngles.y - takip.transform.eulerAngles.y;
+
+            if (sola_donus < 0) sola_donus = sola_donus + 360;
+            if (sola_donus > 180) sola_donus = 360 - sola_donus;
+
+
+
+        }
+
+
+
+        rotation_vector = car.eulerAngles.y+sola_donus * sagsol;
+
+
+        /////////////////////////////////////KAMERA IŞINLARI
+
+        // kamera_yon = takip.transform.right * (-1);
+        dur = false;
+        RaycastHit kamera_hit;
+
+        for (int i = 0; i < 3; i++)
+        {
+            float angle = i * Mathf.PI / 2;
+
+            kamera_yon = kup.transform.right * Mathf.Cos(angle) + kup.transform.forward * Mathf.Sin(angle)*(-1);
+
+            if (Physics.Raycast(kup.transform.position, kamera_yon, out kamera_hit, kamera_uzunluk))
+        {
+                
+                dur = true;
+                break;
+
+
+
+        }
+            Debug.DrawRay(kup.transform.position, kamera_yon * kamera_uzunluk, Color.green);
+        }
+
+
+        coin_ucu = takip.transform.position;
+     arkayon = kup.transform.position-takip.transform.position;
+        mesafe = Vector3.Distance(kup.transform.position, takip.transform.position);
+
+        arkayon = arkayon.normalized;
+    RaycastHit arka_hit;
+            if (Physics.Raycast(takip.transform.position, arkayon, out arka_hit, mesafe))
             {
-                sola_donus = 0;
-            }
 
-
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-  
-
-
+            dur = true;
+               
 
         }
+Debug.DrawRay(coin_ucu, arkayon * mesafe, Color.green);
 
- if (sola_donus < 30) { 
-        if (sola_degme_var)
+
+
+        Debug.Log(local_velocity.z);
+
+        if (local_velocity.z > 4.5f)
         {
-            sola_donus += 0.5f;
+            dur = false;
+
         }
 
-        if (saga_degme_var)
-        {
-            sola_donus += 0.5f;
-        }
-
-        
-
-}
 
 
 
 
-
-
- rotation_vector = car.eulerAngles.y+sola_donus * sagsol;
-
-            transform.LookAt(takip);
-            transform.Rotate(ileriye_alma, 0, 0);
-
-
-
-
-        Debug.Log(sola_donus + "               " + fark);
-
-
-
-
-        /*
-
-        float aci = car.eulerAngles.y + fark * sagsol;
-        Quaternion dur_don = Quaternion.Euler(0, aci, 0);
-        dur_kup.transform.position = takip.transform.position;
-        dur_kup.transform.position -= dur_don * Vector3.forward * mesafe;
-
-        Vector3 yeni_temp = dur_kup.transform.position;
-        yeni_temp.y = takip.transform.position.y + height;
-        dur_kup.transform.position = yeni_temp;
-        dur_kup.transform.LookAt(takip);
-
-
-*/
-
-
-        /*
-
-     
-        /////////////////////BURASI ANİ DUVAR ARKASINA GEÇME DURUMLARI İÇİN//////////////////
-
-            float wantedangle = rotation_vector;
-            float wantedheight = takip.position.y + height;
-            float myangle = transform.eulerAngles.y;
-            float myheight = transform.position.y;
-            float mydistance = distance;
-
-            myangle = Mathf.LerpAngle(myangle, wantedangle, rotationdamping * Time.deltaTime);
-            myheight = Mathf.LerpAngle(myheight, wantedheight, heightdamping * Time.deltaTime);
-            mydistance = Mathf.LerpAngle(mydistance, distance, heightdamping * Time.deltaTime);
-            Quaternion currentrotation = Quaternion.Euler(0, myangle, 0);
-      
-            kup.transform.position = takip.position;
-            kup.transform.position -= currentrotation * Vector3.forward *distance;
-       
-             Vector3 temp = transform.position;
-            temp.y = myheight;
-            transform.position = temp;       
         if (dur)
         {
 
-            yaklasma = 5;
         }
         else
         {
-            if (yaklasma < 20) yaklasma += 0.01f;
-           
-            konuma_gel(transform, kup.transform.position, Time.deltaTime *yaklasma);        
+        konuma_gel(transform, kup.transform.position, yaklasma*Time.deltaTime);
+
         }
 
 
@@ -428,14 +349,71 @@ public class Cameracontroller : MonoBehaviour
 
 
 
-         transform.LookAt(takip);
+        ///////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        transform.LookAt(takip);
         transform.Rotate(ileriye_alma, 0, 0);
 
 
 
+        //////////////////////////////////////deneme
+        ///
 
 
-        Debug.Log(wantedangle + "               " + sola_donus);
+        float wantedangle = rotation_vector;
+        float wantedheight = takip.position.y + height;
+        float myangle = kup.transform.eulerAngles.y;
+        float myheight = kup.transform.position.y;
+
+        myangle = Mathf.LerpAngle(myangle, wantedangle, rotationdamping * Time.deltaTime);
+        myheight = Mathf.LerpAngle(myheight, wantedheight, heightdamping * Time.deltaTime);
+        mydistance = Mathf.LerpAngle(mydistance, distance, heightdamping * Time.deltaTime);
+
+
+        Quaternion currentrotation = Quaternion.Euler(0, myangle, 0);
+        kup.transform.position = takip.position; //new Vector3(car.transform.position.x, car.transform.position.y, car.transform.position.z+ileriye_alma);
+        kup.transform.position = takip.transform.position - currentrotation * Vector3.forward * mydistance;
+
+
+        Vector3 temp = kup.transform.position;
+        temp.y = myheight;
+        kup.transform.position = temp;
+
+        kup.transform.LookAt(takip);
+
+
+
+        //////////////////////////////////////////
 
 
 
@@ -446,9 +424,21 @@ public class Cameracontroller : MonoBehaviour
 
 
 
-        ///////////////////////////////////////////////////////////////////////////////
 
-*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         if (para_goster)
         {
@@ -519,42 +509,22 @@ public class Cameracontroller : MonoBehaviour
     }
 
    
-
+    /*
     private void LateUpdate()
         {
 
 
-            float wantedangle = rotation_vector;
-            float wantedheight = takip.position.y + height;
-            float myangle = kup.transform.eulerAngles.y;
-            float myheight = kup.transform.position.y;
-             mydistance = distance;
-
-            myangle = Mathf.LerpAngle(myangle, wantedangle, rotationdamping * Time.deltaTime);
-            myheight = Mathf.LerpAngle(myheight, wantedheight, heightdamping * Time.deltaTime);
-            mydistance = Mathf.LerpAngle(mydistance, distance, heightdamping * Time.deltaTime);
-
-
-            Quaternion currentrotation = Quaternion.Euler(0, myangle, 0);
-            kup.transform.position = takip.position; //new Vector3(car.transform.position.x, car.transform.position.y, car.transform.position.z+ileriye_alma);
-            kup.transform.position -= currentrotation * Vector3.forward * mydistance;
-
-            
-            Vector3 temp = kup.transform.position;
-            temp.y = myheight;
-            kup.transform.position = temp;
-            kup.transform.LookAt(takip);
-            //transform.Rotate(ileriye_alma, 0, 0);
 
 
 
 
 
-        
+
+
 
     }
 
-
+*/
 
     public void ileri_down()
     {
