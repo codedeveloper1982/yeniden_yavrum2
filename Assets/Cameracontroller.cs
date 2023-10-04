@@ -315,7 +315,7 @@ Debug.DrawRay(coin_ucu, arkayon * mesafe, Color.green);
 
 
 
-        Debug.Log(local_velocity.z);
+
 
         if (local_velocity.z > 4.5f)
         {

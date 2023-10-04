@@ -42,7 +42,12 @@ namespace SplineMesh
             }
 
 
+            if (GUILayout.Button("dortlu ekle"))
+            {
 
+                ekle.dortlu_ekle();
+
+            }
 
 
 
