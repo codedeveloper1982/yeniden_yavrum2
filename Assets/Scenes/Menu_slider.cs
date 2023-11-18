@@ -9,7 +9,7 @@ using UnityEngine.UI;
     {
         public Spline[] line;
         private CurveSample kavis;
-        private int sira = 0,gosterge_araliklari=40,bas,son;
+        private int sira = 0,gosterge_araliklari=40,bas,son, renk_sirasi;
 
         public float ilerleme, toplam_yol,v,eski_v,kalan_noktalar,gosterge_sayisi;
         private float basma_zamani, basim_bekleme=0.1f;
@@ -17,10 +17,12 @@ using UnityEngine.UI;
         private GameObject[] gostergeler;
         private float[] gosterge_konum;
         private Vector3[] sabit;
+    private float renk_zamani, renk_araligi;
 
 
 
-        private void Start()
+
+    private void Start()
         {
             basma_zamani = Time.time + basim_bekleme;
 
@@ -48,122 +50,145 @@ using UnityEngine.UI;
 
             bas = 0;
             toplam_yol = 0;
+            renk_sirasi = 0;
+        renk_araligi = 0.1f;
+        renk_zamani = Time.time + renk_araligi;
+    }
 
-        }
 
 
 
 
+    private void Update()
+    {
 
-        private void Update()
+        /////////////////////// BURASI DOUKDUÐUNDA VE BIRAKTIÐINDA YAPILACAKLARLA ÝLGÝLÝ////////////////////
+
+        if (Input.touchCount > 0)
         {
 
-            /////////////////////// BURASI DOUKDUÐUNDA VE BIRAKTIÐINDA YAPILACAKLARLA ÝLGÝLÝ////////////////////
-
-            if (Input.touchCount > 0) 
+            if (Time.time >= basma_zamani)
             {
 
-                if (Time.time >= basma_zamani)
-                {
+                basma_zamani = Time.time + basim_bekleme;
+                eski_v = Input.GetTouch(0).position.y;
 
-                    basma_zamani = Time.time + basim_bekleme;
-                    eski_v=Input.GetTouch(0).position.y;
+
+            }
+
+
+
+            v = Input.GetTouch(0).position.y;
+
+            v = v - eski_v;
+
+            toplam_yol += (-1) * v / 30;
+
+
+        } else if (Input.GetMouseButton(0))
+        {
+            v = Input.GetAxis("Mouse Y");
+
+            toplam_yol += (-1) * v;
+
+
+        }
+        else
+        {
+            for (int i = 0; i < gosterge_sayisi; i++)
+            {
+                //line[sira].nodes.Count
+                if ((toplam_yol > i * gosterge_araliklari || toplam_yol == i * gosterge_araliklari) && toplam_yol < (i + 1) * gosterge_araliklari)
+                {
+                    bas = i * gosterge_araliklari;
+                    son = bas + gosterge_araliklari;
+
+
+
+
 
 
                 }
 
+                if ((toplam_yol - bas) < (2 * gosterge_araliklari / 5)) {
 
+                    toplam_yol = Mathf.Lerp(toplam_yol, bas, Time.deltaTime);
 
-                 v = Input.GetTouch(0).position.y;
-
-                v = v - eski_v;
-               
-                toplam_yol += (-1)*v/30;
-
-
-            }else if (Input.GetMouseButton(0))
-            {
-                v= Input.GetAxis("Mouse Y");
-
-                toplam_yol += (-1)*v;
-
-
-            }
-            else
-            {
-                for (int i = 0; i <gosterge_sayisi; i++)
+                }
+                else
                 {
-                    //line[sira].nodes.Count
-                    if ((toplam_yol>i*gosterge_araliklari || toplam_yol==i*gosterge_araliklari)&& toplam_yol<(i+1)*gosterge_araliklari)
-                    {
-                        bas = i * gosterge_araliklari;
-                        son = bas + gosterge_araliklari;
-
-
-
-
-
-
-                    }
-
-                    if ((toplam_yol-bas)<(2*gosterge_araliklari/5)) {
-                               
-                      toplam_yol = Mathf.Lerp(toplam_yol, bas, Time.deltaTime);
-
-                    }
-                    else
-                    {
                     toplam_yol = Mathf.Lerp(toplam_yol, son, Time.deltaTime);
-                    }
-
-
-
-
-
                 }
 
 
 
 
+
             }
-            /////////////////////// BURASI DOUKDUÐUNDA VE BIRAKTIÐINDA YAPILACAKLARLA ÝLGÝLÝ////////////////////
 
 
 
 
-            for (int i = 0; i < gosterge_sayisi; i++) { 
-
-                float yakinlik = Mathf.Abs(gosterge_konum[i] - toplam_yol);
-
-
-                    if (yakinlik < gosterge_araliklari)
-                    {
-                    float kat = 1 + 1 * (1 - (yakinlik / gosterge_araliklari));
-                    gostergeler[i].transform.localScale = new Vector3(0.08f * kat, 0.08f * kat, 0.08f * kat);
-                gostergeler[i].transform.position =sabit[i]+ new Vector3(0,(kat-1)*0.08f* gostergeler[i].GetComponentInChildren<RectTransform>().rect.width/2, 0);
-
-
-
-                    //Debug.Log(gostergeler[i].GetComponentInChildren<RectTransform>().rect.width);
-                    }
-
-
-}
+        }
+        /////////////////////// BURASI DOUKDUÐUNDA VE BIRAKTIÐINDA YAPILACAKLARLA ÝLGÝLÝ////////////////////
 
 
 
 
+        for (int i = 0; i < gosterge_sayisi; i++) {
+
+            float yakinlik = Mathf.Abs(gosterge_konum[i] - toplam_yol);
+
+
+            if (yakinlik < gosterge_araliklari)
+            {
+                float kat = 1 + 2 * (1 - (yakinlik / gosterge_araliklari));
+                gostergeler[i].transform.localScale = new Vector3(0.08f * kat, 0.08f * kat, 0.08f * kat);
+                gostergeler[i].transform.position = sabit[i] + new Vector3(0, (kat - 1) * 0.08f * gostergeler[i].GetComponentInChildren<RectTransform>().rect.width / 2, 0);
 
 
 
-            if (toplam_yol < 0) toplam_yol = 0;
-            else if (toplam_yol > line[sira].Length) toplam_yol = line[sira].Length;
+                //Debug.Log(gostergeler[i].GetComponentInChildren<RectTransform>().rect.width);renkler[renk_sirasi];
+            }
 
-                Hareket_et(transform.gameObject, line[sira], kavis, toplam_yol);
+                gostergeler[i].transform.GetChild(1).transform.GetChild(renk_sirasi).gameObject.SetActive(false);
+
+            int sonraki = renk_sirasi + 1;
+
+            if (sonraki==gosterge.transform.GetChild(1).transform.childCount)
+            {
+                sonraki = 0;
+            }
+
+
+                gostergeler[i].transform.GetChild(1).transform.GetChild(sonraki).gameObject.SetActive(true);
+            
+      
 
         }
 
 
+        if (renk_zamani < Time.time)
+        {
+            renk_zamani = Time.time + renk_araligi;
+            renk_sirasi++; 
+            if (renk_sirasi == gosterge.transform.GetChild(1).transform.childCount)
+                {
+                    renk_sirasi = 0;
+                }
+        }
+
+
+        if (toplam_yol < 0) toplam_yol = 0;
+        else if (toplam_yol > line[sira].Length) toplam_yol = line[sira].Length;
+
+        Hareket_et(transform.gameObject, line[sira], kavis, toplam_yol);
+
+
+
+        Debug.Log(renk_sirasi);
+
+    }
 
         private void Hareket_et(GameObject obje, Spline cizgi, CurveSample egri, float konumu)
         {

@@ -119,6 +119,8 @@ using UnityStandardAssets.Vehicles.Car;
 
     [Header("patlama sesi")]
     public GameObject patlama_sesi;
+    private GameObject taramali_sesi , taramali_bitisi;
+    private float tarBitisSuresi=2, tarBitisZamani;
 
 
     /// /////////arabanýn patlmasý  ///////////
@@ -205,7 +207,12 @@ using UnityStandardAssets.Vehicles.Car;
         else if(araba=="birinci_prototip")
         {
             azaltma = 0.86f;
+            taramali_sesi = transform.GetChild(6).gameObject;
+            taramali_bitisi = transform.GetChild(7).gameObject;
 
+            Debug.Log(  transform.GetChild(7).gameObject.name   );
+            tarBitisZamani = Time.time;
+            taramali_bitisi.SetActive(false);
             siluetler = new GameObject[siluet_sayisi];
             for (int i = 0; i < siluet_sayisi; i++)
             {
@@ -357,7 +364,8 @@ using UnityStandardAssets.Vehicles.Car;
 
 
 
-        private void Update()
+
+    private void Update()
         {
         
         donmeal = kontrolet.donme;
@@ -373,9 +381,24 @@ using UnityStandardAssets.Vehicles.Car;
 
 
         mevcut_egim = transform.localEulerAngles.x;
-            //ARABA ÝÇÝN ÖZEL GRAVÝTY OLUÞTURUYORUZ
-            
-            gravityScale = 1 - yeni_azaltma * (CurrentSpeed / (MaxSpeed+donmeye_basili));
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //////////////////////////////////////////// //ARABA ÝÇÝN ÖZEL GRAVÝTY OLUÞTURUYORUZ
+        #region ÖZEL YERÇEKÝMÝ AYARLARI
+
+
+        gravityScale = 1 - yeni_azaltma * (CurrentSpeed / (MaxSpeed+donmeye_basili));
             Vector3 gravity = globalGravity * gravityScale * Vector3.up;
            m_rb.AddForce(gravity, ForceMode.Acceleration);
             m_rb.drag=0.5f-(0.5f-0.01f)* (CurrentSpeed / (MaxSpeed+donmeye_basili));
@@ -407,119 +430,25 @@ using UnityStandardAssets.Vehicles.Car;
                 m_rb.AddForce(ileri, ForceMode.Acceleration);
 
             }
+        #endregion
 
-             // transform.Rotate(Vector3.right,0.5f*(CurrentSpeed / MaxSpeed));
-
-            /////////////////////////////ANTÝ STUCK SÝSTEMÝ////////////////////////////////////////////
-           /* RaycastHit [] lastik_hit;
-            bool[] yamac;
-            bool[] havada;
-            lastik_hit = new RaycastHit[4];
-            yamac = new bool[4];
-            havada= new bool[4];
-
-           for (int i = 0; i < 4; i++)
-            {
-                Vector3 direction = m_WheelColliders[i].transform.up*(-1);
-
-
-
-                if (Physics.Raycast(m_WheelColliders[i].transform.position, direction, out lastik_hit[i], lastik_ray)){
-
-                    if (lastik_hit[i].collider.tag == "yamac")
-                    {
-                        yamac[i] = true;
-                    }
-                    else
-                    {
-                        yamac[i] = false;
-
-                    }
-                }
-                else
-                {
-                    if(lastik_hit[i].collider ==null)
-                    {
-
-                        havada[i] = true;
-
-                    }
-                    else
-                    {
-                         havada[i] = false;                       
-
-                    }
-
-                }
-
-                Debug.DrawRay(m_WheelColliders[i].transform.position, direction*lastik_ray, Color.green);
-
-
-            }
+           //////////////////////////////////////////// //ARABA ÝÇÝN ÖZEL GRAVÝTY OLUÞTURUYORUZ
 
 
 
 
-                    if((yamac[1] || havada[1]) &&  (yamac[0] || havada[0])&& havada[2]==false && havada[2]==false ) 
-                    {
-                            
-                        //Debug.Log("ön tekerler boþta");
-                        if (kontrolet.v < 0) { 
-                        Vector3 geri =globalGravity * gravityScale * transform.forward*2;
-                        m_rb.AddForce(geri, ForceMode.Acceleration);
-                        }else if(kontrolet.v > 0  )
-                            {
-                        Vector3 geri =globalGravity * gravityScale * transform.forward*(-0.75f);
-                        m_rb.AddForce(geri, ForceMode.Acceleration);
 
-                             }
-                    }else if((yamac[0] || havada[0])&& (yamac[3] || havada[3])&&havada[2]==false&&havada[1]==false)
-            {
-                                    m_rb.mass = 800;
-                                    Debug.Log("sað tekerler boþta");
-                                    if (kontrolet.v > 0 && kontrolet.h<0)
-                                     {
-                                        Vector3 ileri = globalGravity * gravityScale * transform.forward * (-2);
-                                         m_rb.AddForce(ileri, ForceMode.Acceleration);
-                                    Vector3 sag = globalGravity * gravityScale * transform.right * (2);
-                                         m_rb.AddForce(sag, ForceMode.Acceleration);
-                                      }
 
-                                }else if((yamac[1] || havada[1])&& (yamac[2] || havada[2])&&havada[0]==false&&havada[0]==false)
-                                {
-                                    m_rb.mass = 800;
-                                    Debug.Log("sol tekerler boþta");
-                                    if (kontrolet.v > 0 && kontrolet.h>0)
-                                     {
-                                        Vector3 ileri = globalGravity * gravityScale * transform.forward * (-2);
-                                         m_rb.AddForce(ileri, ForceMode.Acceleration);
-                                    Vector3 sol = globalGravity * gravityScale * transform.right * (-2);
-                                         m_rb.AddForce(sol, ForceMode.Acceleration);
-                                      }
 
-                                }else if((yamac[2] || havada[2]) && (yamac[3] || havada[3]) && havada[0]==false && havada[1]==false )//(lastik_hit[0].collider.tag=="yamac"|| lastik_hit[0].collider == null) &&  (lastik_hit[1].collider.tag=="yamac"|| lastik_hit[1].collider == null)&& lastik_hit[2].collider != null && lastik_hit[3].collider != null
-            {
-                                    m_rb.mass = 800;
-                                    Debug.Log("arka tekerler boþta");
-                                    if (kontrolet.v > 0 )
-                                     {
-                                        Vector3 ileri = globalGravity * gravityScale * transform.forward * (-2);
-                                         m_rb.AddForce(ileri, ForceMode.Acceleration);
 
-                                    } else if (kontrolet.v < 0)
-                                        {
-                                     Vector3 geri = globalGravity * gravityScale * transform.forward * (0.75f);
-                                 m_rb.AddForce(geri, ForceMode.Acceleration);
+        /////////////////////////////ANTÝ STUCK SÝSTEMÝ////////////////////////////////////////////
 
-                }
 
-            }else if(havada[0]&& havada[1]&& havada[2]&& havada[3])
-            {
-                //havadayken burnu yukarý bakmamasý için
-                transform.Rotate(0.1f, 0, 0);
 
-            }*/
-           if((hiza_basili==1 || hiza_basili==-1) && CurrentSpeed < 3.5f) {
+        #region ARABANIN TAKILMAMASI ÝÇÝN DESTEK KODLARI
+
+       
+        if ((hiza_basili==1 || hiza_basili==-1) && CurrentSpeed < 3.5f) {
             Vector3 dikey_destek = globalGravity * gravityScale * transform.forward * (-5)*hiza_basili;
             m_rb.AddForce(dikey_destek, ForceMode.Acceleration);
             }
@@ -528,42 +457,27 @@ using UnityStandardAssets.Vehicles.Car;
             m_rb.AddForce(yatay_destek, ForceMode.Acceleration);
             }
 
+
+ #endregion
+
+
+
+
         ///////////////////////////////ANTÝ STUCK SÝSTEMÝ//////////////////////////////////////
 
-        ////////////////////////////düþman kotrol için hit/////////////////////////////////
-        /* RaycastHit on_isin;
-         Vector3 araba = transform.position;
-         if(Physics.Raycast(araba,transform.forward,out on_isin, on_sensor_uzunlugu))
-         {
-             if(on_isin.collider.tag=="düþman kontrol")ileri_git = true;
-
-         }
-         else
-         {
-             ileri_git = false;
-         }
-
-         Debug.DrawRay(araba, transform.forward * on_sensor_uzunlugu, Color.green);
-*/
-
-        ////////////////////////////düþman kotrol için hit/////////////////////////////////
-        /*Vector3 araba = transform.position;
-        araba.z += sensorbaslangýcý;
-
-        RaycastHit hit;
-
-        if (Physics.Raycast(araba, transform.forward, out hit, fuze_sensoru_uzunlugu))
-        {
 
 
-            Debug.Log("çarpma oldu");
 
-        }
-        Debug.DrawRay(araba, transform.forward*fuze_sensoru_uzunlugu, Color.green);
-        */
 
-        //FÜZE UPDATE KODLARI
+
+
+
+
+        //////////////////////////////////////////////////ARABA ATEÞ ETME AYARLARI
         if (kontrolet.control_degis == false) { 
+
+
+
         if (Input.GetMouseButton(0))
             {
                 ates = true;
@@ -579,8 +493,19 @@ using UnityStandardAssets.Vehicles.Car;
 
 
         }
-         if(araba=="ücüncü prototip") {
 
+
+
+
+     
+
+
+
+        if (araba=="ücüncü prototip") {
+
+
+
+        #region ÜÇÜNCÜ ARABA ATEÞ AYARI
             if (ates && Time.time >= timetofire && fail==false)
             {
                 timetofire = Time.time + 1.0f / firerate;
@@ -659,38 +584,20 @@ using UnityStandardAssets.Vehicles.Car;
                 
                  }
                 
-                
-                
-                
-                
-                /*
-                
-                if (mermiler[i].transform.GetComponent<Patla>().patla == false && mermiler[i].activeSelf==true){
-                    mermiler[i].transform.position += mermiler[i].transform.forward * (speed * Time.deltaTime);
-                    roket_trails[i].transform.position = mermiler[i].transform.position;
-
-              }else if(mermiler[i].transform.GetComponent<Patla>().patla == true)
-                {
-                    
-                    mermiler[i].transform.GetComponent<Patla>().patla = false;
-                    patlama[i].SetActive(true);
-                    patlama[i].transform.position = mermiler[i].transform.position;
-                    patlama[i].transform.rotation = Quaternion.LookRotation(mermiler[i].transform.up);
-
-
-                    mermiler[i].SetActive(false);
-                }
-                */
-
 
 
 
             } 
-        
-        }else if (araba=="birinci_prototip") {
-         if(ates==true && fail==false)
-            {
+           #endregion
 
+
+
+        }else if (araba=="birinci_prototip") {
+
+            #region BÝRÝNCÝ ARABA ATEÞ AYARI
+            if (ates==true && fail==false)
+            {
+                    #region GÖRSEL KISIM
                 GameObject fisek = transform.GetChild(5).gameObject;
 
                 fisek.SetActive(true);
@@ -700,12 +607,14 @@ using UnityStandardAssets.Vehicles.Car;
 
 
                 RaycastHit bullet_hit;               
-                /* GameObject bullet_trace = transform.GetChild(8).gameObject;
-                float buyukluk = UnityEngine.Random.Range(1.2f, 0.2f);*/
+
 
                 if (Time.time >= timetobullet)
                 {
 
+
+
+                    
                     siluetler[sira_siluet].SetActive(true);
                     siluetler[sira_siluet].transform.position = fisek.transform.position+sapma2;
                     siluetler[sira_siluet].transform.rotation = fisek.transform.rotation;
@@ -793,32 +702,69 @@ using UnityStandardAssets.Vehicles.Car;
 
                 }
 
+                #endregion
 
+                //////////////////////ATEÞ SESÝ///////////////////
+               
+
+                #region SES KISMI
+                if (taramali_sesi.activeSelf == false)
+                {                
+                    taramali_bitisi.SetActive(false);
+                    taramali_sesi.SetActive(true);
+                taramali_sesi.GetComponent<AudioSource>().Play(0);
+                tarBitisZamani = Time.time + tarBitisSuresi;   
+                }
+                #endregion
             }
             else
             {
+                #region TÜFEK VE MUZZLE BÝTÝÞÝ
+                
+
+               
                 transform.GetChild(5).gameObject.SetActive(false);
+                       taramali_sesi.SetActive(false);
+
+                if (taramali_bitisi.activeSelf == false) { 
+                taramali_bitisi.SetActive(true);
+                taramali_bitisi.GetComponent<AudioSource>().Play(0);
+                    }
+     
+                #endregion          
             }
 
+
+            #region TÜFEKTEN ÇIKAN SÝLÜET EFEK AYARI
             for (int i = 0; i < siluetler.Length; i++)
             {
                 if (siluetler[i].activeSelf == true)
                 {
 
-
                     siluetler[i].transform.position += siluetler[i].transform.forward * UnityEngine.Random.Range(150, 200) * Time.deltaTime;
 
 
-
-
                 }
+            } 
+            #endregion
+
+
+            
+            
+            #endregion
 
 
 
 
-            }
         }else if (araba == "ikinci_prototip")
         {
+
+            #region ÝKÝNÝ ARABA ATEÞ AYARI
+
+            
+
+
+
             if (ates == true && fail == false)
             {
                 lr.SetActive(true);
@@ -908,10 +854,20 @@ using UnityStandardAssets.Vehicles.Car;
                 degen.SetActive(false);
             }
 
+#endregion
+
 
 
         }else if(araba== "dördüncü_prototip")
         {
+
+
+            #region DÖRDÜNCÜ ARABA  ATEÞ AYARI
+
+           
+
+
+
             if (ates && Time.time >= timetofire && fail == false)
             {
                 timetofire = Time.time + 1.0f / firerate;
@@ -976,10 +932,19 @@ using UnityStandardAssets.Vehicles.Car;
 
                 }
 
+ #endregion
+
+
 
             }
 
-            RaycastHit[] su_hit;
+
+        #region ARABANIN SUYA BATMASI DURUMU AYARLARI
+
+        
+
+
+        RaycastHit[] su_hit;
         bool[] su;
         float[] su_sensoru;
         //bool[] havada;
@@ -1026,29 +991,28 @@ using UnityStandardAssets.Vehicles.Car;
                 }
                   
             }
-            /*else
-            {
-                if (lastik_hit[i].collider == null)
-                {
 
-                    havada[i] = true;
-
-                }
-                else
-                {
-                    havada[i] = false;
-
-                }
-
-            }*/
 
             Debug.DrawRay(transform.position + transform.forward * su_sensoru[i], direction * 0.2f, Color.green);
 
 
         }
+        #endregion
 
-        ///////////araba patlama ayarlarý//////
-        ///
+
+
+
+
+
+
+        /////////////////////////////////////////////////////ARABA PATLAMASI
+       
+
+
+        #region ARABA PATLAMA AYARLARI
+
+      
+
         if (Input.GetKeyDown(KeyCode.L)) fail = true;
 
         if (fail == true)
@@ -1059,7 +1023,15 @@ using UnityStandardAssets.Vehicles.Car;
         araba_patlama.transform.position = transform.position;
             kontrolet.carpat = true;
         }   
-//+transform.forward*(-0.2f)+transform.up*0.1f ;
+  #endregion
+
+
+
+
+ /////////////////////////////////////////////////////ARABA PATLAMASI
+
+
+
 
 
     }
