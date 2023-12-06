@@ -117,7 +117,7 @@ public class Cameracontroller : MonoBehaviour
         if (verial)
         {
 
-            takip = car.transform.GetComponent<CarController>().sicratma.transform;
+           // takip = car.transform.GetComponent<CarController>().sicratma.transform;
             height = 6;
         }else if (arabapatladi)
         {

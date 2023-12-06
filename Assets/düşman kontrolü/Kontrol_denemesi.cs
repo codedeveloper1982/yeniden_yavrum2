@@ -60,7 +60,7 @@ public class Kontrol_denemesi : MonoBehaviour
     private Transform cam;*/
     // CAN BARI YAPIMINA SONRA KARAR VER.
     private float[] dusman_cani;
-    public GameObject patlama;
+    public GameObject patlama;//BUNDA BÝRAZCIK KAYMA VAR TAM MERKEZDE DEÐÝL PATLAMA BUNA BAK
     public GameObject parcali_drone1,parcali_drone5,parcali_drone11c,parcali_mayinci,parcali_drone6,parcali_fuze_canavari,parcali_sonuncu;
 
 
@@ -102,10 +102,10 @@ public class Kontrol_denemesi : MonoBehaviour
     private GameObject[] fuze_pat;
     private GameObject[] fuze_buyuk_pat;
     private float[] fuze_zamani;
-    public GameObject fuze;// çoðaltýlacak füze
-    public GameObject fuzeatesi;
-    public GameObject pat;
-    public GameObject buyuk_pat;
+    private GameObject fuze;// çoðaltýlacak füze
+    private GameObject fuzeatesi;
+    private GameObject pat;
+    private GameObject buyuk_pat;//BUNU YAP
     private Vector3 []shootpoint;// füze çýkýþ moktasý
     public int fuzesayisi;// aktif olacak füze sayýsý
     private int sira;// aktif füze sýrasý
@@ -126,7 +126,7 @@ public class Kontrol_denemesi : MonoBehaviour
     private int kivilcim_sayisi = 10,ilk_kivilcim, son_kivilcim;
 
     [Header("laser kodlarý")]
-    public GameObject laser_prefab;
+    private GameObject laser_prefab;
     private GameObject[] laserler;
     private GameObject [] laser_pat;
     private int laser_sayisi = 10,ilk_laser, son_laser;
@@ -140,7 +140,7 @@ public class Kontrol_denemesi : MonoBehaviour
     private GameObject[] rocket_trails;
     private GameObject[] rocket_pat;
     private float[] rocket_hiz_x,rocket_hiz_y,rocket_hiz_z;
-    public GameObject rocket;// çoðaltýlacak füze
+    private GameObject rocket;// çoðaltýlacak füze
     private GameObject[] parent_rocket;
 
    // private Vector3[] rocket_shootpoint;// füze çýkýþ moktasý
@@ -157,7 +157,7 @@ public class Kontrol_denemesi : MonoBehaviour
 
     [Header("mayin kodlarý")]
     private GameObject[] mayinlar;
-    public GameObject mayin_prefab;
+    private GameObject mayin_prefab;
     private GameObject[] mayin_pat;
     private Vector3[] mayin_hedefi;
 
@@ -178,7 +178,7 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
     [Header("mavi laser kodlarý")]
-    public GameObject mavi_laser_prefab;
+    private GameObject mavi_laser_prefab;
     private GameObject[] mavi_laserler;
     private GameObject[] mavi_laser_pat;
     private int mavi_laser_sayisi = 20, mavi_ilk_laser, mavi_son_laser;
@@ -193,8 +193,7 @@ public class Kontrol_denemesi : MonoBehaviour
     private GameObject[] canavar_fuze_pat;
     private GameObject[] canavar_fuze_buyuk_pat;
     private float[] canavar_fuze_zamani;
-    public GameObject canavar_fuze;// çoðaltýlacak füze
-    public GameObject canavar_fuzeatesi;
+    private GameObject canavar_fuze;// çoðaltýlacak füze
 
     private Vector3[] canavar_shootpoint;// füze çýkýþ moktasý
     public int canavar_fuzesayisi;// aktif olacak füze sayýsý
@@ -255,13 +254,24 @@ public class Kontrol_denemesi : MonoBehaviour
     /// //////////////////HARABE ARABA AYARLARI//////////////////////////////////////
     /// </summary>
 
-    private float harabe_uzunluk, harabe_cik,har_y,har_z,max_y,max_z;
+    private float  harabe_cik,har_y,har_z,max_y,max_z;
 
 
 
 
     void Start()
     {
+        pat = Resources.Load<GameObject>("patlamalar/küçük patlama");
+        buyuk_pat=Resources.Load<GameObject>("patlamalar/kucuk_pat");
+        fuze=Resources.Load<GameObject>("drone6_füzesi");
+        rocket=Resources.Load<GameObject>("rocket");
+        mavi_laser_prefab=Resources.Load<GameObject>("bluelaser");
+        laser_prefab = mavi_laser_prefab;
+        canavar_fuze=Resources.Load<GameObject>("canavar_fuzesi");
+        mayin_prefab=Resources.Load<GameObject>("mayin");
+        #region KONTROL VE DÜÞMAN EKLEME NOKTALARI
+
+
         ///////burasý on ve arkakontrol noktalarý için///////bide dusman ekleme yeri
         konum_sirasi = new float[3];
         cizgi_sirasi = new int[3];
@@ -271,13 +281,41 @@ public class Kontrol_denemesi : MonoBehaviour
         konum_sirasi[0] = on;
         konum_sirasi[1] =  arka;
         konum_sirasi[2] =  dusman_eklenen_yer;
-        for(int i = 0; i < konum_sirasi.Length; i++) { 
-        cizgi_sirasi[i] = 10;
-        mevcut_cizgiler[i] = cizgiler[cizgi_sirasi[i]];
+        for(int i = 0; i < konum_sirasi.Length; i++) {
+
+
+            #region HANGÝ ÇÝZGÝDEN BBAÞLANACAK
+
+
+
+            cizgi_sirasi[i] = 0;//////////////////////BAÞLANACAK ÇÝZGÝ YERÝ
+
+
+            #endregion
+
+        
+            
+            
+            
+            mevcut_cizgiler[i] = cizgiler[cizgi_sirasi[i]];
         Hareket_et(cube[i],mevcut_cizgiler[i],mevcut_egriler[i],konum_sirasi[i]);
             }
         ///////burasý on ve arkakontrol noktalarý için///////
+        ///
+
+
+
+        #endregion
+
+
+
         //------------------------------------------------------------------------
+
+
+        #region HEDEF KONUM NOKTALARI
+
+
+
         //////////hedef konum belirlenmesi için burasý //////////////
         ///
 
@@ -299,6 +337,15 @@ public class Kontrol_denemesi : MonoBehaviour
         /// 
         //////////hedef konum belirlenmesi için burasý //////////////
 
+
+
+        #endregion
+
+
+
+
+        #region DRONE KONUMU
+
         //-------------------------------------------------------------------------
         //////////drone konum belirlenmesi için burasý //////////////       
         /////
@@ -318,10 +365,22 @@ public class Kontrol_denemesi : MonoBehaviour
         /////
         //////////drone konum belirlenmesi için burasý //////////////  
         ///
+
+
+
+
+        #endregion
+
+
+
             player = GameObject.FindGameObjectWithTag("Player");
+
+
+        #region DRONE SAÐSOL DEÐÝÞÝMÝ
+
         //////////sað sol deðiþim ////////////// 
 
-            yatay_degisim = new  float[dusmanlar.Length];
+        yatay_degisim = new  float[dusmanlar.Length];
             dikey_degisim=new  float[dusmanlar.Length];
             sag_sol =new  float[dusmanlar.Length];
             cik_in=new  float[dusmanlar.Length];
@@ -352,10 +411,26 @@ public class Kontrol_denemesi : MonoBehaviour
         }
         infilak_sirasi = 0;
         //////////sað sol deðiþim ////////////// 
+
+
+
+
+        #endregion
+
+
+       
+
+
+
+
         //cam = Camera.main.transform;CAN BARI YAPIMINA SONRA KARAR VER.
         patlama.SetActive(false);
 
 
+
+
+
+        #region ATEÞ ETME AYARLARI
 
         //////////ates etme ayarlarý ////////////// 
         ates = new bool[dusmanlar.Length];
@@ -401,7 +476,8 @@ public class Kontrol_denemesi : MonoBehaviour
         shootpoint= new Vector3[fuzesayisi];
         vo=new Vector3[fuzesayisi];
         fuze_at= new bool[fuzesayisi];
-        
+        fuzeatesi = Resources.Load<GameObject>("patlamalar/roket_trail");
+
         for (int i = 0; i < fuzesayisi; i++)
         {
             shootpoint[i] = Vector3.zero;
@@ -545,7 +621,7 @@ public class Kontrol_denemesi : MonoBehaviour
         {
             canavar_shootpoint[i] = Vector3.zero;
             canavar_fuzeler[i] = Instantiate(canavar_fuze, shootpoint[i], Quaternion.identity);
-            canavar_fuze_trails[i] = Instantiate(canavar_fuzeatesi, shootpoint[i], Quaternion.identity);
+            canavar_fuze_trails[i] = Instantiate(fuzeatesi, shootpoint[i], Quaternion.identity);
             canavar_fuze_pat[i] = Instantiate(pat, shootpoint[i], Quaternion.identity);
             canavar_fuze_buyuk_pat[i] = Instantiate(buyuk_pat, shootpoint[i], Quaternion.identity);
             canavar_fuze_zamani[i] = 0;
@@ -568,6 +644,17 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
 
+
+
+
+
+
+
+        #endregion
+
+
+
+        #region COÝN AYARLARI
 
         //////////////////coin ayarlarý//////////////////
 
@@ -605,25 +692,50 @@ public class Kontrol_denemesi : MonoBehaviour
         hepsi_toplandi = true;
         coin_yer_al = 0;
 
+
+
+
+        #endregion
+
+
+
+
+
         ///////////////////////////BURASI AR KISIMI ÝSÝMLENDÝRMEK ÝÇÝN ////////////////
         arka_kýsým = GameObject.Find("düþman kontrol arka kýsým");
 
 
+        #region HARABE ARAÇ GÖRÜNCE YÜKSELMESÝ ÝÇÝN AYARLAR
 
 
         /// //////////////////HARABE ARABA AYARLARI//////////////////////////////////////
 
-        harabe_uzunluk = 6.5f;
+
 
         harabe_cik = 0.015f;
         max_y = 1f;
         max_z = 2.8f;
 
+
+
+        #endregion
+
+
+
+
+
+
     }
 
-    // Update is called once per frame
+
+
+
+
+
     void Update()
     {
+
+        #region KONTROL  NOKTALARI ÝLERÝ GERÝ AYARLARI
 
 
         if (Vector3.Distance(cube[0].transform.position, player.transform.position) < 17.0f)
@@ -635,6 +747,15 @@ public class Kontrol_denemesi : MonoBehaviour
             geri = true;
         }
 
+
+
+
+        #endregion
+
+
+
+
+
         araba_hizi= player.transform.GetComponent<CarController>().CurrentSpeed;
 
 
@@ -642,6 +763,9 @@ public class Kontrol_denemesi : MonoBehaviour
         {
             if (dusmanlar[i].activeSelf == true)
             {
+
+                #region DRONE UZAKTAYSA PLAYERA ÖTELE
+
                 uzaklik = Mathf.Abs(gecici_konum[i] - drone_sirasi[i]);
 
                     if (uzaklik < 7.0f)
@@ -657,9 +781,20 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
 
+                #endregion
+
+
+
+
+
+
 
 
                 Hareket_et(drone_konum[i], drone_cizgi[i], drone_egri[i], drone_sirasi[i]);//hareket kodlarý burada olsun (sensör harici olanlar)
+                
+                
+                
+                #region HARABE GÖRÜNCE YÜKSELME
 
                 Vector3 harabe_bas =dusmanlar[i].transform.position+new Vector3(0,0.3f,0);
                 RaycastHit harabe_hit;
@@ -722,11 +857,16 @@ public class Kontrol_denemesi : MonoBehaviour
                     
                 }
 
-  
 
 
 
-                Drone_hareketi(dusmanlar[i], drone_konum[i], dusman_hizi,0,cik_in[i]);//sag_sol[i]
+                #endregion
+
+
+
+                #region DRONE SAÐSOL ÇIK-ÝN
+
+                Drone_hareketi(dusmanlar[i], drone_konum[i], dusman_hizi,sag_sol[i],cik_in[i]);
 
                 if (Mathf.Abs(sag_sol[i] - yatay_degisim[i]) < 0.3f)
                 {
@@ -740,9 +880,9 @@ public class Kontrol_denemesi : MonoBehaviour
                 
                 if (Mathf.Abs(cik_in[i] - dikey_degisim[i]) < 0.33f)
                 {
-                   if(araba_hizi<3)dikey_degisim[i] =Random.Range(0.3f, 0.7f); // bunlar eski deðerler   2, 4   0, 5
+                   if(araba_hizi<3)dikey_degisim[i] =Random.Range(2.0f, 4.0f); // bunlar eski deðerler   2, 4   0, 5
                    
-                   else dikey_degisim[i] = Random.Range(0.3f, 0.7f);
+                   else dikey_degisim[i] = Random.Range(0, 5);
                    
                 }
 
@@ -752,9 +892,19 @@ public class Kontrol_denemesi : MonoBehaviour
 
             }
 
+
+
+
+                #endregion
+
+
+
+
         }
 
         ///////burasý on ve arkakontrol noktalarý için///////
+        ///
+       #region ÝLERÝ VE GERÝ GÝDERKEN YAPILACAKLAR
         if (ileri)
         {
             for (int i = 0; i < konum_sirasi.Length; i++)
@@ -830,12 +980,35 @@ public class Kontrol_denemesi : MonoBehaviour
             geri = false;
         }
         ///////burasý on ve arkakontrol noktalarý için///////bitti
-        ///
+
+
+
+
+
+        #endregion
+
+
+        
+        
 
         for (int i = 0; i < dusmanlar.Length; i++)
         {
             if (dusmanlar[i].activeSelf == true)
             {
+
+
+
+
+
+                #region DRONE ÝÇÝN GEÇÝCÝ BÝR KONUM ÜRET VE ORAYA GÝT
+              
+
+
+
+                #region ARABA YAVAÞLARSA NE KADAR ARABAYA YAÞLAÞSIN
+
+
+
                 if (Mathf.Abs(gecici_konum[i] - drone_sirasi[i]) < 0.2f)
                 {
                     if(araba_hizi < 3)
@@ -854,6 +1027,9 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
                 }
+
+                #endregion
+
 
 
 
@@ -886,6 +1062,15 @@ public class Kontrol_denemesi : MonoBehaviour
                 hedef_konum[i] += hedef_cizgi[i].transform.up * hedef_egri[i].location.y;
 
                 //gorunur_obje.transform.position = hedef_konum[1];                       bunu sonra silebilirsin
+
+
+
+                #endregion
+                
+
+
+
+            #region  DRONE KONTROL EDEN NOKTA AYRLARI AYARLARI
 
 
 
@@ -926,9 +1111,11 @@ public class Kontrol_denemesi : MonoBehaviour
                     drone_sirasi[i] -= 0.1f;
                 }
 
+                #region ÝKÝ DRONE BÝRBÝRÝNE YAKLAÞIRSA YAPILACAKLAR
+
                 for (int a = 0; a < dusmanlar.Length; a++)
                 {
-                    if (a != i)
+                    if (a != i && dusmanlar[a].activeSelf == true)
                     {
                         if (Mathf.Abs(sag_sol[a] - sag_sol[i]) < 1.5f && Mathf.Abs(drone_sirasi[a] - drone_sirasi[i]) < 2)
                         {
@@ -955,6 +1142,13 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
 
+                #endregion
+
+
+
+
+
+
                 if (drone_sirasi[i] > drone_cizgi[i].Length - kirp)
                 {
                     drone_cizgi_sirasi[i]++;
@@ -976,6 +1170,14 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
             }
+
+
+            #endregion
+
+
+
+            #region VURULMA ANI YAPILACAKLAR
+
             //////////// düþman vurulmasý///////////////////
             if (player.GetComponent<CarController>().vuruldu == true)
             {
@@ -983,7 +1185,7 @@ public class Kontrol_denemesi : MonoBehaviour
                 if (dusmanlar[i].name == isim)
                 {
 
-                    dusman_cani[i] -= 2;
+                    dusman_cani[i] -= 5;
                     player.GetComponent<CarController>().vuruldu = false;
                     if (dusman_cani[i] == 0 || dusman_cani[i] < 0)
                     {
@@ -1084,6 +1286,15 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
             }
+
+
+
+
+            #endregion
+
+
+            #region ATEÞE ETME ZAMANI
+
             //////////// ates etme kodlarý///////////////////
             if (Time.time > ates_vakti[i] && dusmanlar[i].activeSelf == true)
             {
@@ -1102,10 +1313,20 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
 
+
+            #endregion
+
             if (ates[i])
             {
                 if (dusmanlar[i].tag == "drone_5")
                 {
+
+
+
+
+                    #region MERMÝ AT
+
+
                     if (Time.time > gecis_vakti[i])
                     {
                         gecis_vakti[i] = Time.time + oburune_gec[i];
@@ -1164,9 +1385,20 @@ public class Kontrol_denemesi : MonoBehaviour
                     Debug.DrawRay(fuze_ucu, muzzle.transform.forward * 15, Color.green);
 
 
+
+                    #endregion
+
+
                 }
                 else if (dusmanlar[i].tag == "füzeci")//drone 6 ateþ etmesi bu 
                 {
+
+
+
+                    #region FÜZE AT
+
+
+
                     if (Time.time > gecis_vakti[i])
                     {
                         gecis_vakti[i] = Time.time + oburune_gec[i];
@@ -1229,8 +1461,18 @@ public class Kontrol_denemesi : MonoBehaviour
                         fuze_at[i] = false;
                     }
 
-                }else if(dusmanlar[i].tag == "drone11_c")
+
+                    #endregion
+
+                }
+                else if(dusmanlar[i].tag == "drone11_c")
                 {
+
+
+
+
+                    #region MAVÝ LAZER AYARLARI
+
 
 
                     if (Time.time > gecis_vakti[i])
@@ -1290,10 +1532,19 @@ public class Kontrol_denemesi : MonoBehaviour
                         laser_at = false;
                     }
 
-                         
 
-                }else if (dusmanlar[i].tag == "drone_1b")
+                    #endregion
+
+                }
+                else if (dusmanlar[i].tag == "drone_1b")
                 {
+
+
+
+                    #region ROKET AT
+
+
+
 
                     if (Time.time > gecis_vakti[i])
                     {
@@ -1359,10 +1610,19 @@ public class Kontrol_denemesi : MonoBehaviour
                         rocket_at[i] = false;
                     }
 
+                    #endregion
 
-
-                }else if (dusmanlar[i].tag == "mayinci")
+                }
+                else if (dusmanlar[i].tag == "mayinci")
                 {
+
+
+                    #region MAYIN BIRAK
+
+
+
+
+
                     GameObject l_shootpoint;
                      l_shootpoint = dusmanlar[i].transform.GetChild(0).gameObject;
                      ates_konum[i]=l_shootpoint.transform.localPosition; 
@@ -1422,11 +1682,20 @@ public class Kontrol_denemesi : MonoBehaviour
 
                             mayin_birak[i] = false;
                     }
+                    #endregion
+
 
 
                 }
                 else if (dusmanlar[i].tag == "drone_x")
                 {
+
+
+
+                    #region MAVÝ LAZER AT
+
+
+
 
                     if (Time.time > gecis_vakti[i])
                     {
@@ -1485,10 +1754,17 @@ public class Kontrol_denemesi : MonoBehaviour
                         mavi_laser_at = false;
                     }
 
+                    #endregion
 
-
-                }else if (dusmanlar[i].tag == "fuzeci_canavar")//füzeci_canavar ateþ etmesi bu 
+                }
+                else if (dusmanlar[i].tag == "fuzeci_canavar")//füzeci_canavar ateþ etmesi bu 
             {
+
+
+                    #region CANAVAR FÜZE AT
+
+
+
                 if (Time.time > gecis_vakti[i])
                 {
                     gecis_vakti[i] = Time.time + oburune_gec[i];
@@ -1553,8 +1829,24 @@ public class Kontrol_denemesi : MonoBehaviour
                     canavar_fuze_at[i] = false;
                 }
 
-            }else if ( dusmanlar[i].tag == "sonuncu")
+
+                    #endregion
+
+
+
+
+
+                }
+                else if ( dusmanlar[i].tag == "sonuncu")
                 {
+
+
+
+
+
+                    #region LAZER AT
+
+
                     if (Time.time > gecis_vakti[i] && (kullanilan_silah==1 || kullanilan_silah==2))
                     {
                         GameObject l_shootpoint = dusmanlar[i].transform.GetChild(0).gameObject;
@@ -1573,6 +1865,7 @@ public class Kontrol_denemesi : MonoBehaviour
                             laser_at = true;
                         }
                     }
+
 
 
 
@@ -1606,6 +1899,19 @@ public class Kontrol_denemesi : MonoBehaviour
 
                         laser_at = false;
                     }
+
+
+
+
+                    #endregion
+
+
+
+
+
+                    #region MAYIN BIRAK
+
+
 
                     if (Time.time > sonuncu_mayin_vakti && (kullanilan_silah == 1 || kullanilan_silah == 3))
                     {
@@ -1667,6 +1973,16 @@ public class Kontrol_denemesi : MonoBehaviour
                     }
 
 
+
+                    #endregion
+
+
+
+
+                    #region ROKET AT
+
+
+
                     if (Time.time > sonuncu_roket_vakti && (kullanilan_silah == 3 || kullanilan_silah == 2))
                     {
                         GameObject l_shootpoint = dusmanlar[i].transform.GetChild(1).gameObject;
@@ -1686,6 +2002,9 @@ public class Kontrol_denemesi : MonoBehaviour
                         }
 
                     }
+
+
+
 
 
 
@@ -1738,8 +2057,11 @@ public class Kontrol_denemesi : MonoBehaviour
                 }
 
 
+                #endregion
+
+
             }
-            
+
             else
             {
                 if (dusmanlar[i].tag == "drone_5")
@@ -1749,6 +2071,10 @@ public class Kontrol_denemesi : MonoBehaviour
                 }
 
             }
+
+
+        #region ENKAZ TOPLAMA AYARLARI
+
 
             if (enkaz_topla[i])
             {
@@ -1779,7 +2105,14 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
 
+        #endregion
+
+
         }
+
+
+
+        #region FÜZE AYARLARI
 
         for (int i = 0; i < fuzesayisi; i++)
         {
@@ -1836,6 +2169,13 @@ public class Kontrol_denemesi : MonoBehaviour
 
         }
 
+
+
+
+        #endregion
+
+
+        #region NORMAL LAZER AYARLARI
         for (int i = 0; i < laser_sayisi; i++)
         {
             if (laserler[i].activeSelf == true)
@@ -1861,6 +2201,16 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
         }
+
+
+
+
+
+        #endregion
+
+
+        #region MAVÝ LAZER AYARLARI
+
 
         for (int i = 0; i < mavi_laser_sayisi; i++)
         {
@@ -1890,6 +2240,10 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
 
+        #endregion
+
+
+        #region ROKET AYARLARI
         for (int i = 0; i < rocketsayisi; i++)
         {
             if (rocketler[i].activeSelf == true)
@@ -1953,6 +2307,14 @@ public class Kontrol_denemesi : MonoBehaviour
 
         }
 
+
+
+
+
+        #endregion
+
+
+        #region MAYIN AYARLARI
         for (int i = 0; i < mayin_sayisi; i++)
         {
             if (mayinlar[i].activeSelf == true)
@@ -1992,10 +2354,19 @@ public class Kontrol_denemesi : MonoBehaviour
             }
 
 
-
-
-
         }
+
+
+
+
+
+        #endregion
+
+
+
+        #region CANAVAR FÜZE AYARLARI
+
+
 
         for (int i = 0; i < canavar_fuzesayisi; i++)
         {
@@ -2048,10 +2419,12 @@ public class Kontrol_denemesi : MonoBehaviour
 
             }
 
-
-
         }
 
+
+            #endregion
+
+        #region DÝÐER DÜÞMANA GEÇME AYARLARI
         ///////////////////düþman sayýsý///////////////////
         ///
         if (aktif_dusman_sayisi == 0)
@@ -2102,6 +2475,16 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
         }
+
+
+
+
+
+        #endregion
+
+
+        #region COÝN EKLEME KISMI
+
 
         ////////////////////////coin ayarlarý////////////////////////
         if (coin_yerlesim==true)
@@ -2187,13 +2570,48 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
 
+        #endregion
+
 
 
     }
 
 
 
-        private void fuze_gonder(GameObject fuze, Vector3 distance, float zaman,Vector3 shootpoint)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void fuze_gonder(GameObject fuze, Vector3 distance, float zaman,Vector3 shootpoint)
     {
         Vector3 vek = distance;
 

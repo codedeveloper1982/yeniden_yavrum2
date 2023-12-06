@@ -16,6 +16,7 @@ using UnityStandardAssets.Vehicles.Car;
 
     public class CarController : MonoBehaviour
     {
+    #region ARABANIN UNÝTY ASSET ORÝJÝNAL KODLARI
         [SerializeField] private CarDriveType m_CarDriveType = CarDriveType.FourWheelDrive;
   
 
@@ -58,16 +59,25 @@ using UnityStandardAssets.Vehicles.Car;
         public float AccelInput { get; private set; }
 
 
-     
-        //ROKET ÝLE ÝLGÝLÝ KODLAR
 
-        GameObject[] mermiler;// mermiler dizisi oluþturur
+    #endregion
+
+
+
+
+
+    #region ÜÇÜNCÜNÜN ROKETÝ
+
+    [Header("ROKET AYARLARI")]
+    //ROKET ÝLE ÝLGÝLÝ KODLAR
+
+    GameObject[] mermiler;// mermiler dizisi oluþturur
         GameObject[] roket_trails;
         GameObject[] patlama;
         GameObject[] kucuk_pat;
-        public GameObject bullet;// çoðaltýlacak füze
-        public GameObject roketatesi;
-        public GameObject pat;
+        private GameObject bullet;// çoðaltýlacak füze
+        private GameObject roketatesi;
+        private GameObject pat;
         private GameObject shootpoint;// füze çýkýþ moktasý
         public int mermisayisi;// aktif olacak füze sayýsý
         public int sira;// aktif füze sýrasý
@@ -81,25 +91,38 @@ using UnityStandardAssets.Vehicles.Car;
         [SerializeField] private float fuze_sensoru_uzunlugu;
 
 
-        //ARABANIN UÇABÝLMESÝ ÝÇÝN GRAVÝTY AYARLARI
-        [Header("GRAVÝTY AYARLARI")]   
+    /// ////////////// FÜZE SESÝ ÝLE ÝLGÝLÝ ELEMANLAR
+    private GameObject fuzeSesi;
+   
+
+
+
+
+
+    #endregion
+
+    #region ÖZEL GRAVÝTY AYARLARI
+
+    //ARABANIN UÇABÝLMESÝ ÝÇÝN GRAVÝTY AYARLARI
+    [Header("GRAVÝTY AYARLARI")]   
         
         [SerializeField] private float azaltma=0.5f;
         [SerializeField] private float globalGravity = -9.81f;
         private Rigidbody m_rb;
         private float gravityScale;
 
-        private Vector3 baslangic;
 
-        //anti stuck ayarlarý
-        [Header("takýlma ayarlarý")]
-        [SerializeField] private float lastik_ray;
+
+    #endregion
 
     public RaycastHit hit;
     public bool vuruldu;
     public string vurulan;
 
-    public GameObject kucuk_patlama;
+
+
+
+    private GameObject kucuk_patlama;
 
 
 
@@ -109,18 +132,25 @@ using UnityStandardAssets.Vehicles.Car;
     public bool ileri_git;
 
     */
+    #region SU SIÇRAMASI ÝLE ÝLGLÝ KISIM
 
     ///    SU SIÇRATMA/////////////
     [Header("su sýçratma ayarlarý")]
     GameObject[] su_sicratma;
-    public GameObject sicratma;
+    private GameObject sicratma;
     private int ilk_su, su_sira, su_sayisi = 3;
     public bool suya_dokundu=false;
 
+
+
+    #endregion
+
+
     [Header("patlama sesi")]
     public GameObject patlama_sesi;
-    private GameObject taramali_sesi , taramali_bitisi;
-    private float tarBitisSuresi=2, tarBitisZamani;
+    
+
+
 
 
     /// /////////arabanýn patlmasý  ///////////
@@ -133,14 +163,26 @@ using UnityStandardAssets.Vehicles.Car;
 
     /// /////////araba çeþidi ayarý ///////////
     private string araba;
+
+
+
+
+    #region BÝRÝNCÝ ATEÞ AYARLARI
+    private GameObject taramali_sesi , taramali_bitisi;
     private float timetobullet, bulletrate=20.0f;
-    public GameObject bullet_trace;
+    private GameObject bullet_trace;
     private GameObject[] siluetler;
     private int siluet_sayisi = 20, ilk_siluet, sira_siluet;
     private float menzil_uzunlugu=30;
     public GameObject kivilcim_ana;
     private GameObject[] kivilcimlar;
     private int kivilcim_sayisi = 10, ilk_kivilcim, son_kivilcim;
+
+
+    #endregion
+
+
+    #region LAZERAYARLARI
 
     [Header("LAZER AYARLARI")]
 
@@ -152,16 +194,33 @@ using UnityStandardAssets.Vehicles.Car;
     private int l_ates_sayisi = 70, ilk_lazer_ates, son_lazer_ates;
     private float lazeruzunluðu;
     public GameObject degen;
+    private GameObject laserbas, laserdevam, laserbitis; ////////// LASER SESLERÝ
+    private  float laserDevamZamani;
+
+
+
+    #endregion
+
 
     //kursun  ayarlarý
+    #region KURÞUN AYARLARI
 
-    [Header("kursun")]
+
+
+
+    [Header("KURÞUN AYARLARI")]
+
 
     GameObject[] kursunlar;// kursunlar dizisi oluþturur
     public int kursunsayisi;// aktif olacak füze sayýsý
-    public GameObject kursun;
+    private GameObject kursun;
     private int kursun_sirasi, kursun_ilk;
     public float kursun_sensoru_uzunlugu;
+    public GameObject kursuntara, kursunbitis;
+
+
+
+    #endregion
 
     // Use this for initialization
     private void Start()
@@ -173,14 +232,20 @@ using UnityStandardAssets.Vehicles.Car;
 
         if(araba=="ücüncü prototip")
         {
+
+
+            #region ÜÇÜNCÜNÜN BAÞLANGIÇ AYARLARI
+
             azaltma = 0.84f;
 
             mermiler = new GameObject[mermisayisi];
             roket_trails = new GameObject[mermisayisi];
             patlama = new GameObject[mermisayisi];
             kucuk_pat = new GameObject[mermisayisi];
-
-
+            bullet = Resources.Load<GameObject>("füze/missile");
+            pat=Resources.Load<GameObject>("patlamalar/patlama1");
+            roketatesi=Resources.Load<GameObject>("patlamalar/roket_trail");
+            kucuk_patlama=Resources.Load<GameObject>("patlamalar/küçük patlama");
             for (int i = 0; i < mermisayisi; i++)
             {
                 mermiler[i] = Instantiate(bullet, shootpoint.transform.position, Quaternion.identity);
@@ -192,28 +257,34 @@ using UnityStandardAssets.Vehicles.Car;
                 roket_trails[i].SetActive(false);
                 patlama[i].SetActive(false);
                 kucuk_pat[i].SetActive(false);
-
-
-
-
-
             }
             sira = 0;
             ilk = sira - (mermisayisi - 1);
 
 
 
+            fuzeSesi = transform.GetChild(1).gameObject;
+
+
+
+
+
+            #endregion
+
         }
         else if(araba=="birinci_prototip")
         {
+
+
+            #region BÝRÝNCÝNÝN BAÞLANGIÇ AYARLARI
+
             azaltma = 0.86f;
             taramali_sesi = transform.GetChild(6).gameObject;
             taramali_bitisi = transform.GetChild(7).gameObject;
 
-            Debug.Log(  transform.GetChild(7).gameObject.name   );
-            tarBitisZamani = Time.time;
             taramali_bitisi.SetActive(false);
             siluetler = new GameObject[siluet_sayisi];
+            bullet_trace= Resources.Load<GameObject>("bullet trance/bullet trace");
             for (int i = 0; i < siluet_sayisi; i++)
             {
 
@@ -240,16 +311,20 @@ using UnityStandardAssets.Vehicles.Car;
             }
 
 
+            #endregion
 
 
-        }else if(araba== "ikinci_prototip")
+        }
+        else if(araba== "ikinci_prototip")
         {
 
 
+            #region ÝKÝCÝNÝN BAÞLANGIÞ AYARLARI
 
+
+           
 
             azaltma = 0.84f;
-
             // lazer ile ilgili ayarlar
             lr.SetActive(false);
             degen.SetActive(false);
@@ -268,6 +343,17 @@ using UnityStandardAssets.Vehicles.Car;
 
             lazer_yakan.SetActive(false);
 
+            ////////////////////SES ÝLE ÝLGÝLÝ KISIM
+
+            laserbas = transform.GetChild(6).gameObject;
+            laserdevam = transform.GetChild(7).gameObject;
+            laserbitis = transform.GetChild(8).gameObject;
+            laserDevamZamani = Time.time;
+
+
+
+
+            #endregion
 
 
 
@@ -275,8 +361,15 @@ using UnityStandardAssets.Vehicles.Car;
         }
         else if (araba== "dördüncü_prototip")
         {
+
+
+            #region DÖRDÜNCÜ BAÞLANGIÇ AYARLA
             azaltma = 0.84f;
 
+            kursuntara= transform.GetChild(6).gameObject;
+            kursunbitis= transform.GetChild(6).gameObject;
+            kucuk_patlama = Resources.Load<GameObject>("patlamalar/küçük patlama");
+            kursun = Resources.Load<GameObject>("lazer");
             kursunlar = new GameObject[kursunsayisi];
             kucuk_pat = new GameObject[kursunsayisi];
 
@@ -291,13 +384,16 @@ using UnityStandardAssets.Vehicles.Car;
 
             kursun_sirasi = 0;
             kursun_ilk = kursun_sirasi - (kursunsayisi - 1);
-
-
+            #endregion
 
         }
 
 
         Application.targetFrameRate = 60;
+
+        #region LASTÝKLERÝ ATAMA AYARI
+
+
         m_WheelMeshLocalRotations = new Quaternion[4];
 
         m_WheelMeshes[0] = GameObject.Find("fr");
@@ -312,6 +408,8 @@ using UnityStandardAssets.Vehicles.Car;
 
 
 
+
+        #endregion
 
 
 
@@ -330,12 +428,12 @@ using UnityStandardAssets.Vehicles.Car;
 
             m_rb = transform.GetComponent<Rigidbody>();
 
-           // baslangic = transform.position;
 
 
             //FÜZE KODLARI
+        #region SIÇRAYAN SU BAÞLANGIÇ AYARI
 
-
+        sicratma= Resources.Load<GameObject>("su_sicrama/susýcrama_efek (1)");
         su_sicratma = new GameObject[su_sayisi];
         for (int i = 0; i < su_sayisi; i++)
         {
@@ -345,6 +443,10 @@ using UnityStandardAssets.Vehicles.Car;
         }
         su_sira = 0;
         ilk_su = su_sira - (su_sayisi - 1);
+
+
+
+        #endregion
 
         araba_patlama= GameObject.FindGameObjectWithTag("araba_patlama");
         yangin = GameObject.FindGameObjectWithTag("yangýn");
@@ -381,6 +483,7 @@ using UnityStandardAssets.Vehicles.Car;
 
 
         mevcut_egim = transform.localEulerAngles.x;
+
 
 
 
@@ -432,7 +535,9 @@ using UnityStandardAssets.Vehicles.Car;
             }
         #endregion
 
-           //////////////////////////////////////////// //ARABA ÝÇÝN ÖZEL GRAVÝTY OLUÞTURUYORUZ
+        //////////////////////////////////////////// //ARABA ÝÇÝN ÖZEL GRAVÝTY OLUÞTURUYORUZ
+
+
 
 
 
@@ -447,7 +552,7 @@ using UnityStandardAssets.Vehicles.Car;
 
         #region ARABANIN TAKILMAMASI ÝÇÝN DESTEK KODLARI
 
-       
+
         if ((hiza_basili==1 || hiza_basili==-1) && CurrentSpeed < 3.5f) {
             Vector3 dikey_destek = globalGravity * gravityScale * transform.forward * (-5)*hiza_basili;
             m_rb.AddForce(dikey_destek, ForceMode.Acceleration);
@@ -506,14 +611,27 @@ using UnityStandardAssets.Vehicles.Car;
 
 
         #region ÜÇÜNCÜ ARABA ATEÞ AYARI
+
+
             if (ates && Time.time >= timetofire && fail==false)
             {
+
+
+                #region GÖRLSEL KISIM
                 timetofire = Time.time + 1.0f / firerate;
                 mermiler[sira].transform.position = shootpoint.transform.position;
                 roket_trails[sira].transform.position = shootpoint.transform.position;
                 mermiler[sira].transform.rotation = shootpoint.transform.rotation;
                 mermiler[sira].SetActive(true);
                 roket_trails[sira].SetActive(true);
+
+
+
+
+
+
+
+
                 sira++;
                 ilk++;
                 if (sira == mermisayisi)
@@ -537,13 +655,24 @@ using UnityStandardAssets.Vehicles.Car;
 
 
                 }
+                #endregion
+
+
+
+                #region SES KISMI
+   
+                fuzeSesi.GetComponent<AudioSource>().Play(0);
+
+                #endregion
+
+
 
 
 
             }
 
             //FÜZE HAREKETLERÝ
-            for(int i =0; i < mermisayisi; i++)
+            for (int i =0; i < mermisayisi; i++)
             {
 
                 if (mermiler[i].activeSelf==true) {
@@ -562,7 +691,7 @@ using UnityStandardAssets.Vehicles.Car;
                     string carpma = hit.collider.tag;
                    
 
-                    if(carpma=="füzeci" || carpma=="drone_5" || carpma == "drone_1b")
+                    if(carpma=="füzeci" || carpma=="drone_5" || carpma == "drone_1b" || carpma == "drone_11c")
                     {
                         kucuk_pat[i].SetActive(true);
                         kucuk_pat[i].transform.position = hit.point;
@@ -654,13 +783,13 @@ using UnityStandardAssets.Vehicles.Car;
                         {
                             vuruldu = true;
                             vurulan = bullet_hit.collider.name;
-                            kivilcimlar[son_kivilcim].transform.localScale = new Vector3(3.8f, 3.8f, 3.8f);
+                            kivilcimlar[son_kivilcim].transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
 
 
                         }
                         else
                         {
-                            kivilcimlar[son_kivilcim].transform.localScale = new Vector3(1.8f, 1.8f, 1.8f);
+                            kivilcimlar[son_kivilcim].transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
                         }
 
                         son_kivilcim++;
@@ -713,7 +842,7 @@ using UnityStandardAssets.Vehicles.Car;
                     taramali_bitisi.SetActive(false);
                     taramali_sesi.SetActive(true);
                 taramali_sesi.GetComponent<AudioSource>().Play(0);
-                tarBitisZamani = Time.time + tarBitisSuresi;   
+
                 }
                 #endregion
             }
@@ -741,7 +870,7 @@ using UnityStandardAssets.Vehicles.Car;
                 if (siluetler[i].activeSelf == true)
                 {
 
-                    siluetler[i].transform.position += siluetler[i].transform.forward * UnityEngine.Random.Range(150, 200) * Time.deltaTime;
+                    siluetler[i].transform.position += siluetler[i].transform.forward * UnityEngine.Random.Range(100, 150) * Time.deltaTime;
 
 
                 }
@@ -767,6 +896,7 @@ using UnityStandardAssets.Vehicles.Car;
 
             if (ates == true && fail == false)
             {
+                #region GÖRSEL KISIM
                 lr.SetActive(true);
                 lr.transform.localScale = new Vector3(lr.transform.localScale.x, lr.transform.localScale.y, lazeruzunluðu);
                 lr.transform.position = shootpoint.transform.position;
@@ -844,21 +974,66 @@ using UnityStandardAssets.Vehicles.Car;
 
                 }
                 Debug.DrawRay(namlu, shootpoint.transform.forward * lazer_mesafesi, Color.green);
+                #endregion
+
+
+                #region SES KISMI
+                
+ 
+
+                    if (laserbas.activeSelf==false)
+                    {
+                    laserDevamZamani = Time.time + laserbas.transform.GetComponent<AudioSource>().clip.length;
+                    laserbitis.SetActive(false);
+                    laserbas.SetActive(true);
+                    laserbas.GetComponent<AudioSource>().Play(0);
+
+
+
+                    }
+
+                    if (laserDevamZamani<Time.time && laserdevam.activeSelf==false)
+                    {
+
+
+                    laserdevam.SetActive(true);
+                    laserdevam.GetComponent<AudioSource>().Play(0);
+
+                    }
+                #endregion
 
             }
             else
             {
+                #region LAZER ATEÞÝ BÝTÝNCE OLACAKLAR
                 lr.SetActive(false);
                 lazer_yakan.SetActive(false);
                 lazeruzunluðu = 0;
                 degen.SetActive(false);
+
+                ////////////////SES BÝTÝÞÝ
+                if (laserbitis.activeSelf == false)
+                {
+                    laserbas.SetActive(false);
+                    laserdevam.SetActive(false);
+
+                    laserbitis.SetActive(true);
+                    laserbitis.GetComponent<AudioSource>().Play(0);
+                }
+
+                #endregion
+
             }
 
-#endregion
+            Debug.Log(laserbas.transform.GetComponent<AudioSource>().clip.length);
+            #endregion
 
 
 
-        }else if(araba== "dördüncü_prototip")
+
+
+        }
+        else if(araba== "dördüncü_prototip")
         {
 
 
@@ -897,9 +1072,34 @@ using UnityStandardAssets.Vehicles.Car;
                 }
 
 
+                #region SES KISMI
+                if (kursuntara.activeSelf == false)
+                {
+                    kursunbitis.SetActive(false);
+                    kursuntara.SetActive(true);
+                    kursuntara.GetComponent<AudioSource>().Play(0);
+
+                }
+                #endregion
+
+
+
+            }
+            else
+            {
+                #region SES bitiþi
+                    kursunbitis.SetActive(true);
+                    kursuntara.SetActive(false);
+                    kursunbitis.GetComponent<AudioSource>().Play(0);
+
+                #endregion
+
+
 
             }
 
+
+                #region dördüncü kurþun hareketi
             for (int i = 0; i < kursunsayisi; i++)
             {
 
@@ -930,9 +1130,22 @@ using UnityStandardAssets.Vehicles.Car;
                 }
 
 
-                }
+            }
+
+
+
+                #endregion
+
+
+
 
  #endregion
+
+
+
+
+
+
 
 
 
@@ -1035,6 +1248,55 @@ using UnityStandardAssets.Vehicles.Car;
 
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         private void GearChanging()
         {
