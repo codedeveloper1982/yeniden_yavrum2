@@ -28,6 +28,7 @@ TagManager:
   - "altk\xFCtle"
   - harabe
   - rampa
+  - but_canv
   layers:
   - Default
   - TransparentFX

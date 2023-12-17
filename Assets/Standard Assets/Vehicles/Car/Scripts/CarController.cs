@@ -1179,9 +1179,11 @@ using UnityStandardAssets.Vehicles.Car;
             if (Physics.Raycast(transform.position + transform.forward * su_sensoru[i], direction*0.2f, out su_hit[i], 2f))
             {
 
-                if (su_hit[i].collider.tag == "su")
+                if (su_hit[i].collider.tag == "su" )
                 {
                     su[i] = true;
+
+
                 }
                 else
                 {
@@ -1198,6 +1200,7 @@ using UnityStandardAssets.Vehicles.Car;
                     su_sicratma[i].transform.rotation = Quaternion.LookRotation(su_hit[i].normal); ; 
                     su_sicratma[i].SetActive(true);
                     suya_dokundu = true;
+
                     }
 
 

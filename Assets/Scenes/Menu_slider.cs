@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using SplineMesh;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 
     public class Menu_slider : MonoBehaviour
@@ -18,13 +19,22 @@ using UnityEngine.UI;
         private float[] gosterge_konum;
         private Vector3[] sabit;
     private float renk_zamani, renk_araligi;
+    private Button[] dugme;
+    public bool sahne=false;
+
+    public static string[][] dusman_listeleri;
+    public int episode;
 
 
 
 
     private void Start()
         {
-            basma_zamani = Time.time + basim_bekleme;
+
+
+
+
+        basma_zamani = Time.time + basim_bekleme;
 
            gosterge= GameObject.Find("gosterge");
 
@@ -32,6 +42,7 @@ using UnityEngine.UI;
             gosterge_sayisi = (line[sira].Length - kalan_noktalar) / gosterge_araliklari;
 
             gostergeler = new GameObject[(int)gosterge_sayisi];
+            dugme=new Button[(int)gosterge_sayisi];
             gosterge_konum = new float[(int)gosterge_sayisi];
             sabit = new Vector3[(int)gosterge_sayisi];
             for (int i = 0; i < gosterge_sayisi; i++)
@@ -41,11 +52,25 @@ using UnityEngine.UI;
 
 
                 gostergeler[i]= Instantiate(gosterge, gosterge.transform.position, Quaternion.identity);
+                gostergeler[i].name = (i + 1).ToString();
                 gosterge_konum[i] = (i + 1) * gosterge_araliklari;
                 Hareket_et(gostergeler[i], line[sira], kavis,gosterge_konum[i]);
                 sabit[i] =gostergeler[i].transform.position+new Vector3(0, 4, 0);
                 gostergeler[i].transform.position = sabit[i];
-            }
+                dugme[i]= gostergeler[i].GetComponentInChildren<Button>();
+
+                dugme[i].onClick.AddListener(sahne_gec);
+            dugme[i].transform.gameObject.SetActive(false);
+
+
+
+        }
+
+
+
+
+
+       
 
 
             bas = 0;
@@ -53,6 +78,18 @@ using UnityEngine.UI;
             renk_sirasi = 0;
         renk_araligi = 0.1f;
         renk_zamani = Time.time + renk_araligi;
+
+
+
+
+
+
+
+         dusman_listeleri = new string[1][];
+
+        dusman_listeleri[0] = new string[] { "drone5", "drone5" };
+
+
     }
 
 
@@ -114,10 +151,16 @@ using UnityEngine.UI;
 
                     toplam_yol = Mathf.Lerp(toplam_yol, bas, Time.deltaTime);
 
+
+
+
                 }
                 else
                 {
                     toplam_yol = Mathf.Lerp(toplam_yol, son, Time.deltaTime);
+
+
+
                 }
 
 
@@ -145,25 +188,63 @@ using UnityEngine.UI;
                 float kat = 1 + 2 * (1 - (yakinlik / gosterge_araliklari));
                 gostergeler[i].transform.localScale = new Vector3(0.08f * kat, 0.08f * kat, 0.08f * kat);
                 gostergeler[i].transform.position = sabit[i] + new Vector3(0, (kat - 1) * 0.08f * gostergeler[i].GetComponentInChildren<RectTransform>().rect.width / 2, 0);
+    
+
+
+
 
 
 
                 //Debug.Log(gostergeler[i].GetComponentInChildren<RectTransform>().rect.width);renkler[renk_sirasi];
+
+
+
             }
 
-                gostergeler[i].transform.GetChild(1).transform.GetChild(renk_sirasi).gameObject.SetActive(false);
+
+                gostergeler[i].transform.GetChild(2).transform.GetChild(renk_sirasi).gameObject.SetActive(false);
 
             int sonraki = renk_sirasi + 1;
 
-            if (sonraki==gosterge.transform.GetChild(1).transform.childCount)
+            if (sonraki==gosterge.transform.GetChild(2).transform.childCount)
             {
                 sonraki = 0;
             }
 
 
-                gostergeler[i].transform.GetChild(1).transform.GetChild(sonraki).gameObject.SetActive(true);
-            
-      
+                gostergeler[i].transform.GetChild(2).transform.GetChild(sonraki).gameObject.SetActive(true);
+
+
+
+            if (yakinlik < gosterge_araliklari / 8)
+            {
+            dugme[i].transform.gameObject.SetActive(true);
+
+                if (sahne)
+                {
+                    sahne = false;
+                    episode = i;
+                    PlayerPrefs.SetInt("episode", episode);
+
+
+
+
+
+                    SceneManager.LoadScene((i+1).ToString());
+
+                }
+
+
+            }
+            else
+            {
+                dugme[i].transform.gameObject.SetActive(false);
+
+            }
+
+
+
+
 
         }
 
@@ -172,7 +253,7 @@ using UnityEngine.UI;
         {
             renk_zamani = Time.time + renk_araligi;
             renk_sirasi++; 
-            if (renk_sirasi == gosterge.transform.GetChild(1).transform.childCount)
+            if (renk_sirasi == gosterge.transform.GetChild(2).transform.childCount)
                 {
                     renk_sirasi = 0;
                 }
@@ -186,7 +267,13 @@ using UnityEngine.UI;
 
 
 
-        Debug.Log(renk_sirasi);
+
+
+
+
+
+
+        
 
     }
 
@@ -203,4 +290,15 @@ using UnityEngine.UI;
                 obje.transform.rotation.eulerAngles.z);
 */
         }
+
+         public void sahne_gec()
+        {
+        sahne = true;
+        }
+
+
+
+
+
     }
+

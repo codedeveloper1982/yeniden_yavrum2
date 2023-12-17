@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/Scenes/ana_menu.unity
+    guid: c8eb5d131ebcb8146881ffc71c0d91d8
+  - enabled: 1
+    path: Assets/Scenes/1.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 0
+    path: Assets/Scenes/yedek_sahne.unity
+    guid: 064bf3dfbbe9747419d89abc80e8485c
   m_configObjects: {}

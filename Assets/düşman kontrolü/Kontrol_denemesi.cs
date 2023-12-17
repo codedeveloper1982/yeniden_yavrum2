@@ -5,6 +5,9 @@ using SplineMesh;
 
 public class Kontrol_denemesi : MonoBehaviour
 {
+
+
+    #region KONTROL NOKTALARI
     /// <summary>
     /// /////////////////////burasý on ve arkakontrol noktalarý için//////////////////////
     /// </summary>
@@ -18,9 +21,14 @@ public class Kontrol_denemesi : MonoBehaviour
     public float on, arka,dusman_eklenen_yer;
     public bool ileri = false, geri = false;
     public float otelenme = 0.2f;
-    /// <summary>
+
+    private GameObject arka_kýsým;
     /// //////////////burasý on ve arkakontrol noktalarý için///////////////////
     /// </summary>
+
+
+
+
 
     //kontrol noktalarý///////////////////////
     private float[] hedef_sirasi;
@@ -32,7 +40,14 @@ public class Kontrol_denemesi : MonoBehaviour
     private float[] gecici_konum;
     public float sure = 2, oynatma_vakti;
 
+    #endregion
 
+
+
+
+
+
+    #region DRONE NOKTALARI
 
     ///////drone noktalarý///////////////////////
     private float[] drone_sirasi;
@@ -54,14 +69,16 @@ public class Kontrol_denemesi : MonoBehaviour
     public float cikin_hiz = 0.01f;
     public int maksimum_drone_sayisi = 2;
 
+    #endregion
 
+    #region DRONE PATLAMA
     ///////can çubuklarý///////////////////////
     /*public GameObject can_bar;
     private Transform cam;*/
     // CAN BARI YAPIMINA SONRA KARAR VER.
     private float[] dusman_cani;
     public GameObject patlama;//BUNDA BÝRAZCIK KAYMA VAR TAM MERKEZDE DEÐÝL PATLAMA BUNA BAK
-    public GameObject parcali_drone1,parcali_drone5,parcali_drone11c,parcali_mayinci,parcali_drone6,parcali_fuze_canavari,parcali_sonuncu;
+    public GameObject parcali_drone1,parcali_drone5,parcali_drone11c,parcali_mayinci,parcali_drone6,parcali_fuze_canavari,parcali_sonuncu,parcali_dronex;
 
 
 
@@ -74,6 +91,13 @@ public class Kontrol_denemesi : MonoBehaviour
     private GameObject[] infilak;
     private int infilak_sirasi, onceki_infilak;
     public int infilak_sayisi = 4;
+
+
+
+
+    #endregion
+
+    #region ENKAZ TOPLAMA
 
     [Header("ENNKAZ ÝLE ÝLGÝLÝ")]
     private float toplama_suresi = 4;
@@ -88,6 +112,12 @@ public class Kontrol_denemesi : MonoBehaviour
         private int muzzle_sayisi,muzzle_sirasi;
     */
 
+
+
+    #endregion
+
+    #region DRONE 5 ATEÞ ETME
+
     private bool[] ates;
     private float[] ates_vakti;
     private float[] ates_araligi;
@@ -95,6 +125,13 @@ public class Kontrol_denemesi : MonoBehaviour
     private float[] gecis_vakti;
     private bool[] gecis_bool;
     private Vector3[] ates_konum;
+
+
+
+    #endregion
+
+
+    #region DRON 6 FÜZELERÝ
 
     [Header("drone 6 füzeleri")]
     private GameObject[] fuzeler;// mermiler dizisi oluþturur
@@ -120,10 +157,22 @@ public class Kontrol_denemesi : MonoBehaviour
     [SerializeField] private float fuze_sensoru_uzunlugu;
 
 
+    #endregion
+
+
+    #region KIVILCIMLAR
+
+
     [Header("kývývým kodlarý")]
     public GameObject kivilcim_prefab;
     private GameObject[] kivilcimlar;
     private int kivilcim_sayisi = 10,ilk_kivilcim, son_kivilcim;
+
+
+
+    #endregion
+
+    #region LAZER 
 
     [Header("laser kodlarý")]
     private GameObject laser_prefab;
@@ -135,6 +184,13 @@ public class Kontrol_denemesi : MonoBehaviour
     [SerializeField] private float laser_sensorbaslangýcý;
     [SerializeField] private float laser_sensoru_uzunlugu;
 
+
+
+
+    #endregion
+
+    #region ROKET 
+
     [Header("rocket kodlarý")]
     private GameObject[] rocketler;// mermiler dizisi oluþturur
     private GameObject[] rocket_trails;
@@ -143,7 +199,12 @@ public class Kontrol_denemesi : MonoBehaviour
     private GameObject rocket;// çoðaltýlacak füze
     private GameObject[] parent_rocket;
 
-   // private Vector3[] rocket_shootpoint;// füze çýkýþ moktasý
+
+
+
+
+
+    // private Vector3[] rocket_shootpoint;// füze çýkýþ moktasý
     public int rocketsayisi=6;// aktif olacak füze sayýsý
     private int rocket_sira;// aktif füze sýrasý
     private int rocket_ilk;//
@@ -153,7 +214,9 @@ public class Kontrol_denemesi : MonoBehaviour
     [SerializeField] private float rocket_sensorbaslangýcý;
     [SerializeField] private float rocket_sensoru_uzunlugu;
 
+    #endregion
 
+    #region MAYIN
 
     [Header("mayin kodlarý")]
     private GameObject[] mayinlar;
@@ -167,16 +230,25 @@ public class Kontrol_denemesi : MonoBehaviour
     private bool[] mayin_birak;
 
 
+    #endregion
+
+    #region AKTÝF DÜÞMAN SAYISI
+
     ///////aktif düþman sayýsý      ///////////////////////
     private int aktif_dusman_sayisi,dusman_sirasi,onceki_sira,sonraki_sira;
     private bool diger_dusmana_gec;
-    private int [] dusman_seviyesi= { 1 };
+    private int [] dusman_seviyesi= { 2 };
     private float obur_dusmana_gecis_vakti;
     private float dusman_hizi =5;
     private float oteleme_dur_kalk = 0;
     private float uzaklik;
 
+    private GameObject drone5;
+    private int episode;
 
+    #endregion
+
+    #region MAVÝ LAZER
     [Header("mavi laser kodlarý")]
     private GameObject mavi_laser_prefab;
     private GameObject[] mavi_laserler;
@@ -187,6 +259,14 @@ public class Kontrol_denemesi : MonoBehaviour
     [SerializeField] private float mavi_laser_sensorbaslangýcý;
     [SerializeField] private float mavi_laser_sensoru_uzunlugu;
 
+
+
+
+    #endregion
+
+
+    #region CANAVARFÜZE
+
     [Header("canavar  füzeleri")]
     private GameObject[] canavar_fuzeler;// mermiler dizisi oluþturur
     private GameObject[] canavar_fuze_trails;
@@ -194,6 +274,11 @@ public class Kontrol_denemesi : MonoBehaviour
     private GameObject[] canavar_fuze_buyuk_pat;
     private float[] canavar_fuze_zamani;
     private GameObject canavar_fuze;// çoðaltýlacak füze
+
+
+
+
+
 
     private Vector3[] canavar_shootpoint;// füze çýkýþ moktasý
     public int canavar_fuzesayisi;// aktif olacak füze sayýsý
@@ -208,7 +293,9 @@ public class Kontrol_denemesi : MonoBehaviour
     [SerializeField] private float canavar_sensorbaslangýcý;
     [SerializeField] private float canavar_fuze_sensoru_uzunlugu;
 
+    #endregion
 
+    #region SONUNCU
     // sounucu ayarlarý
     private float sonuncu_mayin_obur_gec, sonuncu_mayin_vakti;
     private bool sonuncu_mayin_bool;
@@ -219,9 +306,16 @@ public class Kontrol_denemesi : MonoBehaviour
     private Vector3 roket_konum;
     private int kullanilan_silah;
 
+
+
+    #endregion
+
     //araba hýzýný alýyoruz
     private float araba_hizi;
 
+
+
+    #region COÝN 
 
     [Header("coin ayarlarý")]
     public Material mat;
@@ -246,7 +340,11 @@ public class Kontrol_denemesi : MonoBehaviour
     private int [] coin_eklenme_zamani;
     private int coin_yeri_sayisi = 3;
     private int coin_yer_al,siradaki_yer;
-    private GameObject arka_kýsým;
+
+
+
+    #endregion
+
 
 
 
@@ -261,6 +359,10 @@ public class Kontrol_denemesi : MonoBehaviour
 
     void Start()
     {
+
+
+        #region RESOURCELAR
+
         pat = Resources.Load<GameObject>("patlamalar/küçük patlama");
         buyuk_pat=Resources.Load<GameObject>("patlamalar/kucuk_pat");
         fuze=Resources.Load<GameObject>("drone6_füzesi");
@@ -269,7 +371,35 @@ public class Kontrol_denemesi : MonoBehaviour
         laser_prefab = mavi_laser_prefab;
         canavar_fuze=Resources.Load<GameObject>("canavar_fuzesi");
         mayin_prefab=Resources.Load<GameObject>("mayin");
+        
+        drone5=Resources.Load<GameObject>("dusmanlar/drone5");
+
+
+
+        #endregion
+
+        episode = PlayerPrefs.GetInt("episode");
+        dusmanlar = new GameObject[Menu_slider.dusman_listeleri[episode].Length];
+        
+        
+
+        for (int i = 0; i < dusmanlar.Length; i++)
+        {
+            if (Menu_slider.dusman_listeleri[episode][i] == "drone5") { 
+            dusmanlar[i] = Instantiate(drone5, transform.position, Quaternion.identity);
+            dusmanlar[i].name = "drone5" + i;
+            dusmanlar[i].SetActive(false);
+            }
+
+        }
+        
+
+
+
         #region KONTROL VE DÜÞMAN EKLEME NOKTALARI
+
+
+
 
 
         ///////burasý on ve arkakontrol noktalarý için///////bide dusman ekleme yeri
@@ -400,6 +530,12 @@ public class Kontrol_denemesi : MonoBehaviour
 
         
         }
+        //////////sað sol deðiþim ////////////// 
+        ///
+        #endregion
+
+
+
 
         infilak = new GameObject[infilak_sayisi];
 
@@ -410,12 +546,11 @@ public class Kontrol_denemesi : MonoBehaviour
             infilak[i].SetActive(false);
         }
         infilak_sirasi = 0;
-        //////////sað sol deðiþim ////////////// 
 
 
 
 
-        #endregion
+
 
 
        
@@ -734,6 +869,10 @@ public class Kontrol_denemesi : MonoBehaviour
 
     void Update()
     {
+
+
+        Debug.Log(dusman_cani[0] + "               " + dusman_cani[1]);
+
 
         #region KONTROL  NOKTALARI ÝLERÝ GERÝ AYARLARI
 
@@ -1176,7 +1315,7 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
 
-            #region VURULMA ANI YAPILACAKLAR
+            #region PARÇALANMA ANI YAPILACAKLAR
 
             //////////// düþman vurulmasý///////////////////
             if (player.GetComponent<CarController>().vuruldu == true)
@@ -1198,6 +1337,7 @@ public class Kontrol_denemesi : MonoBehaviour
                         else if (dusmanlar[i].tag == "füzeci") Patla(dusmanlar[i], parcali_drone6);
                         else if (dusmanlar[i].tag == "fuzeci_canavar") Patla(dusmanlar[i], parcali_fuze_canavari);
                         else if (dusmanlar[i].tag == "sonuncu") Patla(dusmanlar[i], parcali_sonuncu);
+                        else if (dusmanlar[i].tag == "drone_x") Patla(dusmanlar[i], parcali_dronex);
                         /*parcali_drone1.transform.position=dusmanlar[a].transform.position;
                         parcali_drone1.SetActive(true);
                         dusmanlar[a].SetActive(false);
@@ -2089,6 +2229,7 @@ public class Kontrol_denemesi : MonoBehaviour
                     else if (toplanan_drone[i] == "füzeci") yerden_kaldir = parcali_drone6;
                     else if (toplanan_drone[i] == "fuzeci_canavar") yerden_kaldir = parcali_fuze_canavari;
                     else if (toplanan_drone[i] == "sonuncu") yerden_kaldir = parcali_sonuncu;
+                    else if (toplanan_drone[i] == "drone_x") yerden_kaldir = parcali_dronex;
                     foreach (Transform t in yerden_kaldir.transform)
                     {
 
