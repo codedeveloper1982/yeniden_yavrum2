@@ -42,7 +42,7 @@ public class Cameracontroller : MonoBehaviour
     public Vector3 kaybolan,kamera_yon;
     public bool para_goster = false,don=false;
     private float yan_carpma,yan_isin_uzunluk,arka_isin_uzunluk,carpma_mesafesi,donme_ust,yaklasma,fark,mydistance,kamera_uzunluk=1;
-    private GameObject kup,dur_kup;//dur_kup silmen gerekebilir
+    private GameObject kup;
     
 
 
@@ -102,8 +102,9 @@ public class Cameracontroller : MonoBehaviour
         donme_ust = 90;
         dur = false;
         sola_donus = 0;
-        kup=GameObject.Find("gorunmez_kup");  //sonra sil
-        dur_kup=GameObject.Find("dur_kup");//sonra sil
+        kup = Resources.Load<GameObject>("kup(camera için)");
+        kup = Instantiate(kup, transform.position, Quaternion.identity);
+
        // rotation_vector = car.eulerAngles.y + sola_donus * sagsol;
        // transform.position = car.transform.position + new Vector3(0, 5, 0);
         yaklasma = 8;

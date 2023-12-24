@@ -23,13 +23,45 @@ using UnityEngine.SceneManagement;
     public bool sahne=false;
 
     public static string[][] dusman_listeleri;
+    public static int[][] dusman_sayilari;
     public int episode;
+    private int drone5_sayisi , drone6_sayisi , dronex_sayisi , drone11c_sayisi , drone1b_sayisi, mayinci_sayisi, fuzeci_sayisi, sonuncu_sayisi;
+    private int cesit=0;
+    private Vector2 avatar_buyuklugu;
+    private Vector3 avatar_baslama_yeri;
 
+
+    /// <summary>
+    /// //////////GÖSTERGE ÝÇÝ YAZILAR BURAYA
+    /// </summary>
+    private Sprite drone5_avatar, drone6_avatar,mayinci_avatar, drone11c_avatar, drone1b_avatar, dronex_avatar, fuzeci_avatar, sonuncu_avatar;
 
 
 
     private void Start()
         {
+             drone5_avatar= Resources.Load<Sprite>("dusman_avatarlarý/drone5");
+            drone6_avatar= Resources.Load<Sprite>("dusman_avatarlarý/drone6");
+            mayinci_avatar= Resources.Load<Sprite>("dusman_avatarlarý/mayinci");
+            drone11c_avatar= Resources.Load<Sprite>("dusman_avatarlarý/drone11c");
+            drone1b_avatar= Resources.Load<Sprite>("dusman_avatarlarý/drone1b");
+            dronex_avatar= Resources.Load<Sprite>("dusman_avatarlarý/dronex");
+            fuzeci_avatar = Resources.Load<Sprite>("dusman_avatarlarý/fuzeci");
+            sonuncu_avatar= Resources.Load<Sprite>("dusman_avatarlarý/sonuncu");
+
+
+        avatar_buyuklugu = new Vector2(23, 23);
+        avatar_baslama_yeri = new Vector3(30, -25,0);
+
+
+         dusman_listeleri = new string[1][];
+        dusman_sayilari= new int[1][];
+
+
+        dusman_listeleri[0] = new string[] { "drone5", "drone6", "drone5", "drone5", "drone5", "drone5", "drone5", "drone5", "drone5" };
+        dusman_sayilari[0]= new int[] { 1, 2, 1, 1, 2, 2 };
+
+
 
 
 
@@ -64,6 +96,10 @@ using UnityEngine.SceneManagement;
 
 
 
+
+
+
+
         }
 
 
@@ -83,11 +119,174 @@ using UnityEngine.SceneManagement;
 
 
 
+        for (int j = 0; j < dusman_listeleri.Length; j++)
+        {
+            drone5_sayisi = 0;
+            drone6_sayisi = 0; 
+            dronex_sayisi = 0; 
+            drone11c_sayisi = 0; 
+            drone1b_sayisi = 0; 
+            mayinci_sayisi = 0; 
+            fuzeci_sayisi = 0; 
+            sonuncu_sayisi = 0;
 
 
-         dusman_listeleri = new string[1][];
+            for (int i = 0; i < dusman_listeleri[j].Length; i++)
+        {
 
-        dusman_listeleri[0] = new string[] { "drone5", "drone5" };
+
+            if (dusman_listeleri[j][i] == "drone5")
+            {
+
+                    drone5_sayisi++;
+
+            }
+            else if (dusman_listeleri[j][i] == "drone6")
+            {
+
+                    drone6_sayisi++;
+
+
+            }
+            else if (dusman_listeleri[j][i] == "mayinci")
+            {
+
+
+                    drone1b_sayisi++;
+
+            }
+            else if (dusman_listeleri[j][i] == "drone11c")
+            {
+
+                    drone11c_sayisi++;
+
+
+            }
+            else if (dusman_listeleri[j][i] == "drone1b")
+            {
+
+
+                    mayinci_sayisi++;
+
+
+            }
+            else if (dusman_listeleri[j][i] == "fuzeci")
+            {
+
+                    fuzeci_sayisi++;
+
+
+            }
+            else if (dusman_listeleri[j][i] == "dronex")
+            {
+
+                    sonuncu_sayisi++;
+
+            }
+            else if (dusman_listeleri[j][i] == "sonuncu")
+            {
+
+                    dronex_sayisi++;
+
+            }
+
+
+
+           }
+
+
+                if (drone5_sayisi != 0)
+                {
+
+                cesit++;
+                Transform kanvas = gostergeler[j].transform.Find("yazý_canvasý");
+                GameObject avatar = new GameObject("avatar");
+                avatar.AddComponent<Image>();
+                Image resim = avatar.GetComponent<Image>();
+                avatar.transform.SetParent(kanvas);
+                resim.rectTransform.anchorMin=new Vector2(0, 1);
+                resim.rectTransform.anchorMax=new Vector2(0, 1);
+                resim.rectTransform.anchoredPosition3D = new Vector3(0, 0, 0);
+                resim.rectTransform.sizeDelta = avatar_buyuklugu;
+                resim.rectTransform.localRotation = Quaternion.identity;
+                resim.rectTransform.localScale=new Vector3(1,1,1);
+                resim.sprite = drone5_avatar;
+
+
+
+                }
+                if(drone6_sayisi != 0)
+                {
+                cesit++;
+                Transform kanvas = gostergeler[j].transform.Find("yazý_canvasý");
+                GameObject avatar = new GameObject("avatar");
+                avatar.AddComponent<Image>();
+                Image resim = avatar.GetComponent<Image>();
+                avatar.transform.SetParent(kanvas);
+                resim.rectTransform.anchorMin=new Vector2(0, 1);
+                resim.rectTransform.anchorMax=new Vector2(0, 1);
+                resim.rectTransform.anchoredPosition3D = new Vector3(0, 0, 0);
+                resim.rectTransform.sizeDelta = avatar_buyuklugu;
+                resim.rectTransform.localRotation = Quaternion.identity;
+                resim.rectTransform.localScale=new Vector3(1,1,1);
+                resim.sprite = drone6_avatar;
+
+                }
+             if(dronex_sayisi != 0)
+                {
+                cesit++;
+
+
+                }
+            if(drone1b_sayisi != 0)
+                {
+                cesit++;
+
+
+                }
+            if(drone11c_sayisi != 0)
+                {
+                cesit++;
+
+
+                }
+            if(fuzeci_sayisi != 0)
+                {
+                cesit++;
+
+
+                }
+            if(mayinci_sayisi != 0)
+                {
+                cesit++;
+
+
+                }
+            if(sonuncu_sayisi != 0)
+                {
+                cesit++;
+
+
+                }
+
+            for (int i = 0; i < cesit; i++)
+            {
+                Transform avatar= gostergeler[j].transform.Find("yazý_canvasý");
+                Image resim=  avatar.transform.GetChild(i).GetComponent<Image>();
+                resim.rectTransform.anchoredPosition3D = new Vector3(0, i * (-10), 0) + avatar_baslama_yeri;
+
+            }
+
+
+
+           
+        }
+
+
+
+
+
+
 
 
     }
@@ -132,6 +331,7 @@ using UnityEngine.SceneManagement;
         }
         else
         {
+
             for (int i = 0; i < gosterge_sayisi; i++)
             {
                 //line[sira].nodes.Count
@@ -185,7 +385,7 @@ using UnityEngine.SceneManagement;
 
             if (yakinlik < gosterge_araliklari)
             {
-                float kat = 1 + 2 * (1 - (yakinlik / gosterge_araliklari));
+                float kat = 1 + 2.5f * (1 - (yakinlik / gosterge_araliklari));
                 gostergeler[i].transform.localScale = new Vector3(0.08f * kat, 0.08f * kat, 0.08f * kat);
                 gostergeler[i].transform.position = sabit[i] + new Vector3(0, (kat - 1) * 0.08f * gostergeler[i].GetComponentInChildren<RectTransform>().rect.width / 2, 0);
     

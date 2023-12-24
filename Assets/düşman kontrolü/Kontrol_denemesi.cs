@@ -36,7 +36,6 @@ public class Kontrol_denemesi : MonoBehaviour
     private Spline[] hedef_cizgi;
     private CurveSample[] hedef_egri;
     private Vector3[] hedef_konum;
-    public GameObject gorunur_obje;
     private float[] gecici_konum;
     public float sure = 2, oynatma_vakti;
 
@@ -54,7 +53,7 @@ public class Kontrol_denemesi : MonoBehaviour
     private int[] drone_cizgi_sirasi;
     private Spline[] drone_cizgi;
     private CurveSample[] drone_egri;
-    public GameObject konum_noktasi;
+    private GameObject konum_noktasi;
     private GameObject[] drone_konum;
     ///////drone noktalarý///////////////////////
 
@@ -77,7 +76,7 @@ public class Kontrol_denemesi : MonoBehaviour
     private Transform cam;*/
     // CAN BARI YAPIMINA SONRA KARAR VER.
     private float[] dusman_cani;
-    public GameObject patlama;//BUNDA BÝRAZCIK KAYMA VAR TAM MERKEZDE DEÐÝL PATLAMA BUNA BAK
+    private GameObject patlama;//BUNDA BÝRAZCIK KAYMA VAR TAM MERKEZDE DEÐÝL PATLAMA BUNA BAK
     public GameObject parcali_drone1,parcali_drone5,parcali_drone11c,parcali_mayinci,parcali_drone6,parcali_fuze_canavari,parcali_sonuncu,parcali_dronex;
 
 
@@ -237,13 +236,13 @@ public class Kontrol_denemesi : MonoBehaviour
     ///////aktif düþman sayýsý      ///////////////////////
     private int aktif_dusman_sayisi,dusman_sirasi,onceki_sira,sonraki_sira;
     private bool diger_dusmana_gec;
-    private int [] dusman_seviyesi= { 2 };
+    private int [] dusman_seviyesi;
     private float obur_dusmana_gecis_vakti;
     private float dusman_hizi =5;
     private float oteleme_dur_kalk = 0;
     private float uzaklik;
 
-    private GameObject drone5;
+    private GameObject drone5, drone6, drone1b,drone11c,mayinci,fuzeci,sonuncu,dronex;
     private int episode;
 
     #endregion
@@ -365,6 +364,7 @@ public class Kontrol_denemesi : MonoBehaviour
 
         pat = Resources.Load<GameObject>("patlamalar/küçük patlama");
         buyuk_pat=Resources.Load<GameObject>("patlamalar/kucuk_pat");
+        patlama=Resources.Load<GameObject>("patlamalar/patlama2");
         fuze=Resources.Load<GameObject>("drone6_füzesi");
         rocket=Resources.Load<GameObject>("rocket");
         mavi_laser_prefab=Resources.Load<GameObject>("bluelaser");
@@ -373,27 +373,136 @@ public class Kontrol_denemesi : MonoBehaviour
         mayin_prefab=Resources.Load<GameObject>("mayin");
         
         drone5=Resources.Load<GameObject>("dusmanlar/drone5");
+        drone6=Resources.Load<GameObject>("dusmanlar/drone_6");
+        drone1b=Resources.Load<GameObject>("dusmanlar/drone1b_atlas");
+        drone11c=Resources.Load<GameObject>("dusmanlar/drone_11c");
+        mayinci=Resources.Load<GameObject>("dusmanlar/mayinci_drone");
+
+        fuzeci=Resources.Load<GameObject>("dusmanlar/fuzeci_canavar");
+        sonuncu=Resources.Load<GameObject>("dusmanlar/sonuncu");
+        dronex=Resources.Load<GameObject>("dusmanlar/drone_x");
+
+   
+        konum_noktasi=Resources.Load<GameObject>("konum");
+
 
 
 
         #endregion
 
         episode = PlayerPrefs.GetInt("episode");
+        dusman_seviyesi = new int[Menu_slider.dusman_sayilari[episode].Length];
         dusmanlar = new GameObject[Menu_slider.dusman_listeleri[episode].Length];
-        
-        
+
+        #region EKLENECEK DÜÞMANLAR
+        for (int i = 0; i < dusman_seviyesi.Length; i++)
+        {
+            dusman_seviyesi[i] = Menu_slider.dusman_sayilari[episode][i];
+        }
+
+
 
         for (int i = 0; i < dusmanlar.Length; i++)
         {
+
+
             if (Menu_slider.dusman_listeleri[episode][i] == "drone5") { 
             dusmanlar[i] = Instantiate(drone5, transform.position, Quaternion.identity);
             dusmanlar[i].name = "drone5" + i;
             dusmanlar[i].SetActive(false);
+
+             parcali_drone5=Resources.Load<GameObject>("parcalilar/parcali_drone5");
+             parcali_drone5 = Instantiate(parcali_drone5, transform.position, Quaternion.identity);
+             parcali_drone5.SetActive(false);
+
+
+            }else if (Menu_slider.dusman_listeleri[episode][i] == "drone6") { 
+            dusmanlar[i] = Instantiate(drone6, transform.position, Quaternion.identity);
+            dusmanlar[i].name = "drone6" + i;
+            dusmanlar[i].SetActive(false);
+
+             parcali_drone6=Resources.Load<GameObject>("parcalilar/parcali_drone_6");
+             parcali_drone6 = Instantiate(parcali_drone6, transform.position, Quaternion.identity);
+             parcali_drone6.SetActive(false);
+
+
+
+            }else if (Menu_slider.dusman_listeleri[episode][i] == "drone1b") { 
+            dusmanlar[i] = Instantiate(drone1b, transform.position, Quaternion.identity);
+            dusmanlar[i].name = "drone1b" + i;
+            dusmanlar[i].SetActive(false);
+
+             parcali_drone1=Resources.Load<GameObject>("parcalilar/parcali_drone_1b");
+             parcali_drone1 = Instantiate(parcali_drone1, transform.position, Quaternion.identity);
+             parcali_drone1.SetActive(false);
+
+
+
+            }else if (Menu_slider.dusman_listeleri[episode][i] == "drone11c") { 
+            dusmanlar[i] = Instantiate(drone11c, transform.position, Quaternion.identity);
+            dusmanlar[i].name = "drone11c" + i;
+            dusmanlar[i].SetActive(false);
+
+             parcali_drone11c=Resources.Load<GameObject>("parcalilar/parcali_drone11c");
+             parcali_drone11c = Instantiate(parcali_drone11c, transform.position, Quaternion.identity);
+             parcali_drone11c.SetActive(false);
+
+
+
+            }else if (Menu_slider.dusman_listeleri[episode][i] == "mayinci") { 
+            dusmanlar[i] = Instantiate(mayinci, transform.position, Quaternion.identity);
+            dusmanlar[i].name = "mayinci" + i;
+            dusmanlar[i].SetActive(false);
+
+             parcali_mayinci=Resources.Load<GameObject>("parcalilar/parcali_mayinci");
+             parcali_mayinci = Instantiate(parcali_mayinci, transform.position, Quaternion.identity);
+             parcali_mayinci.SetActive(false);
+
+
+
+
+            }else if (Menu_slider.dusman_listeleri[episode][i] == "fuzeci") { 
+            dusmanlar[i] = Instantiate(fuzeci, transform.position, Quaternion.identity);
+            dusmanlar[i].name = "fuzeci" + i;
+            dusmanlar[i].SetActive(false);
+
+             parcali_fuze_canavari=Resources.Load<GameObject>("parcalilar/parcali_fuze_canavarý");
+             parcali_fuze_canavari = Instantiate(parcali_fuze_canavari, transform.position, Quaternion.identity);
+             parcali_fuze_canavari.SetActive(false);
+
+
+
+            }else if (Menu_slider.dusman_listeleri[episode][i] == "sonuncu") { 
+            dusmanlar[i] = Instantiate(sonuncu, transform.position, Quaternion.identity);
+            dusmanlar[i].name = "sonuncu" + i;
+            dusmanlar[i].SetActive(false);
+
+
+             parcali_sonuncu=Resources.Load<GameObject>("parcalilar/parcali_sonuncu");
+             parcali_sonuncu = Instantiate(parcali_sonuncu, transform.position, Quaternion.identity);
+             parcali_sonuncu.SetActive(false);
+
+
+
+            }else if (Menu_slider.dusman_listeleri[episode][i] == "dronex") { 
+            dusmanlar[i] = Instantiate(dronex, transform.position, Quaternion.identity);
+            dusmanlar[i].name = "dronex" + i;
+            dusmanlar[i].SetActive(false);
+
+             parcali_dronex=Resources.Load<GameObject>("parcalilar/parcali_drone_x");
+             parcali_dronex = Instantiate(parcali_dronex, transform.position, Quaternion.identity);
+             parcali_dronex.SetActive(false);
+
+
+
             }
 
         }
-        
 
+
+
+
+        #endregion
 
 
         #region KONTROL VE DÜÞMAN EKLEME NOKTALARI
@@ -871,7 +980,7 @@ public class Kontrol_denemesi : MonoBehaviour
     {
 
 
-        Debug.Log(dusman_cani[0] + "               " + dusman_cani[1]);
+
 
 
         #region KONTROL  NOKTALARI ÝLERÝ GERÝ AYARLARI
@@ -2716,8 +2825,6 @@ public class Kontrol_denemesi : MonoBehaviour
 
 
     }
-
-
 
 
 

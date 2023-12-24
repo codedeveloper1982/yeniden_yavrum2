@@ -225,8 +225,30 @@ using UnityStandardAssets.Vehicles.Car;
     // Use this for initialization
     private void Start()
         {
+
+
+        #region  RESOURCELAR
+
+        yangin= Resources.Load<GameObject>("patlamalar/yangýn");
+        araba_patlama= Resources.Load<GameObject>("patlamalar/BigExplosion");
+        lazer_yakan= Resources.Load<GameObject>("lazer_yakan");
+
+        #endregion
+
+
+        yangin = Instantiate(yangin, transform.position, Quaternion.identity);
+        yangin.SetActive(false);
+
+
+        araba_patlama = Instantiate(araba_patlama, transform.position, Quaternion.identity);
+        araba_patlama.SetActive(false);
+
+
+
         araba = transform.name;
 
+
+        
 
           shootpoint = GameObject.FindGameObjectWithTag("atisnoktasi");
 
@@ -448,8 +470,8 @@ using UnityStandardAssets.Vehicles.Car;
 
         #endregion
 
-        araba_patlama= GameObject.FindGameObjectWithTag("araba_patlama");
-        yangin = GameObject.FindGameObjectWithTag("yangýn");
+       // araba_patlama= GameObject.FindGameObjectWithTag("araba_patlama");
+      //  yangin = GameObject.FindGameObjectWithTag("yangýn");
 
         araba_patlama.SetActive(false);
         yangin.SetActive(false);
@@ -1025,7 +1047,7 @@ using UnityStandardAssets.Vehicles.Car;
 
             }
 
-            Debug.Log(laserbas.transform.GetComponent<AudioSource>().clip.length);
+
             #endregion
 
 
