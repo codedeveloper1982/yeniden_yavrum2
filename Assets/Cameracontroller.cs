@@ -63,7 +63,7 @@ public class Cameracontroller : MonoBehaviour
 
 
         /// ///////////////// BURASI COİNLERLE İLGİLİ BÖLME////////////////
-        for (int i = 0; i < 32; i++)
+        for (int i = 0; i < 16; i++)
         {
             if (i<10)
             {

@@ -29,6 +29,8 @@ TagManager:
   - harabe
   - rampa
   - but_canv
+  - degme
+  - guc
   layers:
   - Default
   - TransparentFX

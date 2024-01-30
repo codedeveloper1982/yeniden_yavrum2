@@ -29,6 +29,7 @@ using UnityEngine.SceneManagement;
     private int cesit=0;
     private Vector2 avatar_buyuklugu;
     private Vector3 avatar_baslama_yeri;
+    private float satir,sutun;
 
 
     /// <summary>
@@ -51,14 +52,14 @@ using UnityEngine.SceneManagement;
 
 
         avatar_buyuklugu = new Vector2(23, 23);
-        avatar_baslama_yeri = new Vector3(30, -25,0);
+        avatar_baslama_yeri = new Vector3(21, -30,0);
 
 
          dusman_listeleri = new string[1][];
         dusman_sayilari= new int[1][];
 
 
-        dusman_listeleri[0] = new string[] { "drone5", "drone6", "drone5", "drone5", "drone5", "drone5", "drone5", "drone5", "drone5" };
+        dusman_listeleri[0] = new string[] { "drone5", "drone6", "dronex", "mayinci", "drone11c", "drone1b", "drone5", "drone5", "drone5" };
         dusman_sayilari[0]= new int[] { 1, 2, 1, 1, 2, 2 };
 
 
@@ -180,13 +181,13 @@ using UnityEngine.SceneManagement;
             else if (dusman_listeleri[j][i] == "dronex")
             {
 
-                    sonuncu_sayisi++;
+                 dronex_sayisi++;
 
             }
             else if (dusman_listeleri[j][i] == "sonuncu")
             {
 
-                    dronex_sayisi++;
+                 sonuncu_sayisi++; 
 
             }
 
@@ -235,6 +236,20 @@ using UnityEngine.SceneManagement;
              if(dronex_sayisi != 0)
                 {
                 cesit++;
+                Transform kanvas = gostergeler[j].transform.Find("yazý_canvasý");
+                GameObject avatar = new GameObject("avatar");
+                avatar.AddComponent<Image>();
+                Image resim = avatar.GetComponent<Image>();
+                avatar.transform.SetParent(kanvas);
+                resim.rectTransform.anchorMin=new Vector2(0, 1);
+                resim.rectTransform.anchorMax=new Vector2(0, 1);
+                resim.rectTransform.anchoredPosition3D = new Vector3(0, 0, 0);
+                resim.rectTransform.sizeDelta = avatar_buyuklugu;
+                resim.rectTransform.localRotation = Quaternion.identity;
+                resim.rectTransform.localScale=new Vector3(1,1,1);
+                resim.sprite = dronex_avatar;
+
+
 
 
                 }
@@ -242,11 +257,39 @@ using UnityEngine.SceneManagement;
                 {
                 cesit++;
 
+                Transform kanvas = gostergeler[j].transform.Find("yazý_canvasý");
+                GameObject avatar = new GameObject("avatar");
+                avatar.AddComponent<Image>();
+                Image resim = avatar.GetComponent<Image>();
+                avatar.transform.SetParent(kanvas);
+                resim.rectTransform.anchorMin=new Vector2(0, 1);
+                resim.rectTransform.anchorMax=new Vector2(0, 1);
+                resim.rectTransform.anchoredPosition3D = new Vector3(0, 0, 0);
+                resim.rectTransform.sizeDelta = avatar_buyuklugu;
+                resim.rectTransform.localRotation = Quaternion.identity;
+                resim.rectTransform.localScale=new Vector3(1,1,1);
+                resim.sprite = drone1b_avatar;
+
+
 
                 }
             if(drone11c_sayisi != 0)
                 {
                 cesit++;
+
+                Transform kanvas = gostergeler[j].transform.Find("yazý_canvasý");
+                GameObject avatar = new GameObject("avatar");
+                avatar.AddComponent<Image>();
+                Image resim = avatar.GetComponent<Image>();
+                avatar.transform.SetParent(kanvas);
+                resim.rectTransform.anchorMin=new Vector2(0, 1);
+                resim.rectTransform.anchorMax=new Vector2(0, 1);
+                resim.rectTransform.anchoredPosition3D = new Vector3(0, 0, 0);
+                resim.rectTransform.sizeDelta = avatar_buyuklugu;
+                resim.rectTransform.localRotation = Quaternion.identity;
+                resim.rectTransform.localScale=new Vector3(1,1,1);
+                resim.sprite = drone11c_avatar;
+
 
 
                 }
@@ -254,11 +297,38 @@ using UnityEngine.SceneManagement;
                 {
                 cesit++;
 
+                Transform kanvas = gostergeler[j].transform.Find("yazý_canvasý");
+                GameObject avatar = new GameObject("avatar");
+                avatar.AddComponent<Image>();
+                Image resim = avatar.GetComponent<Image>();
+                avatar.transform.SetParent(kanvas);
+                resim.rectTransform.anchorMin=new Vector2(0, 1);
+                resim.rectTransform.anchorMax=new Vector2(0, 1);
+                resim.rectTransform.anchoredPosition3D = new Vector3(0, 0, 0);
+                resim.rectTransform.sizeDelta = avatar_buyuklugu;
+                resim.rectTransform.localRotation = Quaternion.identity;
+                resim.rectTransform.localScale=new Vector3(1,1,1);
+                resim.sprite = fuzeci_avatar;
+
 
                 }
             if(mayinci_sayisi != 0)
                 {
                 cesit++;
+
+                Transform kanvas = gostergeler[j].transform.Find("yazý_canvasý");
+                GameObject avatar = new GameObject("avatar");
+                avatar.AddComponent<Image>();
+                Image resim = avatar.GetComponent<Image>();
+                avatar.transform.SetParent(kanvas);
+                resim.rectTransform.anchorMin=new Vector2(0, 1);
+                resim.rectTransform.anchorMax=new Vector2(0, 1);
+                resim.rectTransform.anchoredPosition3D = new Vector3(0, 0, 0);
+                resim.rectTransform.sizeDelta = avatar_buyuklugu;
+                resim.rectTransform.localRotation = Quaternion.identity;
+                resim.rectTransform.localScale=new Vector3(1,1,1);
+                resim.sprite = mayinci_avatar;
+
 
 
                 }
@@ -266,16 +336,42 @@ using UnityEngine.SceneManagement;
                 {
                 cesit++;
 
+                Transform kanvas = gostergeler[j].transform.Find("yazý_canvasý");
+                GameObject avatar = new GameObject("avatar");
+                avatar.AddComponent<Image>();
+                Image resim = avatar.GetComponent<Image>();
+                avatar.transform.SetParent(kanvas);
+                resim.rectTransform.anchorMin=new Vector2(0, 1);
+                resim.rectTransform.anchorMax=new Vector2(0, 1);
+                resim.rectTransform.anchoredPosition3D = new Vector3(0, 0, 0);
+                resim.rectTransform.sizeDelta = avatar_buyuklugu;
+                resim.rectTransform.localRotation = Quaternion.identity;
+                resim.rectTransform.localScale=new Vector3(1,1,1);
+                resim.sprite = sonuncu_avatar;
+
+
 
                 }
 
+            satir = 0;
+            sutun = 0;
             for (int i = 0; i < cesit; i++)
             {
+
                 Transform avatar= gostergeler[j].transform.Find("yazý_canvasý");
                 Image resim=  avatar.transform.GetChild(i).GetComponent<Image>();
-                resim.rectTransform.anchoredPosition3D = new Vector3(0, i * (-10), 0) + avatar_baslama_yeri;
+                resim.rectTransform.anchoredPosition3D = new Vector3(sutun*35, satir * (-20),0 ) + avatar_baslama_yeri;
+
+                sutun++;
+                if (sutun==2)
+                {
+                    satir++;
+                    sutun = 0;
+
+                }
 
             }
+
 
 
 

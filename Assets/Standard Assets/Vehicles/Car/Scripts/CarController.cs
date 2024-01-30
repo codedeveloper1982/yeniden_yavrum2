@@ -194,9 +194,13 @@ using UnityStandardAssets.Vehicles.Car;
     private int l_ates_sayisi = 70, ilk_lazer_ates, son_lazer_ates;
     private float lazeruzunluðu;
     public GameObject degen;
+    private GameObject lazer_degen,lazerici;
     private GameObject laserbas, laserdevam, laserbitis; ////////// LASER SESLERÝ
     private  float laserDevamZamani;
-
+    private GameObject[] ic_lazerler;
+    private float[] lazer_ilerleme;
+    private int ic_lazer_sayisi, ilk_ic, sira_ic;
+    private float ic_basla, ic_zaman;
 
 
     #endregion
@@ -231,7 +235,10 @@ using UnityStandardAssets.Vehicles.Car;
 
         yangin= Resources.Load<GameObject>("patlamalar/yangýn");
         araba_patlama= Resources.Load<GameObject>("patlamalar/BigExplosion");
-        lazer_yakan= Resources.Load<GameObject>("lazer_yakan");
+        lazer_yakan= Resources.Load<GameObject>("parlak_alev");
+        lazerici= Resources.Load<GameObject>("lazerici");
+
+        lazer_degen = Resources.Load<GameObject>("lazer_degen");
 
         #endregion
 
@@ -344,16 +351,33 @@ using UnityStandardAssets.Vehicles.Car;
             #region ÝKÝCÝNÝN BAÞLANGIÞ AYARLARI
 
 
-           
+            lazer_degen= Instantiate(lazer_degen, transform.position, Quaternion.identity);
+            ic_lazer_sayisi = 8;
+            ilk_ic = sira_ic - (ic_lazer_sayisi - 1);
+
+            ic_lazerler = new GameObject[ic_lazer_sayisi];
+            lazer_ilerleme = new float[ic_lazer_sayisi];
+            ic_zaman = 0.1f;
+
+            for (int i = 0; i < ic_lazer_sayisi; i++)
+            {
+
+                ic_lazerler[i] = Instantiate(lazerici, transform.position, Quaternion.identity);
+                ic_lazerler[i].SetActive(false);
+                lazer_ilerleme[i] = 0;
+                ic_basla = Time.time + ic_zaman;
+
+            }
+
+
 
             azaltma = 0.84f;
             // lazer ile ilgili ayarlar
             lr.SetActive(false);
-            degen.SetActive(false);
+            lazer_degen.SetActive(false);
 
 
-            son_lazer_ates = 0;
-            ilk_lazer_ates = son_lazer_ates - (l_ates_sayisi - 1);
+
 
             lazeratesler = new GameObject[l_ates_sayisi];
 
@@ -942,7 +966,7 @@ using UnityStandardAssets.Vehicles.Car;
                     lazeratesler[son_lazer_ates].transform.SetParent(laser_hit.collider.transform);
 
 
-                    degen.SetActive(true);
+                    lazer_degen.SetActive(true);
 
                     degen.transform.position = laser_hit.point;
                     degen.transform.rotation = Quaternion.LookRotation(laser_hit.normal);
@@ -985,14 +1009,138 @@ using UnityStandardAssets.Vehicles.Car;
 
                     }
 
+                    ////////////////////////////////////////////BURASI ÝÇ LAZERLE ALAKALI
+
+
+
+                    if (ic_basla < Time.time)
+                    {
+                        ic_basla = Time.time + ic_zaman;
+
+
+                        //lazer_ilerleme[sira_ic] += 0.01f;
+                        ic_lazerler[sira_ic].SetActive(true);
+                        ic_lazerler[sira_ic].transform.position = lr.transform.position + lr.transform.forward * lazer_ilerleme[sira_ic];
+
+                    sira_ic++;
+                    ilk_ic++;
+                    if (sira_ic == ic_lazer_sayisi)
+                    {
+
+                        sira_ic = 0;
+                    }
+                    if (ilk_ic == ic_lazer_sayisi)
+                    {
+
+                        ilk_ic = 0;
+                    }
+                    if (ilk_ic >= 0)
+                    {
+                        ic_lazerler[ilk_ic].SetActive(false);
+                            lazer_ilerleme[ilk_ic]= 0;
+
+                    }
 
 
                     }
+
+
+
+
+
+
+                    for (int i = 0; i < ic_lazer_sayisi; i++)
+                    {
+
+                        if (ic_lazerler[i].activeSelf==true)
+                        {
+                            lazer_ilerleme[i] += 0.4f;
+                            ic_lazerler[i].transform.rotation = lr.transform.rotation;
+                            ic_lazerler[i].transform.position = lr.transform.position + lr.transform.forward * lazer_ilerleme[i];
+
+
+                            if (Vector3.Distance(ic_lazerler[i].transform.position,laser_hit.point)<0.5f)
+                            {
+                                ic_lazerler[i].SetActive(false);
+                            }
+                        }
+
+
+
+
+
+                    }
+
+
+
+
+
+
+
+                }
                     else
                 {
+                    if (lazeruzunluðu<30)
+                    {
+                    lazeruzunluðu += 0.3f;
+                    lazer_degen.SetActive(false);
+                    }
 
-                    lazeruzunluðu += 0.5f;
-                    degen.SetActive(false);
+
+                    if (ic_basla < Time.time)
+                    {
+                        ic_basla = Time.time + ic_zaman;
+
+
+                        //lazer_ilerleme[sira_ic] += 0.01f;
+                        ic_lazerler[sira_ic].SetActive(true);
+                        ic_lazerler[sira_ic].transform.position = lr.transform.position + lr.transform.forward * lazer_ilerleme[sira_ic];
+
+                        sira_ic++;
+                        ilk_ic++;
+                        if (sira_ic == ic_lazer_sayisi)
+                        {
+
+                            sira_ic = 0;
+                        }
+                        if (ilk_ic == ic_lazer_sayisi)
+                        {
+
+                            ilk_ic = 0;
+                        }
+                        if (ilk_ic >= 0)
+                        {
+                            ic_lazerler[ilk_ic].SetActive(false);
+                            lazer_ilerleme[ilk_ic] = 0;
+
+                        }
+
+
+                    }
+
+
+
+
+
+
+
+
+                    for (int i = 0; i < ic_lazer_sayisi; i++)
+                    {
+
+                        if (ic_lazerler[i].activeSelf == true)
+                        {
+                            lazer_ilerleme[i] += 0.4f;
+                            ic_lazerler[i].transform.rotation = lr.transform.rotation;
+                            ic_lazerler[i].transform.position = lr.transform.position + lr.transform.forward * lazer_ilerleme[i];
+
+                        }
+
+
+                    }
+
+
+
 
                 }
                 Debug.DrawRay(namlu, shootpoint.transform.forward * lazer_mesafesi, Color.green);
@@ -1031,10 +1179,23 @@ using UnityStandardAssets.Vehicles.Car;
                 lr.SetActive(false);
                 lazer_yakan.SetActive(false);
                 lazeruzunluðu = 0;
-                degen.SetActive(false);
+                lazer_degen.SetActive(false);
 
-                ////////////////SES BÝTÝÞÝ
-                if (laserbitis.activeSelf == false)
+                for (int i = 0; i < ic_lazer_sayisi; i++)
+                {
+
+                    ic_lazerler[i].SetActive(false);
+
+
+
+
+                    }
+
+
+
+
+                    ////////////////SES BÝTÝÞÝ
+                    if (laserbitis.activeSelf == false)
                 {
                     laserbas.SetActive(false);
                     laserdevam.SetActive(false);
@@ -1042,6 +1203,11 @@ using UnityStandardAssets.Vehicles.Car;
                     laserbitis.SetActive(true);
                     laserbitis.GetComponent<AudioSource>().Play(0);
                 }
+
+
+
+
+
 
                 #endregion
 
