@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Vehicles.Car;
+using UnityEngine.UI;
 
 
 #pragma warning disable 649
@@ -158,6 +159,7 @@ using UnityStandardAssets.Vehicles.Car;
     public bool fail;
 
 
+
     /// /////////öne eðim verme  ///////////
     private float max_egim = 14,mevcut_egim;
 
@@ -226,7 +228,17 @@ using UnityStandardAssets.Vehicles.Car;
 
     #endregion
 
-    // Use this for initialization
+
+
+
+    /// /////////////////////// ATEÞ BARI AYARLARI
+
+    private Transform atesbari;
+    private float doluluk, azalma,artis, max_doluluk;
+
+ 
+
+
     private void Start()
         {
 
@@ -500,6 +512,15 @@ using UnityStandardAssets.Vehicles.Car;
         araba_patlama.SetActive(false);
         yangin.SetActive(false);
         fail = false;
+
+        max_doluluk = 1000;
+        doluluk = max_doluluk;
+        artis = 3;
+        azalma = 30;
+        atesbari = GameObject.FindGameObjectWithTag("ates_bari").transform;
+
+
+
         
     }
 
@@ -868,8 +889,13 @@ using UnityStandardAssets.Vehicles.Car;
 
                     
                     timetobullet = Time.time + 1.0f / bulletrate;
-                   /* bullet_trace.SetActive(true);
-                    bullet_trace.transform.localScale = new Vector3(-0.05f, -0.05f, -7.5f) * buyukluk;*/
+                    /* bullet_trace.SetActive(true);
+                     bullet_trace.transform.localScale = new Vector3(-0.05f, -0.05f, -7.5f) * buyukluk;*/
+
+                    doluluk -= azalma;
+
+
+
                 }
                 else
                 {
@@ -1426,13 +1452,28 @@ using UnityStandardAssets.Vehicles.Car;
         yangin.transform.position = transform.position +transform.forward*(-0.2f)+transform.up*0.1f ;
         araba_patlama.transform.position = transform.position;
             kontrolet.carpat = true;
-        }   
-  #endregion
+        }
+        #endregion
 
 
 
 
- /////////////////////////////////////////////////////ARABA PATLAMASI
+        /////////////////////////////////////////////////////ARABA PATLAMASI
+
+
+
+        #region ATEÞ BARI
+        if(doluluk<1000)doluluk += artis;
+        atesbari.GetComponent<Image>().fillAmount = doluluk / max_doluluk;
+
+
+
+
+
+
+        #endregion
+
+
 
 
 

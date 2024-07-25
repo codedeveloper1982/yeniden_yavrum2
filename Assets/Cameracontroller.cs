@@ -34,18 +34,33 @@ public class Cameracontroller : MonoBehaviour
     public Sprite[] coinler;
     public Image para;
     private Image[] paralar;
-    private float coin_time, coin_bekle = 0.01f, coinx, coiny;
+    private float coin_time, coin_bekle = 0.01f, coinx, coiny, coinx_scale, coiny_scale;
     private int coin_sira;
     public GameObject canvas;
     private int para_sayisi = 6, ilk_para, sira_para;
     public Text skortxt;
+    public Image board_para;
     public Vector3 kaybolan,kamera_yon;
     public bool para_goster = false,don=false;
     private float yan_carpma,yan_isin_uzunluk,arka_isin_uzunluk,carpma_mesafesi,donme_ust,yaklasma,fark,mydistance,kamera_uzunluk=1;
     private GameObject kup;
+   
+
+
+
+
+
+
+    #region BURASI ARABANIN CANI İÇİN
     
+    
+    public GameObject can_gosterge;
+    public float player_cani;
+    private Transform dusman;
 
 
+
+    #endregion  
 
 
 
@@ -55,7 +70,7 @@ public class Cameracontroller : MonoBehaviour
 
     private void Start()
     {
-
+        dusman= GameObject.FindGameObjectWithTag("düşman kontrol").transform;
         car = GameObject.FindGameObjectWithTag("Player").transform;
         donus_hiz = 0.9f;
         yan_isin_uzunluk = 1.2f;
@@ -112,6 +127,13 @@ public class Cameracontroller : MonoBehaviour
 
     private void FixedUpdate()
         {
+        player_cani = dusman.GetComponent<Kontrol_denemesi>().playercani;
+        Debug.Log("player can:" + player_cani);
+        if(player_cani>=0)can_gosterge.GetComponent<Image>().fillAmount = (player_cani / 100);
+        
+
+
+
         verial = car.transform.GetComponent<CarController>().suya_dokundu;
         arabapatladi = car.transform.GetComponent<CarController>().fail;
         local_velocity = car.InverseTransformDirection(car.GetComponent<Rigidbody>().velocity);
@@ -480,18 +502,28 @@ Debug.DrawRay(coin_ucu, arkayon * mesafe, Color.green);
             {
                 if (paralar[i].isActiveAndEnabled == true)
                 {
-
+                    ///////////////// tabelaya gidişlerini eşitle
                     paralar[i].sprite = coinler[coin_sira];
                     coinx = paralar[i].rectTransform.position.x;
                     coiny = paralar[i].rectTransform.position.y;
 
-                    coinx = Mathf.Lerp(coinx, skortxt.rectTransform.position.x, 0.05f);
-                    coiny = Mathf.Lerp(coiny, skortxt.rectTransform.position.y, 0.05f);
+                    coinx = Mathf.Lerp(coinx, board_para.rectTransform.position.x, 0.1f);
+                    coiny = Mathf.Lerp(coiny, board_para.rectTransform.position.y, 0.1f);
                     paralar[i].rectTransform.position = new Vector2(coinx, coiny);
 
+                    ///////////////// tabelaya boyutlarını eşitle
+                    coinx_scale = paralar[i].rectTransform.rect.width;
+                    coiny_scale = paralar[i].rectTransform.rect.height;
+
+                    coinx_scale = Mathf.Lerp(coinx_scale, board_para.rectTransform.rect.width, 0.05f);
+                    coiny_scale = Mathf.Lerp(coiny_scale, board_para.rectTransform.rect.height, 0.05f);
+                    paralar[i].rectTransform.sizeDelta = new Vector2(coinx_scale, coiny_scale);
+
+                    paralar[i].rectTransform.localScale = new Vector3(1, 1, 1);
 
 
-                    if (Vector2.Distance(paralar[i].rectTransform.position,skortxt.rectTransform.position)<1)
+
+                    if (Vector2.Distance(paralar[i].rectTransform.position, board_para.rectTransform.position) < 1)
                     {
                         paralar[i].gameObject.SetActive(false);
                     }

@@ -1,14 +1,81 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 
 namespace SplineMesh
 {
+    [ExecuteInEditMode]
     public class Harabe_ekle : MonoBehaviour
     {
         private GameObject prefab;
-        private float yukseklik = 1.7f;
+        public float yukseklik = 1.7f;
+        public GameObject kup;
+        private CurveSample sample;
+
+        public Spline spline;
+        private Spline cizgi;
+        public float rate = 0, hassas_rate;
+
+        public float DurationInSecond;
+
+
+        public void kup_ekle()
+        {
+            kup = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            kup.transform.position =transform.position ;
+            kup.transform.localScale = new Vector3(1, 1, 1);
+
+        }
+
+        private void OnEnable()
+        {
+            //rate = 0;
+
+
+            cizgi = spline.GetComponent<Spline>();
+#if UNITY_EDITOR
+            EditorApplication.update += EditorUpdate;
+#endif
+        }
+
+        void OnDisable()
+        {
+#if UNITY_EDITOR
+            EditorApplication.update -= EditorUpdate;
+#endif
+        }
+
+
+        void EditorUpdate()
+        {
+
+            if (hassas_rate > spline.nodes.Count - 1)
+            {
+                hassas_rate -= spline.nodes.Count - 1;
+            }
+
+            kutu_ilerlet();
+        }
+
+
+
+
+        private void kutu_ilerlet()
+        {
+            hassas_rate = rate / 10;
+            cizgi = transform.GetComponent<Spline>();
+            sample = cizgi.GetSample(hassas_rate);
+
+            kup.transform.rotation = sample.Rotation;
+            kup.transform.position = transform.position+sample.location + kup.transform.up * yukseklik / 4;
+
+
+
+
+        }
+
 
 
         public void mavi_ekle()

@@ -313,6 +313,8 @@ public class Kontrol_denemesi : MonoBehaviour
 
     //araba hýzýný alýyoruz
     private float araba_hizi;
+    public float playercani=100;
+
 
 
 
@@ -342,7 +344,7 @@ public class Kontrol_denemesi : MonoBehaviour
     private int coin_yeri_sayisi = 3;
     private int coin_yer_al,siradaki_yer;
 
-
+    private int puan;
 
     #endregion
 
@@ -1680,6 +1682,8 @@ public class Kontrol_denemesi : MonoBehaviour
                         kivilcimlar[son_kivilcim].transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
                         son_kivilcim++;
                         ilk_kivilcim++;
+                            playercani--;
+                           // Debug.Log("player can:" + playercani);
                         if (son_kivilcim == kivilcim_sayisi)
                         {
 
@@ -2857,6 +2861,8 @@ public class Kontrol_denemesi : MonoBehaviour
                     if (coin_hit.collider.tag == "Player") { 
                         Camera.main.GetComponent<Cameracontroller>().kaybolan=coinler[i].transform.position;
                         Camera.main.GetComponent<Cameracontroller>().para_goster = true;
+                        puan = int.Parse(Camera.main.GetComponent<Cameracontroller>().skortxt.text) + 1;
+                        Camera.main.GetComponent<Cameracontroller>().skortxt.text = puan.ToString();
                     coinler[i].SetActive(false);
 
                     }

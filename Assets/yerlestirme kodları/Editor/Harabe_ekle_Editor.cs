@@ -14,6 +14,19 @@ namespace SplineMesh
             base.OnInspectorGUI();
             Harabe_ekle ekle = (Harabe_ekle)target;
 
+            if (GUILayout.Button("Küp ekle"))
+            {
+
+                ekle.kup_ekle();
+
+            }
+
+
+
+
+
+
+
 
             if (GUILayout.Button("Mavi ekle"))
             {
